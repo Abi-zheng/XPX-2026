@@ -1,0 +1,196 @@
+/**
+ * 学校端 · B 端页面组件（依赖 shared-ui.css，置于页面内联 style 之后加载）
+ */
+/* 统一侧栏（覆盖各页内联 .sidebar，挂载 #schoolSidebar） */
+#schoolSidebar.sidebar,
+.app-wrapper > .sidebar {
+  width: var(--sidebar-w) !important;
+  min-width: var(--sidebar-w) !important;
+  max-width: var(--sidebar-w) !important;
+  flex: 0 0 var(--sidebar-w) !important;
+  padding: var(--space-16) var(--space-12) !important;
+  border-right: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+}
+#schoolSidebar .logo-icon,
+.app-wrapper > .sidebar .logo-icon {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: var(--radius-md) !important;
+}
+#schoolSidebar .nav-item,
+.app-wrapper > .sidebar .nav-item {
+  height: 40px !important;
+  padding: 0 var(--space-12) !important;
+  border-radius: var(--radius) !important;
+  font-size: var(--font-size-body) !important;
+  gap: var(--space-8) !important;
+}
+#schoolSidebar .logo-text,
+.app-wrapper > .sidebar .logo-text {
+  font-size: var(--font-size-h3) !important;
+}
+
+body {
+  font-family: var(--font-family) !important;
+  font-size: var(--font-size-body) !important;
+  line-height: var(--line-height-base) !important;
+  color: var(--text) !important;
+  background: var(--bg) !important;
+}
+
+.main-content {
+  padding: var(--space-16) var(--page-margin) var(--space-24) !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* 与 responsive 对齐的分栏（覆盖内联固定列宽） */
+@media (min-width: 1280px) and (max-width: 1439.98px) {
+  .split { grid-template-columns: minmax(200px, 260px) 1fr !important; }
+}
+@media (max-width: 1023.98px) {
+  .split { grid-template-columns: 1fr !important; }
+  .layout { grid-template-columns: 1fr !important; }
+}
+
+/* 标题层级 13–24 */
+.welcome h2,
+.top-bar h2,
+.login-panel h2,
+h2 { font-size: var(--font-size-h2) !important; font-weight: var(--font-weight-bold) !important; line-height: var(--line-height-tight) !important; color: var(--text) !important; }
+.welcome p,
+.top-bar .sub,
+.login-panel .sub,
+.breadcrumb { font-size: var(--font-size-sub) !important; color: var(--text-secondary) !important; line-height: var(--line-height-base) !important; }
+
+/* 卡片 */
+.card-panel,
+.card,
+.stat-card,
+.info-card {
+  border-radius: var(--radius-md) !important;
+  border-color: var(--border) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* 按钮 常规 32px */
+.btn,
+.btn-primary,
+.btn-outline,
+button.btn {
+  height: var(--control-h);
+  min-height: var(--control-h);
+  padding: 0 var(--space-16) !important;
+  font-size: var(--font-size-body) !important;
+  border-radius: var(--radius) !important;
+  font-weight: var(--font-weight-medium) !important;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+}
+.btn-sm, .tree-actions .btn, .tree-toolbar button {
+  height: var(--control-h-sm) !important;
+  min-height: var(--control-h-sm) !important;
+  padding: 0 var(--space-12) !important;
+  font-size: var(--font-size-sub) !important;
+}
+.btn-primary {
+  background: var(--primary) !important;
+  border: 1px solid var(--primary) !important;
+  color: #fff !important;
+}
+.btn-primary:hover { background: var(--primary-hover) !important; }
+.btn-outline {
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-regular) !important;
+}
+
+/* 输入框 32px */
+input[type="text"],
+input[type="tel"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+select,
+textarea,
+.toolbar input,
+.toolbar select,
+.form-row input,
+.form-row select,
+.tree-search {
+  height: var(--control-h) !important;
+  min-height: var(--control-h) !important;
+  padding: 0 var(--space-12) !important;
+  font-size: var(--font-size-body) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  color: var(--text) !important;
+  line-height: var(--line-height-base);
+}
+textarea { height: auto !important; min-height: 80px; padding: var(--space-8) var(--space-12) !important; }
+.form-row label,
+.toolbar label { font-size: var(--font-size-caption) !important; color: var(--text-secondary) !important; margin-bottom: var(--space-4) !important; }
+
+/* 表格 */
+table { font-size: var(--font-size-sub) !important; }
+th {
+  font-size: var(--font-size-caption) !important;
+  font-weight: var(--font-weight-bold) !important;
+  color: var(--text-secondary) !important;
+  background: #fafafa !important;
+  padding: var(--space-12) var(--space-16) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+td {
+  padding: var(--space-12) var(--space-16) !important;
+  color: var(--text-regular) !important;
+  border-bottom: 1px solid var(--border-light) !important;
+}
+
+/* 标签 24px 高 */
+.chip, .tag {
+  height: var(--tag-h);
+  line-height: calc(var(--tag-h) - 2px);
+  padding: 0 var(--space-8) !important;
+  font-size: var(--font-size-caption) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* Tab */
+.tabs button {
+  font-size: var(--font-size-body) !important;
+  padding: var(--space-12) var(--space-16) !important;
+}
+.tabs button.active { color: var(--primary) !important; font-weight: var(--font-weight-bold) !important; }
+
+/* 线框说明 */
+.wire-note {
+  font-size: var(--font-size-sub) !important;
+  line-height: var(--line-height-loose) !important;
+  border-radius: var(--radius) !important;
+  padding: var(--space-12) var(--space-16) !important;
+  margin-bottom: var(--space-16) !important;
+}
+
+/* 弹窗 */
+.modal { border-radius: var(--radius-md) !important; }
+.modal-hd { font-size: var(--font-size-h3) !important; font-weight: var(--font-weight-bold) !important; padding: var(--space-16) var(--space-20) !important; }
+.modal-bd { padding: var(--space-20) !important; }
+.modal-ft { padding: var(--space-12) var(--space-20) !important; gap: var(--space-8) !important; }
+
+/* 树节点 */
+.tree-node { font-size: var(--font-size-sub) !important; border-radius: var(--radius-sm) !important; padding: var(--space-4) var(--space-8) !important; }
+.tree-node:hover, .tree-node.selected { background: var(--primary-light) !important; color: var(--primary) !important; }
+
+.role-switch button {
+  height: var(--control-h-sm) !important;
+  font-size: var(--font-size-sub) !important;
+  padding: 0 var(--space-16) !important;
+}
+
+.top-bar { margin-bottom: var(--space-16) !important; gap: var(--space-16) !important; }
+.toolbar { gap: var(--space-8) !important; margin-bottom: var(--space-12) !important; }

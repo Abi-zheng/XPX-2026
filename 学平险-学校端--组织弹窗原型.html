@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学平险·学校端 | 组织弹窗原型</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', 'PingFang SC', sans-serif; background: #eef2f6; color: #1E2F3E; font-size: 14px; line-height: 1.5; }
+    .page { max-width: 720px; margin: 0 auto; padding: 24px 20px 48px; }
+    .nav-top { margin-bottom: 20px; font-size: 13px; }
+    .nav-top a { color: #1C6E5C; text-decoration: none; }
+    h1 { font-size: 1.35rem; margin-bottom: 8px; }
+    .intro { background: #fffbe6; border: 1px dashed #d9b559; padding: 14px 16px; border-radius: 10px; color: #856404; font-size: 13px; margin-bottom: 24px; line-height: 1.65; }
+    .proto-block { margin-bottom: 40px; }
+    .proto-label { font-size: 13px; font-weight: 600; color: #1C6E5C; margin-bottom: 10px; }
+    .proto-label span { font-weight: 400; color: #88a3b5; font-size: 12px; margin-left: 8px; }
+    .proto-frame { background: #fff; border-radius: 16px; border: 1px solid #dde5ee; box-shadow: 0 8px 24px rgba(0,0,0,.06); overflow: hidden; }
+    .modal-static .modal-hd { padding: 14px 18px; border-bottom: 1px solid #eef2f8; font-weight: 600; }
+    .modal-static .modal-bd { padding: 18px; }
+    .modal-static .modal-ft { padding: 12px 18px; border-top: 1px solid #eef2f8; display: flex; justify-content: flex-end; gap: 8px; background: #fafbfc; }
+    .form-row { margin-bottom: 12px; }
+    .form-row label { display: block; font-size: 12px; color: #6792a8; margin-bottom: 4px; }
+    .form-row input, .form-row select { width: 100%; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; }
+    .form-row input[readonly] { background: #f5f7fa; }
+    .field-hint { font-size: 11px; color: #88a3b5; margin-top: 4px; }
+    .req { color: #c45656; }
+    .hint { font-size: 12px; color: #88a3b5; margin-bottom: 14px; line-height: 1.55; }
+    .preview-line { font-size: 13px; color: #5e7f92; background: #f8fafc; border: 1px solid #eef2f8; padding: 10px 12px; border-radius: 8px; line-height: 1.5; }
+    .btn { padding: 8px 16px; border-radius: 10px; font-size: 13px; border: none; font-weight: 500; }
+    .btn-outline { background: #fff; border: 1px solid #cbdde6; color: #4c6a7e; }
+    .btn-primary { background: #1C6E5C; color: #fff; }
+    .field-table { width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 14px; }
+    .field-table th, .field-table td { border: 1px solid #eef2f8; padding: 8px 10px; vertical-align: top; }
+    .field-table th { background: #fafbfc; color: #6792a8; width: 26%; }
+    .try-bar { margin-top: 12px; font-size: 12px; color: #6792a8; }
+    .try-bar a { color: #1C6E5C; font-weight: 500; }
+  </style>
+  <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="学平险-学校端-sidebar.css">
+  <link rel="stylesheet" href="学平险-学校端-b-end.css">
+</head>
+<body>
+<div class="page">
+  
+    <a href="学平险-学校端--组织与成员.html">← 组织与成员</a>
+    · <a href="学平险-学校端--原型导航.html">原型导航</a>
+  </div>
+
+  <h1>组织弹窗原型</h1>
+  <p style="color:#5e7f92;font-size:13px;margin-bottom:16px;">新建年级 / 新建班级 · 已合并原「快捷创建」</p>
+
+  <div class="intro">
+    左侧仅保留<strong>新建年级</strong>、<strong>新建班级</strong>两个入口。开学建结构：多次「新建年级」选不同级别并填班级数即可；也可批量导入。
+    交互见 <a href="学平险-学校端--组织与成员.html" style="color:#1C6E5C;">组织与成员</a>。
+  </div>
+
+  <section class="proto-block">
+    <div class="proto-label"><i class="fas fa-layer-group"></i> 新建年级 <span>id=modalGrade</span>
+    <div class="proto-frame">
+      <div class="modal-static">
+        <div class="modal-hd">新建年级</div>
+        <div class="modal-bd">
+          <p class="hint">年级下拉（初/高分组）+ 班级数量（0=仅年级）。</p>
+          <div class="form-row"><label>年级 <span class="req">*</span></label><select disabled><option>高一年级</option></select></div>
+          <div class="form-row"><label>班级数量</label><input value="3" readonly><p class="field-hint">填 0 仅建年级</p></div>
+          <p class="preview-line">将创建「高一年级」共 3 个班：高一(1)班 … 高一(3)班</p>
+        </div>
+        <div class="modal-ft"><button class="btn btn-outline">取消</button><button class="btn btn-primary">确认创建</button></div>
+      </div>
+    </div>
+    <table class="field-table">
+      <tr><th>必填</th><td>年级</td></tr>
+      <tr><th>班级数</th><td>0–40；自动命名班级</td></tr>
+    </table>
+    <div class="pager" data-b-end-pager data-page-size="10"></div>
+    <p class="try-bar"><a href="学平险-学校端--组织与成员.html" data-open="modalGrade">→ 打开交互弹窗</a></p>
+  </section>
+
+  <section class="proto-block">
+    <div class="proto-label"><i class="fas fa-users"></i> 新建班级 <span>需先选中年级</span></div>
+    <div class="proto-frame">
+      <div class="modal-static">
+        <div class="modal-hd">新建班级</div>
+        <div class="modal-bd">
+          <label>年级</label><input readonly value="高一年级"></div>
+          <div class="form-row"><label>班号 <span class="req">*</span></label><input value="4" readonly></div>
+          <p class="preview-line">班级名称：高一(4)班</p>
+        </div>
+        <div class="modal-ft"><button class="btn btn-outline">取消</button><button class="btn btn-primary">保存</button></div>
+      </div>
+    </div>
+    <table class="field-table">
+      <tr><th>必填</th><td>班号（名称自动生成）</td></tr>
+    </table>
+    <div class="pager" data-b-end-pager data-page-size="10"></div>
+    <p class="try-bar"><a href="学平险-学校端--组织与成员.html" data-open="modalClass">→ 打开交互弹窗</a></p>
+  </section>
+
+  <section class="proto-block">
+    <div class="proto-label"><i class="fas fa-user-plus"></i> 添加成员 <span>id=modalAdd · 多选任职范围</span></div>
+    <div class="proto-frame">
+      <div class="modal-static">
+        <div class="modal-hd">添加成员</div>
+        <div class="modal-bd">
+          <p class="hint">年级组长可多选年级；班主任可多选班级（可跨年级）。</p>
+          <div class="form-row"><label>角色</label><select disabled><option>年级组长</option></select></div>
+          <div class="form-row"><label>任职年级 <span class="req">*</span></label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:1px solid #eef2f8;border-radius:8px;background:#fafbfc">
+              <label style="font-size:13px"><input type="checkbox" checked disabled> 高三年级</label>
+              <label style="font-size:13px"><input type="checkbox" checked disabled> 高二年级</label>
+              <label style="font-size:13px"><input type="checkbox" disabled> 高一年级</label>
+            </div>
+          </div>
+          <p class="preview-line">岗位范围：高三年级、高二年级</p>
+          <p class="field-hint" style="margin-top:10px">切换为「班主任」时，改为按年级分组多选班级。</p>
+        </div>
+        <div class="modal-ft"><button class="btn btn-outline">取消</button><button class="btn btn-primary">保存并添加</button></div>
+      </div>
+    </div>
+    <table class="field-table">
+      <tr><th>年级组长</th><td>任职年级，至少 1 项，可多选</td></tr>
+      <tr><th>班主任</th><td>任职班级，至少 1 项，可多选（可跨年级）</td></tr>
+      <tr><th>校级管理员</th><td>全校，无需勾选</td></tr>
+    </table>
+    <p class="try-bar"><a href="学平险-学校端--组织与成员.html">→ 在组织与成员页点击「添加成员」</a></p>
+  </section>
+</div>
+<script>
+document.querySelectorAll('[data-open]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    sessionStorage.setItem('openModal', a.getAttribute('data-open'));
+    location.href = a.getAttribute('href');
+  });
+});
+</script>
+
+<script src="b-end-pager.js"></script>
+<script>BEndPager.initAll();</script>
+</body>
+</html>

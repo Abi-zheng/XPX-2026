@@ -1,0 +1,112 @@
+/* B 端表格分页 */
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-12, 12px);
+  padding: var(--space-12, 12px) var(--space-16, 16px);
+  border-top: 1px solid var(--border-light, #ebeef5);
+  font-size: var(--font-size-sub, 13px);
+  color: var(--text-secondary, #909399);
+  background: var(--bg-elevated, #fff);
+}
+
+.pager-total strong {
+  color: var(--text, #303133);
+  font-weight: var(--font-weight-bold, 600);
+}
+
+.pager-size {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8, 8px);
+}
+
+.pager-size-select {
+  height: var(--control-h, 32px);
+  padding: 0 var(--space-8, 8px);
+  border: 1px solid var(--border, #e4e7ed);
+  border-radius: var(--radius, 6px);
+  font-size: var(--font-size-sub, 13px);
+  color: var(--text-regular, #606266);
+  background: var(--bg-elevated, #fff);
+  cursor: pointer;
+}
+
+.pager-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4, 4px);
+}
+
+.pager-nums {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4, 4px);
+}
+
+.pager-num {
+  min-width: var(--control-h, 32px);
+  height: var(--control-h, 32px);
+  padding: 0 var(--space-8, 8px);
+  border: 1px solid var(--border, #e4e7ed);
+  border-radius: var(--radius, 6px);
+  background: var(--bg-elevated, #fff);
+  color: var(--text-regular, #606266);
+  font-size: var(--font-size-sub, 13px);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.pager-num:hover:not(.is-active):not(:disabled) {
+  border-color: var(--primary, #1c6e5c);
+  color: var(--primary, #1c6e5c);
+}
+
+.pager-num.is-active {
+  background: var(--primary, #1c6e5c);
+  border-color: var(--primary, #1c6e5c);
+  color: #fff;
+  font-weight: var(--font-weight-medium, 500);
+  cursor: default;
+}
+
+.pager-num.is-ellipsis {
+  border: none;
+  background: transparent;
+  cursor: default;
+  min-width: auto;
+  padding: 0 4px;
+}
+
+.pager-btn {
+  height: var(--control-h, 32px);
+  padding: 0 var(--space-12, 12px);
+}
+
+.pager-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8, 8px);
+}
+
+.pager-jump-input {
+  width: 48px;
+  height: var(--control-h, 32px);
+  padding: 0 var(--space-8, 8px);
+  border: 1px solid var(--border, #e4e7ed);
+  border-radius: var(--radius, 6px);
+  text-align: center;
+  font-size: var(--font-size-sub, 13px);
+}
+
+@media (max-width: 767.98px) {
+  .pager {
+    justify-content: center;
+  }
+
+  .pager-jump {
+    display: none;
+  }
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学平险 · 原型导航</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body { font-family: Inter, 'PingFang SC', sans-serif; background: #f3f6fc; padding: 48px 24px; color: #1E2F3E; }
+    h1 { text-align: center; margin-bottom: 8px; }
+    .sub { text-align: center; color: #5e7f92; margin-bottom: 40px; font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 900px; margin: 0 auto; }
+    .card { background: #fff; border-radius: 24px; border: 1px solid #eef2f8; padding: 28px; box-shadow: 0 6px 14px rgba(0,0,0,0.03); }
+    .card .icon { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.4rem; margin-bottom: 16px; background: #1C6E5C; }
+    .card h2 { font-size: 1.25rem; margin-bottom: 8px; }
+    .card p { font-size: 13px; color: #88a3b5; line-height: 1.6; margin-bottom: 16px; }
+    .card ul { list-style: none; font-size: 13px; }
+    .card li { margin-bottom: 8px; }
+    .card a { color: #1C6E5C; text-decoration: none; }
+    .card a:hover { text-decoration: underline; }
+    .note { max-width: 720px; margin: 32px auto 0; padding: 16px; background: #fffbe6; border: 1px dashed #d9b559; border-radius: 12px; font-size: 13px; color: #856404; line-height: 1.6; }
+    .flow { max-width: 720px; margin: 24px auto 0; padding: 16px 20px; background: #fff; border-radius: 16px; border: 1px solid #eef2f8; font-size: 13px; line-height: 1.8; color: #5e7f92; }
+    .flow strong { color: #1E2F3E; }
+    .foot { text-align: center; margin-top: 24px; font-size: 13px; color: #88a3b5; }
+    .foot a { color: #1C6E5C; }
+  </style>
+</head>
+<body>
+  <h1>学平险 · 原型导航</h1>
+  <p class="sub">平台端（全国配置） / 学校端（业务租户） ·
+    <a href="index.html" style="color:#1C6E5C;font-weight:600;">学校端完整菜单</a>
+  </p>
+
+  <div class="flow">
+    <strong>平台端原型链路：</strong>
+    <a href="../学平险-平台端--Html原型/平台端-渠道管理.html">渠道管理</a>
+    → <a href="../学平险-平台端--Html原型/平台端-区域管理.html">区域管理</a>
+    → <a href="../学平险-平台端--Html原型/平台端-学校开通.html">学校管理</a>
+    → <a href="../学平险-平台端--Html原型/平台端-学校方案绑定.html">方案绑定</a>
+    → 学校端投保
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="icon"><i class="fas fa-shield-heart"></i></div>
+      <h2>学校端</h2>
+      <p>七大模块 · <a href="index.html">全部页面索引</a></p>
+      <ul>
+        <li><a href="学平险-学校端--登录.html">登录</a> · <a href="学平险-学校端--统计看板.html">统计看板</a></li>
+        <li><a href="学平险-学校端--学生档案.html">学生档案</a> · <a href="学平险-学校端--班级投保名单.html">班级投保名单</a> · <a href="学平险-学校端--投保二维码.html">投保二维码</a></li>
+        <li><a href="学平险-学校端--风险事件登记.html">风险事件登记</a> · <a href="学平险-学校端--安全教育.html">安全教育</a></li>
+        <li><strong>系统管理</strong>：<a href="学平险-学校端--组织与成员.html">组织与成员</a> · <a href="学平险-学校端--操作日志.html">操作日志</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="icon"><i class="fas fa-cog"></i></div>
+      <h2>平台端</h2>
+      <p>工作台、区域管理、学校开通、订单/理赔等全国运营能力。</p>
+      <ul>
+        <li><a href="../学平险-平台端--Html原型/平台端-工作台.html">工作台</a></li>
+        <li><a href="../学平险-平台端--Html原型/平台端-区域管理.html">区域管理</a> · <a href="../学平险-平台端--Html原型/平台端-学校开通.html">学校管理</a> · <a href="../学平险-平台端--Html原型/平台端-渠道管理.html">渠道管理</a></li>
+        <li><a href="../学平险-平台端--Html原型/平台端-订单管理.html">订单管理</a> · <a href="../学平险-平台端--Html原型/平台端-理赔管理.html">理赔</a></li>
+        <li><a href="../学平险-平台端--Html原型/平台端-原型导航.html">平台端导航页 →</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>组织：</strong>省厅 → 市局 → 学校；业务数据只归属 <code>school_id</code>。<br>
+    <strong>供给：</strong>与组织树并行，用 <code>province_code</code> 做省裁剪，用 <code>school_id</code> 做校绑定。
+  </div>
+  <p class="foot"><a href="原型说明.md">原型说明</a></p>
+</body>
+</html>

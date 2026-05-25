@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学校端 · 在双端体系中的位置</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared-ui.css">
+  <style>
+    .diagram { background: #fff; border-radius: 20px; padding: 24px; border: 1px solid var(--border); line-height: 2; font-size: 14px; }
+    .links { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .links a { padding: 8px 16px; border-radius: 10px; border: 1px solid #cbdde6; text-decoration: none; color: var(--primary); font-size: 13px; }
+  </style>
+</head>
+<body style="padding: 2rem;">
+  <h1 style="margin-bottom:8px;">学校端 · 业务租户</h1>
+  <p style="color:#5e7f92;margin-bottom:20px;">学生/投保/续保数据仅归属 <code>school_id</code></p>
+  <div class="diagram">
+    平台端（全国配置）<br>
+    &nbsp;&nbsp;↓ 下发 RBAC 模板、学校开通<br>
+    <strong>学校端（本校执行）← 当前端</strong>
+  </div>
+  <div class="links">
+    <a href="学平险-学校端--登录.html">学校端登录</a>
+    <a href="学平险-学校端--统计看板.html">统计看板</a>
+    <a href="../学平险-平台端--Html原型/平台端-工作台.html">平台端</a>
+    <a href="学平险-学校端--原型导航.html">原型导航</a>
+  </div>
+</body>
+</html>

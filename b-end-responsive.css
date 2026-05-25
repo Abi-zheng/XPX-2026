@@ -1,0 +1,291 @@
+/**
+ * B 端分辨率自适应
+ * 1280×800 最小 · 1440×900 最佳 · 1920×1080 大屏
+ * https://www.uisdc.com/b-end-ui-specs
+ */
+
+/* —— 基础：弹性主区，避免撑破视口 —— */
+html {
+  overflow-x: auto;
+}
+
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  min-width: 0;
+  max-width: 100vw;
+}
+
+.main-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* 表格/宽卡片：小屏横向滚动 */
+.card-panel,
+.card,
+.table-wrap {
+  max-width: 100%;
+}
+
+.card-panel > table,
+.card > table,
+.main-content > table {
+  width: 100%;
+}
+
+@media (max-width: 1439.98px) {
+  .card-panel,
+  .card-panel .tab-body,
+  .pane-right {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* —— ≥1920 大屏：加大边距，主内容可选居中 —— */
+@media (min-width: 1920px) {
+  :root {
+    --page-margin: 32px;
+    --grid-gutter: 20px;
+    --content-inner-max: 1680px;
+  }
+
+  .main-content {
+    padding-left: var(--page-margin);
+    padding-right: var(--page-margin);
+  }
+
+  /* 平台端等内容包在 .page 内 */
+  .main-content > .page,
+  .main-content .page {
+    width: 100%;
+    max-width: var(--content-inner-max);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* —— 1440–1919 最佳画布（默认 token，无需覆盖）—— */
+
+/* —— 1280–1439 最小笔记本 —— */
+@media (min-width: 1280px) and (max-width: 1439.98px) {
+  :root {
+    --page-margin: 16px;
+    --grid-gutter: 12px;
+    --sidebar-w: 220px;
+  }
+
+  .stat-grid,
+  .info-cards,
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+    gap: var(--grid-gutter) !important;
+  }
+
+  .split,
+  .layout-2 {
+    grid-template-columns: minmax(200px, 240px) 1fr !important;
+  }
+
+  .layout {
+    grid-template-columns: minmax(160px, 180px) 1fr !important;
+  }
+}
+
+/* —— 1024–1279 紧凑：侧栏图标模式 —— */
+@media (max-width: 1279.98px) {
+  :root {
+    --page-margin: 12px;
+    --sidebar-w: 72px;
+  }
+
+  .sidebar,
+  #platformSidebar.sidebar,
+  #schoolSidebar.sidebar,
+  .app-wrapper > .sidebar,
+  .app-wrapper > aside.sidebar {
+    width: var(--sidebar-w) !important;
+    min-width: var(--sidebar-w) !important;
+    max-width: var(--sidebar-w) !important;
+    flex: 0 0 var(--sidebar-w) !important;
+    padding: var(--space-12) var(--space-8) !important;
+  }
+
+  .sidebar .logo-text,
+  .sidebar .logo-module,
+  .sidebar .nav-item span,
+  .sidebar .nav-section,
+  .sidebar .school-nav-section,
+  #platformSidebar .logo-text,
+  #platformSidebar .nav-item span,
+  #platformSidebar .nav-section,
+  #schoolSidebar .logo-text,
+  #schoolSidebar .logo-module,
+  #schoolSidebar .nav-item span,
+  #schoolSidebar .school-nav-section {
+    display: none !important;
+  }
+
+  .sidebar .logo-area,
+  #platformSidebar .logo-area,
+  #schoolSidebar .logo-area {
+    justify-content: center;
+    padding: 0 !important;
+  }
+
+  .sidebar .nav-item,
+  #platformSidebar .nav-item,
+  #schoolSidebar .nav-item {
+    justify-content: center;
+    padding: 0 !important;
+  }
+
+  .sidebar .nav-item a,
+  #platformSidebar .nav-item a {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .footer-bar {
+    left: var(--sidebar-w) !important;
+  }
+
+  .stat-grid,
+  .info-cards,
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+  }
+}
+
+/* —— 768–1023 平板：分栏改单列 —— */
+@media (max-width: 1023.98px) {
+  :root {
+    --page-margin: 12px;
+  }
+
+  .split,
+  .layout,
+  .layout-2,
+  .grid-2col,
+  .quick-grid,
+  [style*="grid-template-columns: 1fr 1fr"],
+  [style*="grid-template-columns: 1fr 1.1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .split .pane-left {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+    max-height: 280px;
+    overflow-y: auto;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .top-bar {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .toolbar input,
+  .toolbar select,
+  .toolbar .btn,
+  .toolbar .input,
+  .main-content .toolbar .input[style*="min-width"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100%;
+  }
+
+  .role-switch {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .role-switch button {
+    flex: 1;
+  }
+}
+
+/* —— <768 小屏（仍保留 B 端最小可用）—— */
+@media (max-width: 767.98px) {
+  :root {
+    --page-margin: 12px;
+    --font-size-h2: 18px;
+    --font-size-h1: 20px;
+  }
+
+  .stat-grid,
+  .info-cards,
+  .stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: var(--space-8) !important;
+  }
+
+  .modal,
+  .modal-mask .modal {
+    max-width: calc(100vw - 24px) !important;
+    margin: 12px;
+  }
+
+  th, td {
+    padding: var(--space-8) var(--space-12) !important;
+    font-size: var(--font-size-caption) !important;
+  }
+}
+
+@media (max-width: 479.98px) {
+  .stat-grid,
+  .info-cards,
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 侧栏折叠态：悬停展开（可选增强，仅 1024–1279） */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .sidebar:hover,
+  #platformSidebar.sidebar:hover,
+  #schoolSidebar.sidebar:hover {
+    width: 240px !important;
+    min-width: 240px !important;
+    max-width: 240px !important;
+    flex: 0 0 240px !important;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+
+  .sidebar:hover .logo-text,
+  .sidebar:hover .nav-item span,
+  .sidebar:hover .nav-section,
+  .sidebar:hover .school-nav-section,
+  #platformSidebar.sidebar:hover .logo-text,
+  #platformSidebar.sidebar:hover .nav-item span,
+  #platformSidebar.sidebar:hover .nav-section,
+  #schoolSidebar.sidebar:hover .logo-text,
+  #schoolSidebar.sidebar:hover .nav-item span,
+  #schoolSidebar.sidebar:hover .school-nav-section {
+    display: block !important;
+  }
+
+  .sidebar:hover .nav-item,
+  #platformSidebar.sidebar:hover .nav-item,
+  #schoolSidebar.sidebar:hover .nav-item {
+    justify-content: flex-start;
+    padding: 0 var(--space-12) !important;
+  }
+}

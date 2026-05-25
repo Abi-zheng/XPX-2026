@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学平险·学校端 | 组织与成员</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', 'PingFang SC', sans-serif; background: #f3f6fc; color: #1E2F3E; font-size: 14px; }
+    .app-wrapper { display: flex; min-height: 100vh; }
+    .main-content { flex: 1; padding: 1.5rem 2rem 2rem; overflow-x: auto; }
+    .wire-note { background: #fffbe6; border: 1px dashed #d9b559; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; color: #856404; font-size: 13px; line-height: 1.6; }
+    .top-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 1rem; }
+    .welcome h2 { font-size: 1.5rem; font-weight: 600; }
+    .welcome p { color: #5e7f92; font-size: 0.85rem; margin-top: 4px; }
+    .role-switch { display: inline-flex; border: 1px solid #e2e8f0; border-radius: 999px; overflow: hidden; background: #fff; }
+    .role-switch button { border: none; background: transparent; padding: 8px 16px; font-size: 13px; cursor: pointer; color: #6792a8; }
+    .role-switch button.active { background: #1C6E5C; color: #fff; }
+    .chip { display: inline-flex; padding: 2px 10px; border-radius: 999px; font-size: 12px; border: 1px solid #e2e8f0; }
+    .chip.admin { background: #eef6f3; border-color: #b8d9ce; color: #1C6E5C; }
+    .chip.grade { background: #eef2fa; border-color: #c5d4f0; color: #3d5a80; }
+    .chip.class { background: #fdf6ec; border-color: #f5dab1; color: #b88230; }
+    body[data-role="grade"] .admin-only, body[data-role="class"] .admin-only { display: none !important; }
+    body[data-role="grade"] .denied-banner, body[data-role="class"] .denied-banner { display: block; }
+    .denied-banner { display: none; background: #fef0f0; border: 1px solid #fbc4c4; color: #c45656; padding: 24px; border-radius: 16px; text-align: center; }
+    .card-panel { background: #fff; border-radius: 20px; border: 1px solid #eef2f8; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+    .split { display: grid; grid-template-columns: 280px 1fr; min-height: 520px; }
+    @media (max-width: 960px) { .split { grid-template-columns: 1fr; } }
+    .pane-left { border-right: 1px solid #eef2f8; padding: 14px; background: #fafbfc; }
+    .pane-right { display: flex; flex-direction: column; }
+    .tree ul { list-style: none; padding-left: 16px; }
+    .tree-node { padding: 6px 10px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .tree-node:hover, .tree-node.selected { background: #eef6f3; color: #1C6E5C; }
+    .scope-badge { font-size: 11px; color: #88a3b5; margin-left: auto; }
+    .node-meta { padding: 10px 14px; border-bottom: 1px solid #eef2f8; font-size: 13px; }
+    .tabs { display: flex; border-bottom: 1px solid #eef2f8; padding: 0 12px; }
+    .tabs button { border: none; background: none; padding: 12px; font-size: 13px; color: #88a3b5; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .tabs button.active { color: #1C6E5C; font-weight: 600; border-bottom-color: #1C6E5C; }
+    .tab-body { padding: 14px 16px 18px; }
+    .tab-pane { display: none; } .tab-pane.active { display: block; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .toolbar input, .toolbar select { padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; }
+    .btn { padding: 8px 14px; border-radius: 10px; font-size: 13px; cursor: pointer; border: none; font-weight: 500; }
+    .btn-primary { background: #1C6E5C; color: #fff; }
+    .btn-outline { background: #fff; border: 1px solid #cbdde6; color: #4c6a7e; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid #f0f4f9; }
+    th { color: #6792a8; font-size: 12px; font-weight: 600; background: #fafbfc; }
+    tr:hover td { background: #fafcfd; }
+    .link { color: #1C6E5C; cursor: pointer; }
+    .link-danger { color: #c45656; }
+    .link-danger:hover { text-decoration: underline; }
+    .form-row { margin-bottom: 12px; max-width: 400px; }
+    .form-row label { display: block; font-size: 12px; color: #6792a8; margin-bottom: 4px; }
+    .form-row input, .form-row select { width: 100%; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 8px; }
+    .hint { font-size: 12px; color: #88a3b5; margin-top: 8px; line-height: 1.5; }
+    .modal-mask { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 100; align-items: center; justify-content: center; }
+    .modal-mask.open { display: flex; }
+    .modal { background: #fff; border-radius: 16px; width: 100%; max-width: 480px; }
+    .modal-hd, .modal-ft { padding: 14px 18px; border-color: #eef2f8; }
+    .modal-hd { border-bottom: 1px solid #eef2f8; font-weight: 600; display: flex; justify-content: space-between; }
+    .modal-ft { border-top: 1px solid #eef2f8; display: flex; justify-content: flex-end; gap: 8px; }
+    .modal-bd { padding: 18px; }
+    .modal.modal-wide { max-width: 520px; }
+    .tree-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .tree-actions .btn { font-size: 12px; padding: 6px 10px; }
+    .tree-actions .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .preview-box { background: #f8fafc; border: 1px solid #eef2f8; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #5e7f92; line-height: 1.6; margin-top: 8px; }
+    .tree-node .node-ops { margin-left: auto; display: none; gap: 6px; font-size: 11px; }
+    .tree-node:hover .scope-badge { display: none; }
+    .tree-node:hover .node-ops { display: flex; }
+    .node-ops span { color: #88a3b5; cursor: pointer; }
+    .node-ops span:hover { color: #1C6E5C; }
+    .node-ops span[data-delete]:hover { color: #c45656; }
+
+    .modal.modal-wide { max-width: 600px; max-height: 90vh; }
+    .modal-bd.scroll { max-height: calc(90vh - 120px); overflow-y: auto; }
+    .form-section { margin-bottom: 18px; }
+    .form-section-title { font-size: 12px; font-weight: 600; color: #6792a8; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #eef2f8; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+    .form-grid .form-row { max-width: none; }
+    .form-row.full { grid-column: 1 / -1; }
+    .field-hint { font-size: 11px; color: #88a3b5; margin-top: 4px; line-height: 1.4; }
+    .code-preview { font-family: ui-monospace, monospace; font-size: 11px; background: #f0f4f9; padding: 8px 10px; border-radius: 6px; color: #4c6a7e; margin-top: 6px; }
+    .preview-list { max-height: 160px; overflow: auto; border: 1px solid #eef2f8; border-radius: 8px; margin-top: 8px; }
+    .preview-list table { font-size: 12px; margin: 0; }
+    .preview-list th { position: sticky; top: 0; z-index: 1; }
+    .checkbox-row { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; margin: 10px 0; color: #4c6a7e; }
+    .checkbox-row input { margin-top: 3px; }
+    .sub-fields { display: none; margin-top: 10px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px dashed #e2e8f0; }
+    .sub-fields.show { display: block; }
+    .req { color: #c45656; }
+
+    .tree-toolbar { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+    .tree-toolbar button { font-size: 11px; padding: 4px 8px; border: 1px solid #e2e8f0; background: #fff; border-radius: 6px; cursor: pointer; color: #6792a8; }
+    .tree-search { width: 100%; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; }
+    .tree-scroll { max-height: 420px; overflow-y: auto; margin: 0 -4px; padding: 0 4px; }
+    .tree .grade-block { margin: 2px 0; }
+    .tree .grade-block.collapsed .class-list { display: none; }
+    .tree .grade-block.collapsed .tree-toggle i { transform: rotate(-90deg); }
+    .tree .grade-head { display: flex; align-items: center; gap: 2px; }
+    .tree-toggle { width: 22px; height: 28px; display: flex; align-items: center; justify-content: center; color: #88a3b5; cursor: pointer; flex-shrink: 0; }
+    .tree-toggle i { font-size: 10px; transition: transform .15s; }
+    .grade-head .tree-node { flex: 1; }
+    .tree-node.hidden-by-search { display: none !important; }
+    .grade-block.hidden-by-search { display: none !important; }
+    .scope-panel { display: none; }
+    .scope-panel.active { display: block; }
+    .scope-panel .form-row { max-width: none; }
+    .scope-links { font-size: 12px; margin-top: 6px; }
+    .scope-links a { color: #1C6E5C; cursor: pointer; margin-right: 12px; }
+    .modal-add-wide { max-width: 560px; max-height: 90vh; }
+    .modal-add-wide .modal-bd.scroll { max-height: calc(90vh - 120px); overflow-y: auto; }
+    .scope-block { margin-bottom: 14px; }
+
+    /* 多选下拉 */
+    .ms { position: relative; }
+    .ms-trigger { display: flex; align-items: center; min-height: 36px; padding: 4px 32px 4px 8px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; cursor: pointer; flex-wrap: wrap; gap: 4px; }
+    .ms.open .ms-trigger { border-color: #1C6E5C; box-shadow: 0 0 0 3px rgba(28,110,92,.1); }
+    .ms-trigger::after { content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #88a3b5; font-size: 11px; transition: transform .15s; pointer-events: none; }
+    .ms.open .ms-trigger::after { transform: translateY(-50%) rotate(180deg); }
+    .ms-placeholder { color: #b8c5d0; font-size: 13px; padding: 4px 4px; }
+    .ms-tag { display: inline-flex; align-items: center; gap: 4px; background: #eef6f3; color: #1C6E5C; border: 1px solid #b8d9ce; padding: 2px 4px 2px 8px; border-radius: 6px; font-size: 12px; line-height: 1.4; }
+    .ms-tag .ms-tag-x { width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; color: #1C6E5C; cursor: pointer; font-size: 10px; }
+    .ms-tag .ms-tag-x:hover { background: #d6e9e0; }
+    .ms-dropdown { display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 20; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.08); max-height: 280px; overflow: hidden; flex-direction: column; }
+    .ms.open .ms-dropdown { display: flex; }
+    .ms-search { padding: 8px 10px; border-bottom: 1px solid #eef2f8; }
+    .ms-search input { width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; font-size: 13px; }
+    .ms-options { flex: 1; overflow-y: auto; padding: 6px 4px; }
+    .ms-option { display: flex; align-items: center; gap: 8px; padding: 6px 10px; font-size: 13px; color: #1E2F3E; cursor: pointer; border-radius: 6px; }
+    .ms-option:hover { background: #f4f8fb; }
+    .ms-option.selected { color: #1C6E5C; font-weight: 500; }
+    .ms-option i.tick { width: 14px; color: #1C6E5C; font-size: 12px; visibility: hidden; }
+    .ms-option.selected i.tick { visibility: visible; }
+    .ms-option.hidden { display: none; }
+    .ms-group-hd { padding: 6px 10px 2px; font-size: 11px; color: #88a3b5; font-weight: 600; letter-spacing: .04em; }
+    .ms-group-hd:not(:first-child) { border-top: 1px solid #f0f4f9; margin-top: 4px; padding-top: 8px; }
+    .ms-empty { padding: 16px; text-align: center; color: #88a3b5; font-size: 12px; }
+    .ms-foot { padding: 6px 10px; border-top: 1px solid #eef2f8; display: flex; justify-content: space-between; font-size: 12px; }
+    .ms-foot button { background: none; border: none; color: #1C6E5C; cursor: pointer; padding: 4px 6px; }
+    .ms-foot button:hover { text-decoration: underline; }
+    .ms-foot .ms-count { color: #88a3b5; }
+    .preview-line { font-size: 13px; color: #5e7f92; background: #f8fafc; border: 1px solid #eef2f8; padding: 10px 12px; border-radius: 8px; margin-top: 4px; line-height: 1.5; }
+    .inline-num { width: 56px; padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px; margin: 0 6px; vertical-align: middle; }
+    .preview-line { font-size: 13px; color: #5e7f92; background: #f8fafc; border: 1px solid #eef2f8; padding: 10px 12px; border-radius: 8px; margin-top: 4px; line-height: 1.5; }
+    .inline-num { width: 56px; padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px; margin: 0 6px; vertical-align: middle; }
+    .stat-pill { font-size: 11px; color: #88a3b5; margin-bottom: 8px; }
+    .radio-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+    .radio-option {
+      display: inline-flex; align-items: center; gap: 6px;
+      min-height: 32px; padding: 0 14px;
+      border: 1px solid #e2e8f0; border-radius: 6px;
+      font-size: 14px; color: #4c6a7e; cursor: pointer; user-select: none;
+      background: #fff;
+    }
+    .radio-option input { margin: 0; width: 16px; height: 16px; accent-color: #1C6E5C; cursor: pointer; }
+    .radio-option:has(input:checked) {
+      border-color: #b8d9ce; background: #eef6f3; color: #1C6E5C; font-weight: 500;
+    }
+    /* 角色多选 chip */
+    .role-pick { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+    .role-pick label {
+      display: inline-flex; align-items: center; gap: 6px;
+      min-height: 32px; padding: 0 14px;
+      border: 1px solid #e2e8f0; border-radius: 6px;
+      font-size: 14px; color: #4c6a7e; cursor: pointer; user-select: none;
+      background: #fff;
+    }
+    .role-pick label input { margin: 0; width: 16px; height: 16px; accent-color: #1C6E5C; cursor: pointer; }
+    .role-pick label:has(input:checked) { border-color: #b8d9ce; background: #eef6f3; color: #1C6E5C; font-weight: 500; }
+    .role-pick label.disabled { opacity: .4; cursor: not-allowed; }
+    .chip.multi { background: #e6f0ec; border-color: #b8d9ce; color: #1C6E5C; margin-right: 4px; }
+  </style>
+  <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="学平险-学校端-sidebar.css">
+  <link rel="stylesheet" href="学平险-学校端-b-end.css">
+</head>
+<body data-role="admin">
+<div class="app-wrapper">
+  <div class="sidebar" id="schoolSidebar"></div>
+  <main class="main-content">
+<div class="top-bar">
+      <div class="welcome"><h2>组织与成员</h2><p>立德中学 · school_id SCH_00128</p></div>
+      <div id="userMenuMount"></div>
+    </div>
+    <div class="denied-banner"><p style="font-weight:600;">无权限访问组织与成员</p><p style="font-size:13px;margin-top:8px;">仅校级管理员可维护</p></div>
+    <div class="admin-only card-panel">
+      <div class="split">
+        <div class="pane-left">
+          <p style="font-size:12px;color:#6792a8;font-weight:600;margin-bottom:6px;">年级班级</p>
+          <p class="stat-pill" id="treeStat">—</p>
+          <input type="search" class="tree-search" id="treeSearch" placeholder="搜索年级 / 班级…">
+          <div class="tree-toolbar">
+            <button type="button" id="btnExpandAll">全部展开</button>
+            <button type="button" id="btnCollapseAll">全部折叠</button>
+          </div>
+          <div class="tree-actions">
+            <button type="button" class="btn btn-primary" id="btnAddGrade" style="flex:1;"><i class="fas fa-plus"></i> 新建年级</button>
+            <button type="button" class="btn btn-outline" id="btnAddClass" disabled title="请先选中一个年级"><i class="fas fa-plus"></i> 新建班级</button>
+          </div>
+          <div class="tree-scroll">
+            <div class="tree" id="orgTree">
+              <div class="tree-node selected" data-type="school" data-id="school" data-label="立德中学">
+                <i class="fas fa-school"></i><span class="node-label">立德中学</span><span class="scope-badge">全校</span>
+              </div>
+              <ul id="gradeList"></ul>
+            </div>
+          </div>
+          <p class="hint">左侧选范围筛选右侧成员。添加成员时：<strong>年级组长</strong>可多选任职年级，<strong>班主任</strong>可多选任职班级（可同时负责多个年级/多个班）。</p>
+        </div>
+        <div class="pane-right">
+          <div class="node-meta" id="nodeMeta">当前范围：<strong>立德中学 · 全校</strong></div>
+          <div class="tabs" id="rightTabs">
+            <button type="button" data-tab="list" class="active">成员列表</button>
+            <button type="button" data-tab="import">批量导入</button>
+          </div>
+          <div class="tab-body">
+            <div class="tab-pane active" id="pane-list">
+              <div class="toolbar">
+                <input type="search" placeholder="姓名/手机" style="width:150px;">
+                <select><option>全部角色</option><option>校级管理员</option><option>年级组长</option><option>班主任</option></select>
+                <button type="button" class="btn btn-primary" id="btnAddMember"><i class="fas fa-user-plus"></i> 添加成员</button>
+              </div>
+              <table>
+                <thead><tr><th>姓名</th><th>手机号</th><th>角色</th><th>岗位范围</th><th>账号状态</th><th>操作</th></tr></thead>
+                <tbody id="memberTbody">
+                  <tr><td>张敏</td><td>138****8001</td><td><span class="chip admin">校级管理员</span></td><td>全校</td><td>启用</td><td><span class="link" data-edit data-roles="admin" data-grades="" data-classes="">编辑</span> <span class="link link-danger" data-del-member>删除</span></td></tr>
+                  <tr><td>李建华</td><td>139****2233</td><td><span class="chip grade">年级组长</span></td><td>高三年级、高二年级</td><td>启用</td><td><span class="link" data-edit data-roles="grade" data-grades="高三年级,高二年级" data-classes="">编辑</span> <span class="link link-danger" data-del-member>删除</span></td></tr>
+                  <tr><td>陈志强</td><td>187****9900</td><td><span class="chip class">班主任</span></td><td>高三(2)班</td><td>启用</td><td><span class="link" data-edit data-roles="class" data-grades="" data-classes="高三(2)班">编辑</span> <span class="link link-danger" data-del-member>删除</span></td></tr>
+                  <tr><td>王芳</td><td>137****6655</td><td><span class="chip grade multi">年级组长</span><span class="chip class multi">班主任</span></td><td>年级组长：高一年级 / 班主任：高一(3)班、高二(1)班</td><td>启用</td><td><span class="link" data-edit data-roles="grade,class" data-grades="高一年级" data-classes="高一(3)班,高二(1)班">编辑</span> <span class="link link-danger" data-del-member>删除</span></td></tr>
+                </tbody>
+              </table>
+              <div class="pager" data-b-end-pager data-page-size="10"></div>
+            </div>
+            <div class="tab-pane" id="pane-import">
+              <p class="hint">可批量导入<strong>年级班级结构</strong>或<strong>成员与岗位</strong>（模板分 sheet）；无校务对接时建议先用左侧「新建年级」建结构。</p>
+              <button type="button" class="btn btn-outline">下载模板</button>
+              <button type="button" class="btn btn-primary" style="margin-left:8px;">上传 Excel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<div class="modal-mask" id="modalGrade">
+  <div class="modal">
+    <div class="modal-hd">新建年级 <button type="button" class="modal-close" data-close="modalGrade" style="border:none;background:none;cursor:pointer;font-size:18px;">×</button></div>
+    <div class="modal-bd">
+      <p class="hint" style="margin-top:0;">选年级并设置班级数；开学可逐个年级建班，或走批量导入。</p>
+      <div class="form-row"><label>年级 <span class="req">*</span></label>
+        <select id="gradeGradePick"></select>
+      </div>
+      <div class="form-row"><label>班级数量</label>
+        <input id="gradeClassCount" type="number" min="0" max="40" value="6">
+        <p class="field-hint">填 0 仅建年级；1–40 按「高一(1)班」规则批量生成</p>
+      </div>
+      <p class="preview-line" id="gradePreviewText">—</p>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn btn-outline modal-close" data-close="modalGrade">取消</button>
+      <button type="button" class="btn btn-primary" id="saveGrade">确认创建</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask" id="modalClass">
+  <div class="modal">
+    <div class="modal-hd">新建班级 <button type="button" class="modal-close" data-close="modalClass" style="border:none;background:none;cursor:pointer;font-size:18px;">×</button></div>
+    <div class="modal-bd">
+      <p class="hint" style="margin-top:0;">在已选年级下新增一个班。</p>
+      <div class="form-row"><label>年级</label>
+        <input id="classGradeLabel" readonly style="background:#f5f7fa;">
+      </div>
+      <div class="form-row"><label>班号 <span class="req">*</span></label>
+        <input id="classNoInput" type="number" min="1" max="99" value="1">
+      </div>
+      <p class="preview-line" id="classNamePreview">班级名称：—</p>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn btn-outline modal-close" data-close="modalClass">取消</button>
+      <button type="button" class="btn btn-primary" id="saveClass">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask" id="modalAdd">
+  <div class="modal modal-add-wide">
+    <div class="modal-hd">添加成员 <button type="button" class="modal-close" data-close="modalAdd" style="border:none;background:none;cursor:pointer;font-size:18px;">×</button></div>
+    <div class="modal-bd scroll">
+      <p class="hint" style="margin-top:0;margin-bottom:14px;">年级组长、班主任均支持<strong>多选</strong>任职范围；选项来自左侧组织树，无选项时请先在左侧新建年级/班级。</p>
+      <div class="form-row"><label>姓名 <span class="req">*</span></label><input id="addName" placeholder="真实姓名"></div>
+      <div class="form-row"><label>手机号（登录账号）<span class="req">*</span></label><input id="addPhone" placeholder="11位手机号"></div>
+      <div class="form-row"><label>初始密码</label><input id="addPwd" type="password" placeholder="留空则系统生成"></div>
+      <div class="form-row"><label>角色 <span class="req">*</span> <span class="field-hint" style="margin:0 0 0 6px;display:inline">可同时担任「年级组长 + 班主任」</span></label>
+        <div class="role-pick" id="addRolePick">
+          <label><input type="checkbox" value="grade"> 年级组长</label>
+          <label><input type="checkbox" value="class"> 班主任</label>
+          <label><input type="checkbox" value="admin"> 校级管理员（全校）</label>
+        </div>
+      </div>
+      <div id="scopeAdminHint" class="hint" style="display:none;">校级管理员岗位范围为全校，与「年级组长 / 班主任」互斥。</div>
+      <div id="scopeGradePanel" class="scope-panel active">
+        <div id="addGradesBlock" class="scope-block" style="display:none">
+          <div class="form-row"><label>任职年级 <span class="req">*</span></label>
+            <p class="field-hint">支持多选；可同时负责多个年级的统筹管理</p>
+            <div class="ms" id="addGradesMs" data-kind="grade"></div>
+          </div>
+        </div>
+        <div id="addClassesBlock" class="scope-block" style="display:none">
+          <div class="form-row"><label>任职班级 <span class="req">*</span></label>
+            <p class="field-hint">支持多选；可同时担任多个班的班主任（可跨年级）</p>
+            <div class="ms" id="addClassesMs" data-kind="class"></div>
+          </div>
+        </div>
+        <p class="preview-line" id="addScopePreview" style="margin-top:4px;">岗位范围：—</p>
+      </div>
+      <select id="addScope" style="display:none;"><option>全校</option></select>
+      <div class="form-row">
+        <label>账号状态</label>
+        <div class="radio-group" role="radiogroup" aria-label="账号状态">
+          <label class="radio-option"><input type="radio" name="addStatus" id="addStatusOn" value="on" checked> 启用</label>
+          <label class="radio-option"><input type="radio" name="addStatus" id="addStatusOff" value="off"> 禁用</label>
+        </div>
+        <p class="field-hint">禁用后该账号无法登录学校端，可随时在「编辑」中改回启用。</p>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn btn-outline modal-close" data-close="modalAdd">取消</button>
+      <button type="button" class="btn btn-primary" id="saveAdd">保存并添加</button>
+    </div>
+  </div>
+</div>
+<div class="modal-mask" id="modalAssign">
+  <div class="modal modal-add-wide">
+    <div class="modal-hd">编辑成员 <button type="button" class="modal-close" data-close="modalAssign" style="border:none;background:none;cursor:pointer;font-size:18px;">×</button></div>
+    <div class="modal-bd scroll">
+      <div class="form-row"><label>成员</label><input id="editMemberName" value="陈志强" readonly style="background:#f5f7fa;"></div>
+      <div class="form-row"><label>角色 <span class="field-hint" style="margin:0 0 0 6px;display:inline">可同时担任「年级组长 + 班主任」</span></label>
+        <div class="role-pick" id="editRolePick">
+          <label><input type="checkbox" value="grade"> 年级组长</label>
+          <label><input type="checkbox" value="class"> 班主任</label>
+          <label><input type="checkbox" value="admin"> 校级管理员（全校）</label>
+        </div>
+      </div>
+      <div id="editScopeAdminHint" class="hint" style="display:none;">校级管理员岗位范围为全校，与「年级组长 / 班主任」互斥。</div>
+      <div id="editScopePanel" class="scope-panel active">
+        <div id="editGradesBlock" class="scope-block" style="display:none">
+          <div class="form-row"><label>任职年级 <span class="req">*</span></label>
+            <p class="field-hint">支持多选</p>
+            <div class="ms" id="editGradesMs" data-kind="grade"></div>
+          </div>
+        </div>
+        <div id="editClassesBlock" class="scope-block" style="display:none">
+          <div class="form-row"><label>任职班级 <span class="req">*</span></label>
+            <p class="field-hint">支持多选（可跨年级）</p>
+            <div class="ms" id="editClassesMs" data-kind="class"></div>
+          </div>
+        </div>
+        <p class="preview-line" id="editScopePreview">岗位范围：—</p>
+      </div>
+      <div class="form-row">
+        <label>账号状态</label>
+        <div class="radio-group" role="radiogroup" aria-label="账号状态">
+          <label class="radio-option"><input type="radio" name="assignStatus" id="assignStatusOn" value="on" checked> 启用</label>
+          <label class="radio-option"><input type="radio" name="assignStatus" id="assignStatusOff" value="off"> 禁用</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn btn-outline modal-close" data-close="modalAssign">取消</button>
+      <button type="button" class="btn btn-primary" id="saveModal">保存</button>
+    </div>
+  </div>
+</div>
+
+<script src="学平险-学校端-sidebar.js"></script>
+<script>initSchoolSidebar('members');</script>
+<script>
+  function syncBodyRole(){ document.body.setAttribute('data-role', (window.SchoolAccount&&SchoolAccount.role)||'admin'); }
+  syncBodyRole();
+  initSchoolUserMenu('#userMenuMount', syncBodyRole);
+</script>
+<script>
+(function() {
+  var LEVELS = {
+    primary: ['一年级','二年级','三年级','四年级','五年级','六年级'],
+    middle: ['初一','初二','初三'],
+    high: ['高一','高二','高三']
+  };
+  var LEVEL_CODE = { '一年级':'G1','二年级':'G2','三年级':'G3','四年级':'G4','五年级':'G5','六年级':'G6','初一':'M1','初二':'M2','初三':'M3','高一':'H1','高二':'H2','高三':'H3' };
+  var selected = { type: 'school', id: 'school', label: '立德中学', gradeId: null };
+  var idSeq = 100;
+
+  function $(id) { return document.getElementById(id); }
+  function openModal(id) { $(id).classList.add('open'); }
+  function closeModal(id) { $(id).classList.remove('open'); }
+  function nextId(prefix) { idSeq += 1; return prefix + '-' + idSeq; }
+
+  function getLabel(node) {
+    var el = node.querySelector('.node-label');
+    return el ? el.textContent.trim() : node.getAttribute('data-label') || '';
+  }
+
+  function formatGradeName(level) {
+    if (!level) return '';
+    if (/年级$/.test(level)) return level;
+    return level + '年级';
+  }
+
+  function gradeShortName(fullName) {
+    return fullName.replace(/年级$/, '');
+  }
+
+  function segmentFromLevel(level) {
+    if (LEVELS.primary.indexOf(level) >= 0) return 'primary';
+    if (LEVELS.middle.indexOf(level) >= 0) return 'middle';
+    return 'high';
+  }
+
+  function sortFromLevel(level) {
+    var all = LEVELS.primary.concat(LEVELS.middle, LEVELS.high);
+    var i = all.indexOf(level);
+    return String((i >= 0 ? i + 1 : 50) * 10);
+  }
+
+  function fillGradePick(selectEl, selectedLevel) {
+    /* #原型说明：当前学段为中学（初中 + 高中）；如需小学版可在 LEVELS.primary 中放回 */
+    var groups = [['middle', '初中', LEVELS.middle], ['high', '高中', LEVELS.high]];
+    selectEl.innerHTML = groups.map(function(g) {
+      return '<optgroup label="' + g[1] + '">' + g[2].map(function(l) {
+        return '<option value="' + l + '"' + (l === selectedLevel ? ' selected' : '') + '>' + formatGradeName(l) + '</option>';
+      }).join('') + '</optgroup>';
+    }).join('');
+  }
+
+  function buildGradeCode(segment, level) {
+    var seg = segment.toUpperCase();
+    var lc = LEVEL_CODE[level] || 'GX';
+    return 'GR-' + seg + '-' + lc;
+  }
+
+  function buildClassCode(gradeCode, classNo) {
+    return gradeCode.replace(/^GR-/, 'CLS-') + '-C' + classNo;
+  }
+
+  function defaultClassName(fullGradeName, classNo) {
+    return gradeShortName(fullGradeName) + '(' + classNo + ')班';
+  }
+
+  function readGradeForm() {
+    var level = $('gradeGradePick').value;
+    var segment = segmentFromLevel(level);
+    var name = formatGradeName(level);
+    return {
+      segment: segment, level: level, name: name, sort: sortFromLevel(level),
+      status: 'on', remark: '', gradeCode: buildGradeCode(segment, level)
+    };
+  }
+
+  function buildClassListFromForm() {
+    var g = readGradeForm();
+    var count = parseInt($('gradeClassCount').value, 10);
+    if (isNaN(count) || count < 0) count = 0;
+    var list = [];
+    for (var i = 1; i <= count; i++) {
+      list.push({ no: i, name: defaultClassName(g.name, i), code: buildClassCode(g.gradeCode, i) });
+    }
+    return { grade: g, classes: list };
+  }
+
+  function renderGradeSummary() {
+    var pack = buildClassListFromForm();
+    var el = $('gradePreviewText');
+    if (!el) return;
+    var g = pack.grade;
+    var n = pack.classes.length;
+    if (n === 0) { el.textContent = '将仅创建年级「' + g.name + '」（无班级）'; return; }
+    var sample = pack.classes[0].name + (n > 1 ? ' … ' + pack.classes[n - 1].name : '');
+    el.textContent = '将创建「' + g.name + '」共 ' + n + ' 个班：' + sample;
+  }
+
+  function gradeExists(name) {
+    return Array.prototype.some.call(document.querySelectorAll('.tree-node[data-type="grade"]'), function(n) {
+      return getLabel(n) === name;
+    });
+  }
+
+
+  function updateTreeStat() {
+    var grades = document.querySelectorAll('.grade-block').length;
+    var classes = document.querySelectorAll('.tree-node[data-type="class"]').length;
+    var el = $('treeStat');
+    if (el) el.textContent = '共 ' + grades + ' 个年级 · ' + classes + ' 个班';
+  }
+
+  function escAttr(v) { return String(v == null ? '' : v).replace(/"/g, '&quot;'); }
+  function escText(v) { return String(v == null ? '' : v).replace(/[&<>]/g, function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+
+  function getAllGradesFromTree() {
+    var grades = [];
+    document.querySelectorAll('.tree-node[data-type="grade"]').forEach(function(n) {
+      grades.push({ id: n.getAttribute('data-id'), label: getLabel(n) });
+    });
+    return grades;
+  }
+
+  function getAllClassesFromTree() {
+    var list = [];
+    document.querySelectorAll('li.grade-block').forEach(function(block) {
+      var gnode = block.querySelector('.tree-node[data-type="grade"]');
+      var gname = gnode ? getLabel(gnode) : '';
+      block.querySelectorAll('.tree-node[data-type="class"]').forEach(function(n) {
+        list.push({ id: n.getAttribute('data-id'), groupLabel: gname, label: getLabel(n) });
+      });
+    });
+    return list;
+  }
+
+  /* ========= 多选下拉控件 ========= */
+  /* #原型说明：通用多选下拉；支持搜索、按组分组、全选/清空、标签移除 */
+  var msRegistry = {};
+
+  function MultiSelect(root, opts) {
+    this.root = root;
+    this.opts = opts || {};
+    this.placeholder = opts.placeholder || '请选择（可多选）';
+    this.items = opts.items || [];
+    this.selected = (opts.selected || []).slice();
+    this.searchable = opts.searchable !== false;
+    this.onChange = opts.onChange || function(){};
+    this.build();
+  }
+  MultiSelect.prototype.setItems = function(items, selectedIds) {
+    this.items = items || [];
+    if (Array.isArray(selectedIds)) this.selected = selectedIds.slice();
+    /* 过滤掉已不存在的选中项 */
+    var ids = {};
+    this.items.forEach(function(i){ ids[i.id] = true; });
+    this.selected = this.selected.filter(function(id){ return ids[id]; });
+    this.render();
+  };
+  MultiSelect.prototype.setSelected = function(ids) {
+    this.selected = (ids || []).slice();
+    this.render();
+  };
+  MultiSelect.prototype.getSelected = function() { return this.selected.slice(); };
+  MultiSelect.prototype.getSelectedLabels = function() {
+    var map = {};
+    this.items.forEach(function(i){ map[i.id] = i.label; });
+    return this.selected.map(function(id){ return map[id]; }).filter(Boolean);
+  };
+  MultiSelect.prototype.build = function() {
+    var self = this;
+    this.root.classList.add('ms');
+    this.root.innerHTML =
+      '<div class="ms-trigger"><div class="ms-tags"></div></div>' +
+      '<div class="ms-dropdown">' +
+        (this.searchable ? '<div class="ms-search"><input type="text" placeholder="搜索..." autocomplete="off"></div>' : '') +
+        '<div class="ms-options"></div>' +
+        '<div class="ms-foot"><span class="ms-count">已选 0 项</span><span><button type="button" data-act="all">全选</button><button type="button" data-act="clear">清空</button></span></div>' +
+      '</div>';
+
+    this.trigger = this.root.querySelector('.ms-trigger');
+    this.tagsBox = this.root.querySelector('.ms-tags');
+    this.optionsBox = this.root.querySelector('.ms-options');
+    this.countLabel = this.root.querySelector('.ms-count');
+    this.searchInput = this.root.querySelector('.ms-search input');
+
+    this.trigger.addEventListener('click', function(e) {
+      if (e.target.closest('.ms-tag-x')) return;
+      self.toggle();
+    });
+    document.addEventListener('click', function(e) {
+      if (!self.root.contains(e.target)) self.close();
+    });
+    if (this.searchInput) {
+      this.searchInput.addEventListener('input', function() { self.filter(self.searchInput.value); });
+    }
+    this.root.querySelector('[data-act="all"]').addEventListener('click', function(e) {
+      e.stopPropagation();
+      self.selected = self.items.map(function(i){ return i.id; });
+      self.render(); self.onChange();
+    });
+    this.root.querySelector('[data-act="clear"]').addEventListener('click', function(e) {
+      e.stopPropagation();
+      self.selected = [];
+      self.render(); self.onChange();
+    });
+    this.render();
+  };
+  MultiSelect.prototype.toggle = function() {
+    if (this.root.classList.contains('open')) this.close();
+    else this.open();
+  };
+  MultiSelect.prototype.open = function() {
+    Object.keys(msRegistry).forEach(function(k){ msRegistry[k].close(); });
+    this.root.classList.add('open');
+    if (this.searchInput) { this.searchInput.value = ''; this.filter(''); setTimeout(this.searchInput.focus.bind(this.searchInput), 0); }
+  };
+  MultiSelect.prototype.close = function() { this.root.classList.remove('open'); };
+  MultiSelect.prototype.filter = function(kw) {
+    kw = (kw || '').trim().toLowerCase();
+    this.optionsBox.querySelectorAll('.ms-option').forEach(function(el) {
+      var lbl = (el.getAttribute('data-label') || '').toLowerCase();
+      var grp = (el.getAttribute('data-group') || '').toLowerCase();
+      el.classList.toggle('hidden', !!kw && lbl.indexOf(kw) < 0 && grp.indexOf(kw) < 0);
+    });
+    this.optionsBox.querySelectorAll('.ms-group-hd').forEach(function(hd) {
+      var key = hd.getAttribute('data-group');
+      var any = false;
+      var next = hd.nextElementSibling;
+      while (next && !next.classList.contains('ms-group-hd')) {
+        if (next.classList.contains('ms-option') && !next.classList.contains('hidden')) { any = true; break; }
+        next = next.nextElementSibling;
+      }
+      hd.style.display = any ? '' : 'none';
+    });
+    var visible = this.optionsBox.querySelectorAll('.ms-option:not(.hidden)').length;
+    var empty = this.optionsBox.querySelector('.ms-empty');
+    if (!visible && !empty) {
+      var em = document.createElement('div');
+      em.className = 'ms-empty';
+      em.textContent = '没有匹配的选项';
+      this.optionsBox.appendChild(em);
+    } else if (visible && empty) {
+      empty.remove();
+    }
+  };
+  MultiSelect.prototype.toggleItem = function(id) {
+    var i = this.selected.indexOf(id);
+    if (i >= 0) this.selected.splice(i, 1);
+    else this.selected.push(id);
+    this.render(); this.onChange();
+  };
+  MultiSelect.prototype.render = function() {
+    var self = this;
+    /* 选中标签 */
+    if (!this.selected.length) {
+      this.tagsBox.innerHTML = '<span class="ms-placeholder">' + escText(this.placeholder) + '</span>';
+    } else {
+      var map = {};
+      this.items.forEach(function(i){ map[i.id] = i.label; });
+      this.tagsBox.innerHTML = this.selected.map(function(id) {
+        if (!map[id]) return '';
+        return '<span class="ms-tag" data-id="' + escAttr(id) + '">' + escText(map[id]) +
+          '<span class="ms-tag-x" data-rm="' + escAttr(id) + '"><i class="fas fa-times"></i></span></span>';
+      }).join('');
+      this.tagsBox.querySelectorAll('.ms-tag-x').forEach(function(x) {
+        x.addEventListener('click', function(e) {
+          e.stopPropagation();
+          self.toggleItem(x.getAttribute('data-rm'));
+        });
+      });
+    }
+    this.countLabel.textContent = '已选 ' + this.selected.length + ' 项';
+
+    /* 选项 */
+    if (!this.items.length) {
+      this.optionsBox.innerHTML = '<div class="ms-empty">暂无选项</div>';
+      return;
+    }
+    var sel = {};
+    this.selected.forEach(function(id){ sel[id] = true; });
+    var html = '', lastGroup = null;
+    this.items.forEach(function(it) {
+      if (it.groupLabel && it.groupLabel !== lastGroup) {
+        html += '<div class="ms-group-hd" data-group="' + escAttr(it.groupLabel) + '">' + escText(it.groupLabel) + '</div>';
+        lastGroup = it.groupLabel;
+      }
+      html += '<div class="ms-option' + (sel[it.id] ? ' selected' : '') + '" data-id="' + escAttr(it.id) + '" data-label="' + escAttr(it.label) + '" data-group="' + escAttr(it.groupLabel || '') + '">' +
+        '<i class="fas fa-check tick"></i><span>' + escText(it.label) + '</span></div>';
+    });
+    this.optionsBox.innerHTML = html;
+    this.optionsBox.querySelectorAll('.ms-option').forEach(function(el) {
+      el.addEventListener('click', function() { self.toggleItem(el.getAttribute('data-id')); });
+    });
+  };
+
+  function ensureMs(id, opts) {
+    if (msRegistry[id]) return msRegistry[id];
+    var root = $(id);
+    if (!root) return null;
+    var ms = new MultiSelect(root, opts);
+    msRegistry[id] = ms;
+    return ms;
+  }
+
+  function fillAddGradesMs(prefIds) {
+    var ms = ensureMs('addGradesMs', {
+      placeholder: '选择任职年级（可多选）',
+      onChange: function() { syncAddScopeHidden(); updateAddScopePreview(); }
+    });
+    if (ms) ms.setItems(getAllGradesFromTree(), prefIds || []);
+  }
+  function fillAddClassesMs(prefIds) {
+    var ms = ensureMs('addClassesMs', {
+      placeholder: '选择任职班级（可多选，可跨年级）',
+      onChange: function() { syncAddScopeHidden(); updateAddScopePreview(); }
+    });
+    if (ms) ms.setItems(getAllClassesFromTree(), prefIds || []);
+  }
+  function fillEditGradesMs(prefIds) {
+    var ms = ensureMs('editGradesMs', {
+      placeholder: '选择任职年级（可多选）',
+      onChange: function() { updateEditScopePreview(); }
+    });
+    if (ms) ms.setItems(getAllGradesFromTree(), prefIds || []);
+  }
+  function fillEditClassesMs(prefIds) {
+    var ms = ensureMs('editClassesMs', {
+      placeholder: '选择任职班级（可多选，可跨年级）',
+      onChange: function() { updateEditScopePreview(); }
+    });
+    if (ms) ms.setItems(getAllClassesFromTree(), prefIds || []);
+  }
+
+  function msLabels(id) {
+    var ms = msRegistry[id];
+    return ms ? ms.getSelectedLabels() : [];
+  }
+
+  /* ===== 多角色读写：年级组长 / 班主任 可并存，校级管理员与两者互斥 ===== */
+  function getRoles(pickId) {
+    var pick = $(pickId);
+    if (!pick) return [];
+    return Array.prototype.map.call(pick.querySelectorAll('input[type="checkbox"]:checked'), function(i){ return i.value; });
+  }
+  function setRoles(pickId, roles) {
+    var pick = $(pickId);
+    if (!pick) return;
+    var set = {};
+    (roles || []).forEach(function(r){ set[r] = true; });
+    pick.querySelectorAll('input[type="checkbox"]').forEach(function(i) { i.checked = !!set[i.value]; });
+    enforceRoleExclusive(pickId);
+  }
+  function enforceRoleExclusive(pickId) {
+    var pick = $(pickId);
+    if (!pick) return;
+    var inputs = pick.querySelectorAll('input[type="checkbox"]');
+    var adminChecked = pick.querySelector('input[value="admin"]').checked;
+    var otherChecked = pick.querySelector('input[value="grade"]').checked || pick.querySelector('input[value="class"]').checked;
+    inputs.forEach(function(i) {
+      var label = i.closest('label');
+      var disable = (i.value === 'admin' && otherChecked && !adminChecked) ||
+                    (i.value !== 'admin' && adminChecked);
+      i.disabled = !!disable;
+      if (label) label.classList.toggle('disabled', !!disable);
+    });
+  }
+
+  function buildScopeText(roles, gradesMsId, classesMsId, ctx) {
+    if (roles.indexOf('admin') >= 0) return { ok: true, text: '全校', hint: '' };
+    if (!roles.length) return { ok: false, text: '—', hint: '请至少选择一个角色。' };
+    var parts = [], err = '';
+    if (roles.indexOf('grade') >= 0) {
+      var g = msLabels(gradesMsId);
+      if (!g.length) err = '请至少选择一个任职年级。';
+      else parts.push('年级组长：' + g.join('、'));
+    }
+    if (roles.indexOf('class') >= 0) {
+      var c = msLabels(classesMsId);
+      if (!c.length) err = err || '请至少选择一个任职班级。';
+      else parts.push('班主任：' + c.join('、'));
+    }
+    if (err) return { ok: false, text: '—', hint: err };
+    return { ok: true, text: parts.join(' / '), hint: '' };
+  }
+
+  function getAddScopeFromForm() {
+    return buildScopeText(getRoles('addRolePick'), 'addGradesMs', 'addClassesMs');
+  }
+  function getEditScopeFromForm() {
+    return buildScopeText(getRoles('editRolePick'), 'editGradesMs', 'editClassesMs');
+  }
+
+  function syncAddScopeHidden() {
+    var scope = $('addScope');
+    if (!scope) return;
+    var r = getAddScopeFromForm();
+    scope.value = r.ok ? r.text : '';
+  }
+
+  function updateAddScopePreview() {
+    var el = $('addScopePreview');
+    if (!el) return;
+    var roles = getRoles('addRolePick');
+    if (roles.indexOf('admin') >= 0) {
+      el.textContent = '岗位范围：全校（立德中学）';
+      el.style.color = '';
+      return;
+    }
+    if (!roles.length) {
+      el.textContent = '岗位范围：请选择角色';
+      el.style.color = '#c45656';
+      return;
+    }
+    var r = getAddScopeFromForm();
+    el.textContent = '岗位范围：' + (r.ok ? r.text : '请完成上方选择');
+    el.style.color = r.ok ? '' : '#c45656';
+  }
+
+  function refreshAddMemberScope(prefGradeIds, prefClassIds) {
+    fillAddGradesMs(prefGradeIds);
+    fillAddClassesMs(prefClassIds);
+    syncAddScopeHidden();
+    updateAddScopePreview();
+  }
+
+  function refreshScopeOptions() {
+    var pg = selected.type === 'grade' ? [selected.id] : (selected.gradeId ? [selected.gradeId] : []);
+    var pc = selected.type === 'class' ? [selected.id] : [];
+    refreshAddMemberScope(pg, pc);
+  }
+
+  function updateAddScopePanels() {
+    enforceRoleExclusive('addRolePick');
+    var roles = getRoles('addRolePick');
+    var isAdmin = roles.indexOf('admin') >= 0;
+    $('scopeAdminHint').style.display = isAdmin ? 'block' : 'none';
+    $('scopeGradePanel').classList.toggle('active', !isAdmin);
+    $('addGradesBlock').style.display = (!isAdmin && roles.indexOf('grade') >= 0) ? '' : 'none';
+    $('addClassesBlock').style.display = (!isAdmin && roles.indexOf('class') >= 0) ? '' : 'none';
+    updateAddScopePreview();
+    syncAddScopeHidden();
+  }
+
+  function updateEditScopePanels() {
+    enforceRoleExclusive('editRolePick');
+    var roles = getRoles('editRolePick');
+    var isAdmin = roles.indexOf('admin') >= 0;
+    $('editScopeAdminHint').style.display = isAdmin ? 'block' : 'none';
+    $('editScopePanel').classList.toggle('active', !isAdmin);
+    $('editGradesBlock').style.display = (!isAdmin && roles.indexOf('grade') >= 0) ? '' : 'none';
+    $('editClassesBlock').style.display = (!isAdmin && roles.indexOf('class') >= 0) ? '' : 'none';
+    updateEditScopePreview();
+  }
+
+  function updateEditScopePreview() {
+    var el = $('editScopePreview');
+    if (!el) return;
+    var roles = getRoles('editRolePick');
+    if (roles.indexOf('admin') >= 0) {
+      el.textContent = '岗位范围：全校（立德中学）';
+      el.style.color = '';
+      return;
+    }
+    if (!roles.length) {
+      el.textContent = '岗位范围：请选择角色';
+      el.style.color = '#c45656';
+      return;
+    }
+    var r = getEditScopeFromForm();
+    el.textContent = '岗位范围：' + (r.ok ? r.text : '请完成上方选择');
+    el.style.color = r.ok ? '' : '#c45656';
+  }
+
+  function filterTreeSearch(q) {
+    q = (q || '').trim().toLowerCase();
+    document.querySelectorAll('li.grade-block').forEach(function(block) {
+      var gn = block.querySelector('.tree-node[data-type="grade"]');
+      var gradeLabel = gn ? getLabel(gn).toLowerCase() : '';
+      var matchGrade = !q || gradeLabel.indexOf(q) >= 0;
+      var anyClass = false;
+      block.querySelectorAll('.tree-node[data-type="class"]').forEach(function(cn) {
+        var cl = getLabel(cn).toLowerCase();
+        var match = !q || matchGrade || cl.indexOf(q) >= 0;
+        cn.style.display = match || !q ? '' : 'none';
+        if (match && q && !matchGrade) anyClass = true;
+      });
+      var show = !q || matchGrade || anyClass;
+      block.classList.toggle('hidden-by-search', !show);
+      if (q && show) block.classList.remove('collapsed');
+    });
+  }
+
+  function updateClassCount(gradeLi) {
+    var n = gradeLi.querySelectorAll('.tree-node[data-type="class"]').length;
+    var badge = gradeLi.querySelector('.class-count');
+    if (badge) badge.textContent = n + '班';
+    updateTreeStat();
+  }
+
+  function selectNode(node) {
+    document.querySelectorAll('.tree-node').forEach(function(x) { x.classList.remove('selected'); });
+    node.classList.add('selected');
+    var type = node.getAttribute('data-type');
+    var label = getLabel(node);
+    selected = { type: type, id: node.getAttribute('data-id'), label: label, gradeId: null };
+    if (type === 'grade') selected.gradeId = node.getAttribute('data-id');
+    if (type === 'class') selected.gradeId = node.getAttribute('data-grade-id');
+    $('nodeMeta').innerHTML = '当前范围：<strong>' + label + (type === 'school' ? ' · 全校' : '') + '</strong>';
+    $('btnAddClass').disabled = type !== 'grade';
+    if ($('modalAdd') && $('modalAdd').classList.contains('open')) refreshScopeOptions();
+  }
+
+  function buildClassNode(gradeId, classId, className, meta) {
+    var li = document.createElement('li');
+    var attrs = 'data-type="class" data-id="' + classId + '" data-label="' + className + '" data-grade-id="' + gradeId + '"';
+    if (meta && meta.code) attrs += ' data-class-code="' + meta.code + '"';
+    var cno = meta && (meta.classNo != null ? meta.classNo : meta.no);
+    if (cno != null) attrs += ' data-class-no="' + cno + '"';
+    li.innerHTML = '<div class="tree-node" ' + attrs + '><i class="fas fa-users"></i><span class="node-label">' + className + '</span><span class="node-ops"><span data-rename>重命名</span><span data-delete>删除</span></span></div>';
+    return li;
+  }
+
+  function appendGradeToTree(gradeMeta, classes, selectAfter, collapsed) {
+    var gid = nextId('grade');
+    var li = document.createElement('li');
+    li.className = 'grade-block' + (collapsed ? ' collapsed' : '');
+    li.setAttribute('data-grade-id', gid);
+    var classLis = (classes || []).map(function(c) {
+      var meta = { code: c.code, no: c.no, classNo: c.no };
+      return '<li>' + buildClassNode(gid, nextId('class'), c.name, meta).innerHTML + '</li>';
+    }).join('');
+    var node = document.createElement('div');
+    node.className = 'tree-node';
+    node.setAttribute('data-type', 'grade');
+    node.setAttribute('data-id', gid);
+    node.setAttribute('data-label', gradeMeta.name);
+    node.setAttribute('data-segment', gradeMeta.segment);
+    node.setAttribute('data-sort', gradeMeta.sort);
+    node.setAttribute('data-grade-code', gradeMeta.gradeCode);
+    if (gradeMeta.remark) node.setAttribute('title', gradeMeta.remark);
+    if (gradeMeta.status === 'off') node.style.opacity = '0.55';
+    node.innerHTML = '<i class="fas fa-layer-group"></i><span class="node-label">' + gradeMeta.name + '</span>' +
+      '<span class="scope-badge class-count">' + (classes ? classes.length : 0) + '班</span><span class="node-ops"><span data-rename>重命名</span><span data-delete>删除</span></span>';
+    var head = document.createElement('div');
+    head.className = 'grade-head';
+    head.innerHTML = '<span class="tree-toggle" data-toggle title="展开/折叠"><i class="fas fa-chevron-down"></i></span>';
+    head.appendChild(node);
+    li.appendChild(head);
+    var ul = document.createElement('ul');
+    ul.className = 'class-list';
+    ul.innerHTML = classLis;
+    li.appendChild(ul);
+    $('gradeList').appendChild(li);
+    updateTreeStat();
+    if (selectAfter) selectNode(node);
+    return gid;
+  }
+
+  function initDemoTree() {
+    $('gradeList').innerHTML = '';
+    /* #原型说明：示例采用与「班级投保名单」一致的 6 年级 12 班 */
+    var SEED = [
+      { segment: 'high',   level: '高三', classes: [{no:1,name:'高三(1)班'},{no:2,name:'高三(2)班'},{no:3,name:'高三(3)班'}] },
+      { segment: 'high',   level: '高二', classes: [{no:1,name:'高二(1)班'},{no:2,name:'高二(2)班'}] },
+      { segment: 'high',   level: '高一', classes: [{no:1,name:'高一(1)班'},{no:2,name:'高一(2)班'},{no:3,name:'高一(3)班'}] },
+      { segment: 'middle', level: '初三', classes: [{no:2,name:'初三(2)班'},{no:3,name:'初三(3)班'}] },
+      { segment: 'middle', level: '初二', classes: [{no:4,name:'初二(4)班'}] },
+      { segment: 'middle', level: '初一', classes: [{no:1,name:'初一(1)班'}] }
+    ];
+    SEED.forEach(function(item, idx) {
+      var name = formatGradeName(item.level);
+      var gmeta = {
+        segment: item.segment, level: item.level, name: name,
+        sort: sortFromLevel(item.level), status: 'on',
+        gradeCode: buildGradeCode(item.segment, item.level)
+      };
+      var classes = item.classes.map(function(c) {
+        return { no: c.no, name: c.name, code: buildClassCode(gmeta.gradeCode, c.no) };
+      });
+      appendGradeToTree(gmeta, classes, false, idx !== 0);
+    });
+    var school = document.querySelector('.tree-node[data-type="school"]');
+    if (school) selectNode(school);
+  }
+
+  fillGradePick($('gradeGradePick'), '高一');
+  $('gradeGradePick').addEventListener('change', renderGradeSummary);
+  $('gradeClassCount').addEventListener('input', renderGradeSummary);
+
+  function deleteTreeNode(node) {
+    var type = node.getAttribute('data-type');
+    if (type === 'school') return;
+    var label = getLabel(node);
+    if (type === 'class') {
+      if (!confirm('确认删除班级「' + label + '」？\n该班关联的学生与名单将解除关联，操作不可撤销。')) return;
+      var gradeLi = node.closest('li.grade-block');
+      var classLi = node.closest('li');
+      if (classLi) classLi.remove();
+      if (gradeLi) updateClassCount(gradeLi);
+      var school = document.querySelector('.tree-node[data-type="school"]');
+      if (node.classList.contains('selected') && school) selectNode(school);
+      if ($('modalAdd') && $('modalAdd').classList.contains('open')) refreshScopeOptions();
+      return;
+    }
+    if (type === 'grade') {
+      var block = node.closest('li.grade-block');
+      var classNum = block ? block.querySelectorAll('.tree-node[data-type="class"]').length : 0;
+      var tip = classNum
+        ? '确认删除年级「' + label + '」及其下 ' + classNum + ' 个班级？\n该年级关联的所有班级、学生名单将解除关联，操作不可撤销。'
+        : '确认删除年级「' + label + '」？';
+      if (!confirm(tip)) return;
+      if (block) block.remove();
+      updateTreeStat();
+      var school2 = document.querySelector('.tree-node[data-type="school"]');
+      if (school2) selectNode(school2);
+      if ($('modalAdd') && $('modalAdd').classList.contains('open')) refreshScopeOptions();
+      return;
+    }
+  }
+
+  document.getElementById('orgTree').onclick = function(e) {
+    if (e.target.closest('[data-toggle]')) {
+      e.stopPropagation();
+      var block = e.target.closest('.grade-block');
+      if (block) block.classList.toggle('collapsed');
+      return;
+    }
+    if (e.target.closest('[data-delete]')) {
+      e.stopPropagation();
+      var dnode = e.target.closest('.tree-node');
+      if (dnode) deleteTreeNode(dnode);
+      return;
+    }
+    if (e.target.closest('[data-rename]')) {
+      e.stopPropagation();
+      var node = e.target.closest('.tree-node');
+      if (node.getAttribute('data-type') === 'school') return;
+      var nv = prompt('重命名为', getLabel(node));
+      if (nv && nv.trim()) {
+        node.querySelector('.node-label').textContent = nv.trim();
+        node.setAttribute('data-label', nv.trim());
+        if (node.classList.contains('selected')) selectNode(node);
+      }
+      return;
+    }
+    var n = e.target.closest('.tree-node');
+    if (n) selectNode(n);
+  };
+
+  $('rightTabs').onclick = function(e) {
+    var b = e.target.closest('button[data-tab]');
+    if (!b) return;
+    document.querySelectorAll('#rightTabs button').forEach(function(x) { x.classList.toggle('active', x === b); });
+    document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.toggle('active', p.id === 'pane-' + b.dataset.tab); });
+  };
+
+  $('btnAddGrade').onclick = function() {
+    fillGradePick($('gradeGradePick'), '高一');
+    $('gradeClassCount').value = '3';
+    renderGradeSummary();
+    openModal('modalGrade');
+  };
+
+
+  var classGradeMeta = { name: '', short: '', gradeCode: '' };
+
+  function suggestNextClassNo(gid) {
+    var gradeLi = document.querySelector('li.grade-block[data-grade-id="' + gid + '"]');
+    var max = 0;
+    if (gradeLi) {
+      gradeLi.querySelectorAll('.tree-node[data-type="class"]').forEach(function(n) {
+        var m = (n.getAttribute('data-class-no') || '').match(/\d+/);
+        if (m) max = Math.max(max, parseInt(m[0], 10));
+      });
+    }
+    return max + 1;
+  }
+
+  function syncClassForm() {
+    var no = parseInt($('classNoInput').value, 10) || 1;
+    var name = classGradeMeta.name ? defaultClassName(classGradeMeta.name, no) : '—';
+    $('classNamePreview').textContent = '班级名称：' + name;
+  }
+
+  $('classNoInput').addEventListener('input', syncClassForm);
+
+  $('btnAddClass').onclick = function() {
+    if (selected.type !== 'grade') return;
+    var gnode = document.querySelector('.tree-node[data-type="grade"][data-id="' + selected.gradeId + '"]');
+    classGradeMeta.name = selected.label;
+    classGradeMeta.short = gradeShortName(selected.label);
+    classGradeMeta.gradeCode = gnode ? gnode.getAttribute('data-grade-code') || '' : '';
+    $('classGradeLabel').value = selected.label;
+    var nextNo = suggestNextClassNo(selected.gradeId);
+    $('classNoInput').value = nextNo;
+    syncClassForm();
+    openModal('modalClass');
+  };
+
+  $('saveGrade').onclick = function() {
+    var pack = buildClassListFromForm();
+    var g = pack.grade;
+    if (!g.name) { alert('请选择年级'); return; }
+    if (gradeExists(g.name)) { alert('已存在「' + g.name + '」，请换其他年级'); return; }
+    var newGid = appendGradeToTree(g, pack.classes, true, false);
+    closeModal('modalGrade');
+    var msg = '年级「' + g.name + '」已创建';
+    if (pack.classes.length) msg += '，已生成 ' + pack.classes.length + ' 个班级';
+    alert(msg + '');
+    if ($('modalAdd') && $('modalAdd').classList.contains('open')) refreshScopeOptions();
+  };
+
+  $('saveClass').onclick = function() {
+    var cno = parseInt($('classNoInput').value, 10);
+    if (!cno) { alert('请填写班号'); return; }
+    var cname = defaultClassName(classGradeMeta.name, cno);
+    var gid = selected.gradeId;
+    var gradeLi = document.querySelector('li.grade-block[data-grade-id="' + gid + '"]');
+    if (!gradeLi) { alert('请先选中年级'); return; }
+    var dup = false;
+    gradeLi.querySelectorAll('.tree-node[data-type="class"]').forEach(function(n) {
+      if (n.getAttribute('data-class-no') === String(cno)) dup = true;
+    });
+    if (dup) { alert('该年级下班号 ' + cno + ' 已存在'); return; }
+    var gnode = gradeLi.querySelector('.tree-node[data-type="grade"]');
+    var gcode = gnode ? gnode.getAttribute('data-grade-code') : '';
+    var meta = { code: buildClassCode(gcode, cno), classNo: cno };
+    var li = buildClassNode(gid, nextId('class'), cname, meta);
+    li.querySelector('.tree-node').setAttribute('data-class-no', String(cno));
+    gradeLi.querySelector('.class-list').appendChild(li);
+    updateClassCount(gradeLi);
+    var newId = li.querySelector('.tree-node').getAttribute('data-id');
+    closeModal('modalClass');
+    alert('班级「' + cname + '」已创建\n' + meta.code + '');
+    if ($('modalAdd') && $('modalAdd').classList.contains('open')) {
+      refreshAddMemberScope(selected.gradeId ? [selected.gradeId] : [], [newId]);
+    }
+  };
+
+
+  function getStatusLabel(value) {
+    return value === 'off' ? '禁用' : '启用';
+  }
+  function getCheckedStatus(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : 'on';
+  }
+
+  $('btnAddMember').onclick = function() {
+    $('addName').value = '';
+    $('addPhone').value = '';
+    $('addPwd').value = '';
+    if ($('addStatusOn')) $('addStatusOn').checked = true;
+    var defaultRoles = ['class'];
+    if (selected.type === 'school') defaultRoles = ['admin'];
+    else if (selected.type === 'grade') defaultRoles = ['grade'];
+    else if (selected.type === 'class') defaultRoles = ['class'];
+    setRoles('addRolePick', defaultRoles);
+    var pg = selected.type === 'grade' ? [selected.id] : (selected.gradeId ? [selected.gradeId] : []);
+    var pc = selected.type === 'class' ? [selected.id] : [];
+    refreshAddMemberScope(pg, pc);
+    updateAddScopePanels();
+    openModal('modalAdd');
+  };
+
+  $('addRolePick').addEventListener('change', updateAddScopePanels);
+  $('editRolePick').addEventListener('change', updateEditScopePanels);
+
+  $('treeSearch').oninput = function() { filterTreeSearch(this.value); };
+  $('btnExpandAll').onclick = function() {
+    document.querySelectorAll('.grade-block').forEach(function(b) { b.classList.remove('collapsed'); });
+  };
+  $('btnCollapseAll').onclick = function() {
+    document.querySelectorAll('.grade-block').forEach(function(b) { b.classList.add('collapsed'); });
+  };
+
+  document.querySelectorAll('.modal-close').forEach(function(btn) {
+    btn.onclick = function() { closeModal(btn.getAttribute('data-close')); };
+  });
+  function findGradeIdsByLabels(labels) {
+    var ids = [];
+    labels.forEach(function(lbl) {
+      var t = lbl.trim();
+      if (!t) return;
+      document.querySelectorAll('.tree-node[data-type="grade"]').forEach(function(n) {
+        if (getLabel(n) === t) ids.push(n.getAttribute('data-id'));
+      });
+    });
+    return ids;
+  }
+  function findClassIdsByLabels(labels) {
+    var ids = [];
+    labels.forEach(function(lbl) {
+      var t = lbl.trim();
+      if (!t) return;
+      document.querySelectorAll('.tree-node[data-type="class"]').forEach(function(n) {
+        if (getLabel(n) === t) ids.push(n.getAttribute('data-id'));
+      });
+    });
+    return ids;
+  }
+
+  /* #原型说明：成员表格操作（编辑 / 删除）使用事件委托，删除后自动刷新分页 */
+  function refreshMemberPager() {
+    var tbody = $('memberTbody');
+    if (!tbody) return;
+    var pager = tbody.closest('.tab-pane') && tbody.closest('.tab-pane').querySelector('[data-b-end-pager]');
+    if (window.BEndPager && pager) BEndPager.remount(pager);
+  }
+
+  $('memberTbody').addEventListener('click', function(e) {
+    var del = e.target.closest('[data-del-member]');
+    var edit = e.target.closest('[data-edit]');
+    if (!del && !edit) return;
+    var row = e.target.closest('tr');
+    if (!row) return;
+    var name = row.cells[0].textContent.trim();
+    if (del) {
+      if (!confirm('确认删除成员「' + name + '」？\n删除后该账号无法登录学校端，操作不可撤销。')) return;
+      row.remove();
+      refreshMemberPager();
+      return;
+    }
+    var el = edit;
+    var rolesAttr = (el.getAttribute('data-roles') || 'class').split(',').filter(Boolean);
+    var gradesAttr = (el.getAttribute('data-grades') || '').split(',').filter(Boolean);
+    var classesAttr = (el.getAttribute('data-classes') || '').split(',').filter(Boolean);
+    $('editMemberName').value = name;
+    setRoles('editRolePick', rolesAttr);
+    updateEditScopePanels();
+    fillEditGradesMs(findGradeIdsByLabels(gradesAttr));
+    fillEditClassesMs(findClassIdsByLabels(classesAttr));
+    updateEditScopePreview();
+    openModal('modalAssign');
+  });
+  $('saveAdd').onclick = function() {
+    var name = $('addName').value.trim();
+    var phone = $('addPhone').value.trim();
+    if (!name || !phone) { alert('请填写姓名和手机号'); return; }
+    var roles = getRoles('addRolePick');
+    if (!roles.length) { alert('请至少选择一个角色'); return; }
+    var r = getAddScopeFromForm();
+    if (!r.ok) { alert(r.hint); return; }
+    syncAddScopeHidden();
+    var statusLabel = getStatusLabel(getCheckedStatus('addStatus'));
+    alert('成员「' + name + '」已添加\n岗位范围：' + r.text + '\n账号状态：' + statusLabel);
+    closeModal('modalAdd');
+  };
+  $('saveModal').onclick = function() {
+    var roles = getRoles('editRolePick');
+    if (!roles.length) { alert('请至少选择一个角色'); return; }
+    var r = getEditScopeFromForm();
+    if (!r.ok) { alert(r.hint); return; }
+    alert('已保存\n岗位范围：' + r.text + '\n账号状态：' + getStatusLabel(getCheckedStatus('assignStatus')));
+    closeModal('modalAssign');
+  };
+  renderGradeSummary();
+  initDemoTree();
+
+  var openKey = sessionStorage.getItem('openModal');
+  if (openKey) {
+    sessionStorage.removeItem('openModal');
+    setTimeout(function() {
+      if (openKey === 'modalQuick' || openKey === 'modalGrade') $('btnAddGrade').click();
+      else if (openKey === 'modalClass') {
+        var g = document.querySelector('.tree-node[data-type="grade"]');
+        if (g) selectNode(g);
+        $('btnAddClass').click();
+      }
+    }, 200);
+  }
+})();
+</script>
+
+<script src="b-end-pager.js"></script>
+<script>BEndPager.initAll();</script>
+</body>
+</html>

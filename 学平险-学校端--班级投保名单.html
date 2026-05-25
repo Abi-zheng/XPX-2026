@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学平险·学校端 | 班级投保名单</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter','PingFang SC',sans-serif;background:#f3f6fc;color:#1E2F3E;font-size:14px}
+    .app-wrapper{display:flex;min-height:100vh}
+    .main-content{flex:1;padding:1.5rem 2rem 2rem;overflow-x:auto}
+    .top-bar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:1rem;flex-wrap:wrap}
+    .welcome h2{font-size:1.5rem;font-weight:600;display:flex;align-items:center;gap:10px}
+    .welcome p{color:#5e7f92;font-size:.85rem;margin-top:4px}
+
+    .btn{padding:8px 16px;border-radius:10px;font-size:13px;cursor:pointer;border:none;font-weight:500;display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:inherit}
+    .btn-primary{background:#1C6E5C;color:#fff}
+    .btn-primary:hover{background:#155a4a}
+    .btn-outline{background:#fff;border:1px solid #cbdde6;color:#4c6a7e}
+    .btn-outline:hover{border-color:#1C6E5C;color:#1C6E5C}
+    .btn-warn{background:#fffbe6;border:1px solid #ffe7a3;color:#856404}
+    .btn-warn:hover{background:#fff5cc}
+    .btn-sm{padding:6px 10px;font-size:12px}
+
+    /* 列表 / 详情 视图切换 */
+    .view{display:none}
+    .view.active{display:block}
+
+    /* KPI（仅列表页） */
+    .kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1rem}
+    @media(max-width:760px){.kpi-row{grid-template-columns:1fr}}
+    .kpi{background:#fff;border:1px solid #eef2f8;border-radius:14px;padding:14px 16px}
+    .kpi .label{font-size:12px;color:#88a3b5}
+    .kpi .val{font-size:1.6rem;font-weight:700;margin-top:4px}
+    .kpi .val small{font-size:12px;color:#88a3b5;font-weight:400;margin-left:4px}
+    .kpi.danger .val{color:#c45656}
+    .kpi.success .val{color:#1C6E5C}
+
+    .panel{background:#fff;border:1px solid #eef2f8;border-radius:18px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.02)}
+    .panel-head{padding:14px 18px;border-bottom:1px solid #eef2f8;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:14px;gap:10px;flex-wrap:wrap}
+    .panel-head h3{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+    .panel-head h3 i{color:#1C6E5C}
+
+    .filter-bar{padding:12px 18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:#fafbfc;border-bottom:1px solid #eef2f8}
+    .filter-bar input,.filter-bar select{padding:7px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;background:#fff}
+    .filter-bar input[type=search]{width:220px}
+    .filter-bar .summary{margin-left:auto;font-size:12px;color:#88a3b5}
+
+    .tab-status{display:inline-flex;border:1px solid #e2e8f0;border-radius:999px;overflow:hidden;background:#fff}
+    .tab-status button{border:none;background:transparent;padding:6px 14px;font-size:12px;color:#6792a8;cursor:pointer}
+    .tab-status button.active{background:#1C6E5C;color:#fff;font-weight:600}
+
+    table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+    th,td{padding:11px 14px;text-align:left;border-bottom:1px solid #f0f4f9;vertical-align:middle}
+    th{color:#6792a8;font-size:12px;font-weight:600;background:#fafbfc}
+    tbody tr{transition:background .12s}
+    tbody tr:hover{background:#fafcfd}
+    tbody tr.clickable{cursor:pointer}
+    th.num,td.num{text-align:right!important;font-variant-numeric:tabular-nums;white-space:nowrap}
+    #classListTable th:nth-child(1),#classListTable td:nth-child(1){width:30%}
+    #classListTable th:nth-child(2),#classListTable td:nth-child(2){width:20%}
+    #classListTable th:nth-child(3),#classListTable td:nth-child(3){width:140px}
+    #classListTable th:nth-child(4),#classListTable td:nth-child(4){width:120px}
+
+    .status{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:500}
+    .status.insured{background:#eef6f3;color:#1C6E5C;border:1px solid #b8d9ce}
+    .status.uninsured{background:#fef0f0;color:#c45656;border:1px solid #fbc4c4}
+    .cov{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid #e2e8f0}
+    .cov.active{background:#eef6f3;color:#1C6E5C;border-color:#b8d9ce}
+    .cov.soon{background:#fff7e6;color:#b88230;border-color:#f5dab1}
+    .cov.invalid{background:#fafbfc;color:#6792a8;border-color:#dde6ec}
+    .cov.none{color:#b9c5cf}
+    .cov-sub{display:inline-block;margin-left:6px;font-size:11px;color:#b88230;font-weight:500}
+    .student-row.uninsured td{background:#fef9f9}
+    .student-row.uninsured:hover td{background:#fdefef}
+    .link-btn{color:#1C6E5C;font-weight:500;cursor:pointer;background:none;border:none;font-size:13px;padding:0}
+    .link-btn:hover{text-decoration:underline}
+    .link-btn.muted{color:#88a3b5;cursor:default}
+    .link-btn.muted:hover{text-decoration:none}
+
+    /* 详情头 */
+    .detail-back{padding:0 0 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid #cbdde6;background:#fff;color:#4c6a7e;font-size:13px;cursor:pointer;font-weight:500}
+    .back-btn:hover{border-color:#1C6E5C;color:#1C6E5C}
+    .crumb{font-size:13px;color:#88a3b5}
+    .crumb b{color:#1E2F3E}
+
+    .detail-head{padding:20px 22px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;background:linear-gradient(180deg,#fafbfc 0%,#fff 100%);border-bottom:1px solid #eef2f8}
+    .detail-head h2{font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .detail-head .sub-meta{margin-top:6px;color:#5e7f92;font-size:13px;display:flex;flex-wrap:wrap;gap:14px}
+    .detail-head .sub-meta i{margin-right:5px;color:#1C6E5C}
+    .detail-head .ph-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .mini-kpi{display:flex;gap:18px;margin-top:12px;flex-wrap:wrap}
+    .mini-kpi div{font-size:12px;color:#88a3b5}
+    .mini-kpi div b{font-size:18px;color:#1E2F3E;display:block;font-weight:700}
+    .mini-kpi div.ok b{color:#1C6E5C}
+    .mini-kpi div.bad b{color:#c45656}
+
+    /* 档案关联 */
+    .link-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid #e2e8f0}
+    .link-tag.linked{background:#eef6f3;color:#1C6E5C;border-color:#b8d9ce}
+    .link-tag.unlinked{background:#fafbfc;color:#88a3b5;border-color:#dde6ec}
+
+    /* 通知弹窗 */
+    .modal-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:20px}
+    .modal-mask.open{display:flex}
+    .modal{background:#fff;border-radius:16px;width:100%;max-width:500px;overflow:hidden}
+    .modal-hd{padding:16px 20px;border-bottom:1px solid #eef2f8;display:flex;justify-content:space-between;align-items:center}
+    .modal-hd h3{font-size:16px;font-weight:600}
+    .modal-bd{padding:18px 20px;font-size:13px;color:#4c6a7e;line-height:1.7}
+    .modal-bd .preview{background:#f8fafc;border:1px solid #eef2f8;border-radius:10px;padding:12px;margin-top:10px;font-size:13px;color:#1E2F3E;white-space:pre-wrap;line-height:1.7}
+    .modal-ft{padding:12px 20px;border-top:1px solid #eef2f8;display:flex;justify-content:flex-end;gap:8px}
+    .channel-pick{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .channel-pick label{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #e2e8f0;border-radius:999px;cursor:pointer;font-size:12px;color:#4c6a7e}
+    .channel-pick label.active{border-color:#1C6E5C;background:#eef6f3;color:#1C6E5C;font-weight:600}
+    .close-x{background:none;border:none;font-size:18px;color:#88a3b5;cursor:pointer}
+
+    .hint-row{font-size:12px;color:#88a3b5;padding:10px 18px;background:#fafbfc;border-top:1px solid #eef2f8}
+    .hint-row i{margin-right:4px;color:#1C6E5C}
+
+    /* 统计学期（全局口径，置于汇总数据之前） */
+    .term-scope-bar{display:flex;align-items:center;gap:12px;margin-bottom:1rem;padding:12px 16px;background:#fff;border:1px solid #eef2f8;border-radius:14px;box-shadow:0 4px 10px rgba(0,0,0,.02);flex-wrap:wrap}
+    .term-scope-bar label{font-size:13px;font-weight:600;color:#1E2F3E;display:flex;align-items:center;gap:6px;white-space:nowrap}
+    .term-scope-bar label i{color:#1C6E5C}
+    .term-scope-bar select{padding:8px 14px;border:1px solid #cbdde6;border-radius:10px;font-size:13px;font-weight:500;min-width:300px;max-width:100%;background:#fafbfc;color:#1E2F3E}
+    .term-scope-bar select:focus{border-color:#1C6E5C;outline:none;box-shadow:0 0 0 3px rgba(28,110,92,.12)}
+    .term-scope-bar .meta{font-size:12px;color:#5e7f92;line-height:1.5;flex:1;min-width:220px}
+
+  </style>
+  <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="学平险-学校端-sidebar.css">
+  <link rel="stylesheet" href="学平险-学校端-b-end.css">
+</head>
+<body>
+<div class="app-wrapper">
+  <div class="sidebar" id="schoolSidebar"></div>
+  <main class="main-content">
+
+    <div class="top-bar">
+      <div class="welcome">
+        <h2><i class="fas fa-list-check" style="color:#1C6E5C"></i>班级投保名单</h2>
+        <p id="topSub">按班级查看学生投保情况</p>
+      </div>
+      <div class="actions">
+        <div id="userMenuMount"></div>
+      </div>
+    </div>
+
+    <!-- 统计学期：列表 KPI / 班级表 / 详情名单均按此口径汇总 -->
+    <div class="term-scope-bar" id="termScopeBar">
+      <label for="termSel"><i class="fas fa-calendar-days"></i> 统计学期</label>
+      <select id="termSel" title="统计学期"></select>
+      <span class="meta" id="termScopeMeta">—</span>
+    </div>
+
+    <!-- ============ 列表页 ============ -->
+    <div class="view active" id="viewList">
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3><i class="fas fa-school"></i> 班级一览</h3>
+          <button class="btn btn-outline btn-sm" id="btnExportAll"><i class="fas fa-download"></i> 导出全部</button>
+        </div>
+        <div class="filter-bar">
+          <input type="search" id="classFilter" placeholder="搜索班级 / 班主任">
+          <select id="gradeSel">
+            <option value="">全部年级</option>
+          </select>
+          <span class="summary" id="classSummary">—</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table id="classListTable">
+            <thead>
+              <tr>
+                <th>年级 / 班级</th>
+                <th>班主任</th>
+                <th class="num">已投保人数</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="classListBody"></tbody>
+          </table>
+        </div>
+        <div class="pager" id="classListPager" data-b-end-pager data-page-size="10"></div>
+        <div class="hint-row" id="listEnrollHint">
+          <i class="fas fa-circle-info"></i>
+          <span id="hintRuleText">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 详情页 ============ -->
+    <div class="view" id="viewDetail">
+      <div class="detail-back">
+        <button type="button" class="back-btn" id="btnBack"><i class="fas fa-arrow-left"></i> 返回班级一览</button>
+        <span class="crumb">班级投保名单 / <b id="crumbName">—</b></span>
+      </div>
+
+      <div class="panel">
+        <div class="detail-head">
+          <div>
+            <h2 id="detailTitle">高一(3)班</h2>
+            <div class="sub-meta">
+              <span><i class="fas fa-user-tie"></i><span id="detailTeacher">王芳</span></span>
+              <span><i class="fas fa-receipt"></i>本学期投保订单 <span id="detailOrders">35</span> 条</span>
+            </div>
+            <div class="mini-kpi">
+              <div class="ok"><b id="miniInsured">35</b>已投保（去重）</div>
+              <div><b id="miniLinked">5</b>已关联档案</div>
+              <div><b id="miniUnlinked">30</b>未建档</div>
+            </div>
+          </div>
+          <div class="ph-actions">
+            <button class="btn btn-outline" id="btnExport"><i class="fas fa-download"></i> 导出本班订单</button>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="tab-status" id="statusTab">
+            <button data-st="all" class="active">全部 <span id="cntAll">35</span></button>
+            <button data-st="linked">已关联档案 <span id="cntLinked">5</span></button>
+            <button data-st="unlinked">未建档 <span id="cntUnlinked">30</span></button>
+          </div>
+          <select id="coverageSel" title="保障状态">
+            <option value="">全部保障状态</option>
+            <option value="active">保障中</option>
+            <option value="soon">临近过期（&lt; 30 天）</option>
+            <option value="invalid">已失效</option>
+          </select>
+          <input type="search" id="studentSearch" placeholder="姓名 / 投保人">
+          <span class="summary" id="filterSum">显示 35 / 35 条</span>
+        </div>
+
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>学生</th>
+                <th>投保人</th>
+                <th style="width:120px;white-space:nowrap">投保日期</th>
+                <th style="width:110px">保障状态</th>
+                <th style="width:140px">档案关联</th>
+              </tr>
+            </thead>
+            <tbody id="studentBody"></tbody>
+          </table>
+        </div>
+        <div class="pager" id="studentListPager" data-b-end-pager data-page-size="10"></div>
+        <div class="hint-row" id="detailEnrollHint">
+          <i class="fas fa-circle-info"></i>
+          本名单来自家长端投保订单流水，按当前学期汇总。投保订单与学生档案是<b>独立数据</b>，仅按"<b>姓名 + 班级</b>"做关联匹配；未建档的订单仍计入投保人数。保障状态：<b>保障中</b> / <b>已失效</b>（保障止期已过）/ <b>临近过期</b>（&lt; 30 天）。
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="学平险-学校端-school-stats.js"></script>
+<script src="学平险-学校端-sidebar.js"></script>
+<script src="b-end-pager.js"></script>
+<script>initSchoolSidebar("enrollList");</script>
+<script>
+  /* #原型说明：班级/学期/档案示例学生与统计看板共用 SchoolStats */
+  var ALL_CLASSES = SchoolStats.cloneClasses();
+  var PROFILE_STUDENTS = SchoolStats.PROFILE_STUDENTS;
+  var SCHOOL_TERM_DEFS = SchoolStats.SCHOOL_TERM_DEFS;
+  var TERM_SELECT_OPTIONS = SchoolStats.TERM_SELECT_OPTIONS;
+  function getRefToday(){ return SchoolStats.referenceToday; }
+  function termCodeFromDate(d){ return SchoolStats.termCodeFromDate(d); }
+  function getStatTermCode(){ return SchoolStats.getStatTermCode(); }
+  function getStatTerm(){ return SchoolStats.getStatTerm(); }
+  function getStatTermLabel(){ return getStatTerm().label; }
+  function getTermRecord(stu, termCode){ return SchoolStats.getTermRecord(stu, termCode); }
+
+  /* #原型说明：保障状态—按保障止期与参考日期判定 */
+  function daysBetween(a, b){
+    var ad = new Date(a + 'T00:00:00');
+    var bd = new Date(b + 'T00:00:00');
+    return Math.round((bd - ad) / 86400000);
+  }
+  function coverageState(endDate){
+    if(!endDate) return {cls:'none',label:'—'};
+    var diff = daysBetween(getRefToday(), endDate);
+    if(diff < 0) return {cls:'invalid',label:'已失效'};
+    if(diff < 30) return {cls:'soon',label:'临近过期',suffix:'剩 '+diff+' 天'};
+    return {cls:'active',label:'保障中'};
+  }
+  function renderCoverageBadge(endDate){
+    var st = coverageState(endDate);
+    if(st.cls==='none') return '<span class="cov none">—</span>';
+    var tip = endDate ? '止于 '+endDate+(st.suffix?' · '+st.suffix:'') : '';
+    var sub = st.cls==='soon' ? '<span class="cov-sub">&lt; 30 天</span>' : '';
+    return '<span class="cov '+st.cls+'" title="'+tip+'">'+st.label+'</span>'+sub;
+  }
+
+  function updateEnrollHints(){
+    var def = getStatTerm();
+    var auto = termCodeFromDate(getRefToday()) === getStatTermCode();
+    var meta = document.getElementById('termScopeMeta');
+    if(meta){
+      meta.innerHTML =
+        '学期 <b>'+def.coverageText+'</b>'+
+        (auto ? ' · 参考日期 '+getRefToday()+' 自动匹配' : ' · 已手动切换')+
+        ' · 名单来自家长端投保订单流水';
+    }
+    var el = document.getElementById('hintRuleText');
+    if(el){
+      el.innerHTML =
+        '本名单来自<b>家长端投保订单</b>（与学生档案独立维护），按当前学期汇总；订单与档案通过"<b>姓名 + 班级</b>"匹配，未建档订单仍计入投保数。';
+    }
+  }
+
+  function fillTermSelect(){
+    var sel = document.getElementById('termSel');
+    if(!sel) return;
+    var autoCode = termCodeFromDate(getRefToday());
+    sel.innerHTML = TERM_SELECT_OPTIONS.map(function(code){
+      var d = SCHOOL_TERM_DEFS[code];
+      var tag = code===autoCode ? '' : '';
+      return '<option value="'+code+'">'+d.label+tag+' · '+d.coverageText+'</option>';
+    }).join('');
+    sel.value = getStatTermCode();
+  }
+
+  function invalidateAllRosters(){
+    studentCache = {};
+    ALL_CLASSES.forEach(function(c){ syncClassCounts(c, buildRoster(c)); });
+  }
+
+  function setStatTerm(code){
+    SchoolStats.setStatTermOverride(code || null);
+    fillTermSelect();
+    updateEnrollHints();
+    invalidateAllRosters();
+    renderScope();
+    renderClassList();
+    if(currentView==='detail' && currentClass) renderDetail();
+  }
+
+  /* #原型说明：班级投保名单 = 家长端「投保订单流水」按当前学期 + 班级名汇总
+   * 学生档案独立维护，仅按"姓名 + 班级"做关联匹配（不强制订单上的学生都建过档）
+   */
+  function buildRoster(cls){
+    var termCode = getStatTermCode();
+    var orders = SchoolStats.getEnrollmentsForClass(cls.name, termCode);
+    return orders.map(function(o){
+      var profile = SchoolStats.findProfileByNameAndClass(o.studentName, o.cls);
+      return {
+        orderId: o.orderId,
+        name: o.studentName,
+        cls: o.cls,
+        grade: o.grade,
+        contact: o.contact,
+        contactPhone: o.contactPhone,
+        product: o.product,
+        enrolledAt: o.enrolledAt,
+        coverageEnd: o.coverageEnd,
+        channel: o.channel,
+        profileId: profile ? profile.id : null,
+        hasProfile: !!profile
+      };
+    });
+  }
+
+  function syncClassCounts(cls, orders){
+    /* 已投保 = 该班该学期投保订单去重学生数（一人多单只计 1） */
+    var unique = {};
+    orders.forEach(function(o){ unique[o.name] = true; });
+    cls.insured = Object.keys(unique).length;
+    cls.orders = orders.length;
+    cls.rate = cls.total ? +(cls.insured/cls.total*100).toFixed(1) : 0;
+    /* total（在册建制）保持原种子，未投保参考值供其它视图使用 */
+    cls.uninsured = Math.max(0, (cls.total||0) - cls.insured);
+  }
+
+  function initTermFromUrl(){
+    SchoolStats.initFromUrl();
+  }
+
+  /* #原型说明：班级列表按 SchoolAccount.role 过滤 */
+  var ROLE_MAP = {
+    admin: { visible:()=>ALL_CLASSES.slice() },
+    grade: { visible:()=>ALL_CLASSES.filter(c=>c.grade==='高一年级') },
+    class: { visible:()=>ALL_CLASSES.filter(c=>c.id==='g1-3') }
+  };
+  function getRole(){ return (window.SchoolAccount && SchoolAccount.role) || 'admin'; }
+
+  /* ============ 状态 ============ */
+  var visibleClasses = ROLE_MAP[getRole()].visible();
+  var currentView = 'list';
+  var currentClass = null;
+  var currentStatus = 'all';
+  var currentCoverage = '';
+  var currentSearch = '';
+  var classKw = '';
+  var classGrade = '';
+  var studentCache = {};
+
+  function getStudents(cls){
+    if(!studentCache[cls.id]){
+      var list = buildRoster(cls);
+      syncClassCounts(cls, list);
+      studentCache[cls.id] = list;
+    }
+    return studentCache[cls.id];
+  }
+
+  /* ============ 视图切换 ============ */
+  function showList(){
+    currentView = 'list';
+    document.getElementById('viewList').classList.add('active');
+    document.getElementById('viewDetail').classList.remove('active');
+    document.getElementById('topSub').textContent = '按班级汇总家长端投保订单流水';
+    if(location.search) history.replaceState(null,'',location.pathname);
+  }
+  function showDetail(id){
+    var c = visibleClasses.find(x=>x.id===id);
+    if(!c){
+      alert('当前账号无权查看该班级');
+      return;
+    }
+    currentClass = c;
+    currentView = 'detail';
+    currentStatus = 'all';
+    currentCoverage = '';
+    currentSearch = '';
+    document.getElementById('studentSearch').value = '';
+    document.getElementById('coverageSel').value = '';
+    document.querySelectorAll('#statusTab button').forEach(b=>b.classList.toggle('active',b.getAttribute('data-st')==='all'));
+    document.getElementById('viewList').classList.remove('active');
+    document.getElementById('viewDetail').classList.add('active');
+    document.getElementById('crumbName').textContent = c.name;
+    document.getElementById('topSub').textContent = c.grade + ' · '+c.name+' · '+getStatTermLabel()+' · 班主任 '+c.teacher;
+    renderDetail();
+    history.replaceState(null,'',location.pathname+'?cls='+encodeURIComponent(id));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function renderScope(){
+    var r = ROLE_MAP[getRole()];
+    visibleClasses = r.visible();
+
+    /* 年级下拉跟随权限范围 */
+    var grades = Array.from(new Set(visibleClasses.map(c=>c.grade)));
+    var sel = document.getElementById('gradeSel');
+    sel.innerHTML = '<option value="">全部年级</option>' + grades.map(g=>'<option>'+g+'</option>').join('');
+    sel.disabled = grades.length<=1;
+    classGrade = '';
+  }
+
+  function renderClassList(){
+    var r = ROLE_MAP[getRole()];
+    var list = visibleClasses.filter(c=>{
+      if(classGrade && c.grade!==classGrade) return false;
+      if(classKw && !(c.name.includes(classKw) || c.teacher.includes(classKw))) return false;
+      return true;
+    });
+    document.getElementById('classSummary').textContent = '共 '+list.length+' 个班级';
+    document.getElementById('classListBody').innerHTML = list.map(c=>{
+      return '<tr class="clickable" data-id="'+c.id+'">'+
+        '<td><b>'+c.name+'</b><div style="font-size:11px;color:#88a3b5;margin-top:2px">'+c.grade+'</div></td>'+
+        '<td>'+c.teacher+'</td>'+
+        '<td class="num" style="color:#1C6E5C;font-weight:600">'+c.insured+' <small style="color:#88a3b5;font-weight:400">人</small></td>'+
+        '<td><button type="button" class="link-btn" data-id="'+c.id+'">查看名单 →</button></td>'+
+      '</tr>';
+    }).join('') || '<tr><td colspan="4" style="text-align:center;padding:36px;color:#88a3b5">暂无班级</td></tr>';
+
+    document.querySelectorAll('#classListBody tr.clickable').forEach(tr=>{
+      tr.addEventListener('click',()=>showDetail(tr.getAttribute('data-id')));
+    });
+    /* 仅 1 个班级时（班主任视角）自动打开详情 */
+    if(visibleClasses.length===1 && currentView==='list'){
+      showDetail(visibleClasses[0].id);
+    }
+    if(window.BEndPager) BEndPager.remount('#classListPager');
+  }
+
+  /* ============ 详情页渲染 ============ */
+  function renderDetail(){
+    var c = currentClass;
+    var orders = getStudents(c);
+    var uniqueNames = {};
+    orders.forEach(function(o){ uniqueNames[o.name] = true; });
+    var uniqueCount = Object.keys(uniqueNames).length;
+    var linkedCount = orders.filter(function(o){ return o.hasProfile; }).length;
+    var unlinkedCount = orders.length - linkedCount;
+
+    document.getElementById('detailTitle').textContent = c.name;
+    document.getElementById('detailTeacher').textContent = c.teacher;
+    document.getElementById('detailOrders').textContent = orders.length;
+    document.getElementById('miniInsured').textContent = uniqueCount;
+    document.getElementById('miniLinked').textContent = linkedCount;
+    document.getElementById('miniUnlinked').textContent = unlinkedCount;
+
+    document.getElementById('cntAll').textContent = orders.length;
+    document.getElementById('cntLinked').textContent = linkedCount;
+    document.getElementById('cntUnlinked').textContent = unlinkedCount;
+
+    var filtered = orders.filter(function(o){
+      if(currentStatus==='linked' && !o.hasProfile) return false;
+      if(currentStatus==='unlinked' && o.hasProfile) return false;
+      if(currentCoverage){
+        var st = coverageState(o.coverageEnd);
+        if(st.cls !== currentCoverage) return false;
+      }
+      if(currentSearch){
+        var kw = currentSearch;
+        var hit = o.name.includes(kw) || (o.contact||'').includes(kw);
+        if(!hit) return false;
+      }
+      return true;
+    });
+    document.getElementById('filterSum').textContent = '显示 '+filtered.length+' / '+orders.length+' 条';
+
+    document.getElementById('studentBody').innerHTML = filtered.map(function(o){
+      var cov = renderCoverageBadge(o.coverageEnd);
+      var linkTag = o.hasProfile
+        ? '<a href="学平险-学校端--学生档案.html?id='+o.profileId+'" class="link-tag linked"><i class="fas fa-link"></i> 已关联档案</a>'
+        : '<span class="link-tag unlinked" title="该投保学生未在学生档案中找到匹配（按姓名+班级）"><i class="fas fa-unlink"></i> 未建档</span>';
+      return '<tr class="student-row">'+
+        '<td><b>'+o.name+'</b></td>'+
+        '<td>'+(o.contact||'—')+'<div style="font-size:11px;color:#88a3b5;margin-top:2px">'+(o.contactPhone||'—')+'</div></td>'+
+        '<td style="white-space:nowrap"><code style="font-size:12px;background:#f0f4f9;padding:2px 6px;border-radius:4px">'+o.enrolledAt+'</code></td>'+
+        '<td>'+cov+'</td>'+
+        '<td>'+linkTag+'</td>'+
+      '</tr>';
+    }).join('') || '<tr><td colspan="5" style="text-align:center;padding:36px;color:#88a3b5">没有符合条件的订单</td></tr>';
+    if(window.BEndPager) BEndPager.remount('#studentListPager');
+  }
+
+  /* ============ 事件绑定 ============ */
+  initSchoolUserMenu('#userMenuMount', function(){
+    classKw = ''; classGrade = '';
+    document.getElementById('classFilter').value = '';
+    renderScope();
+    renderClassList();
+    if(currentView==='detail' && !visibleClasses.find(c=>c.id===(currentClass&&currentClass.id))){
+      showList();
+    }
+  });
+  document.getElementById('termSel').addEventListener('change', function(e){
+    setStatTerm(e.target.value);
+  });
+  document.getElementById('classFilter').addEventListener('input',e=>{ classKw = e.target.value.trim(); renderClassList(); });
+  document.getElementById('gradeSel').addEventListener('change',e=>{ classGrade = e.target.value; renderClassList(); });
+  document.getElementById('btnBack').addEventListener('click',showList);
+
+  document.querySelectorAll('#statusTab button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#statusTab button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    currentStatus = b.getAttribute('data-st');
+    renderDetail();
+  }));
+  document.getElementById('studentSearch').addEventListener('input',e=>{ currentSearch = e.target.value.trim(); renderDetail(); });
+  document.getElementById('coverageSel').addEventListener('change',e=>{ currentCoverage = e.target.value; renderDetail(); });
+
+  document.getElementById('btnExport').addEventListener('click',()=>alert('已导出 '+currentClass.name+' 投保订单'));
+
+  /* #原型说明：?cls= 直达班级详情；?role= 预置演示账号身份（仅前端原型） */
+  var initRole = new URLSearchParams(location.search).get('role');
+  if(initRole && ROLE_MAP[initRole] && window.SchoolAccount){
+    SchoolAccount.switchTo(initRole);
+  }
+  initTermFromUrl();
+  fillTermSelect();
+  updateEnrollHints();
+  invalidateAllRosters();
+  renderScope();
+  renderClassList();
+  var initCls = new URLSearchParams(location.search).get('cls');
+  if(initCls && visibleClasses.find(c=>c.id===initCls)){
+    showDetail(initCls);
+  } else if (currentView==='list') {
+    showList();
+  }
+</script>
+</body>
+</html>

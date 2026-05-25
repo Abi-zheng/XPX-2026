@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学平险 · 学校端原型导航</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="shared-ui.css">
+  <style>
+    body { font-family: Inter, 'PingFang SC', sans-serif; background: #f3f6fc; padding: 40px 24px; color: #1E2F3E; }
+    h1 { text-align: center; margin-bottom: 8px; font-size: 1.6rem; }
+    .sub { text-align: center; color: #5e7f92; margin-bottom: 28px; font-size: 14px; }
+    .wrap { max-width: 1040px; margin: 0 auto; }
+    .hero { text-align: center; margin-bottom: 32px; display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap }
+    .hero a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: #1C6E5C; color: #fff; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 15px; }
+    .hero a:hover { background: #155a4a; }
+    .hero a.ghost { background: #fff; color: #1C6E5C; border: 1px solid #1C6E5C; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .card { background: #fff; border-radius: 18px; border: 1px solid #eef2f8; padding: 20px 22px; box-shadow: 0 4px 10px rgba(0,0,0,.02); display:flex;flex-direction:column;gap:10px; transition: transform .15s, box-shadow .15s; text-decoration:none; color:inherit }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(0,0,0,.06) }
+    .card .ic { width: 44px; height: 44px; border-radius: 12px; background: #eef6f3; color: #1C6E5C; display: flex; align-items: center; justify-content: center; font-size: 20px }
+    .card h2 { font-size: 16px; margin: 0; font-weight: 600 }
+    .card p { font-size: 13px; color: #88a3b5; margin: 0; line-height: 1.6 }
+    .card .tag { font-size: 11px; color: #1C6E5C; background: #eef6f3; padding: 2px 8px; border-radius: 999px; align-self:flex-start; font-weight: 500 }
+    .section-title { font-size: 13px; color: #88a3b5; font-weight: 700; letter-spacing: .06em; margin: 28px 0 12px }
+    .foot { margin-top: 28px; text-align: center; font-size: 13px; color: #88a3b5; }
+    .foot a { color: #1C6E5C; }
+  </style>
+</head>
+<body>
+  <h1><i class="fas fa-shield-heart" style="color:#1C6E5C;"></i> 学平险 · 学校端</h1>
+  <p class="sub">七大模块：统计看板 · 学生档案 · 班级投保名单 · 投保二维码 · 风险事件登记 · 安全教育 · 系统管理</p>
+
+  <div class="wrap">
+    <div class="hero">
+      <a href="学平险-学校端--登录.html"><i class="fas fa-sign-in-alt"></i> 从登录进入</a>
+      <a class="ghost" href="学平险-学校端--统计看板.html"><i class="fas fa-chart-pie"></i> 直接打开看板</a>
+    </div>
+
+    <div class="section-title">业务模块</div>
+    <div class="grid">
+      <a class="card" href="学平险-学校端--统计看板.html">
+        <div class="ic"><i class="fas fa-chart-pie"></i></div>
+        <h2>统计看板</h2>
+        <p>全校投保率、出险率、覆盖率与风险下降可视化，证明保障价值。</p>
+        <span class="tag">投保率 91.5% · 出险率 ↓0.5pp</span>
+      </a>
+      <a class="card" href="学平险-学校端--学生档案.html">
+        <div class="ic"><i class="fas fa-address-card"></i></div>
+        <h2>学生档案</h2>
+        <p>学生基本信息库 · 监护人 · 健康标签 · 历年投保 / 出险记录一站可查。</p>
+        <span class="tag">列表 → 详情 · 三角色数据范围</span>
+      </a>
+      <a class="card" href="学平险-学校端--班级投保名单.html">
+        <div class="ic"><i class="fas fa-list-check"></i></div>
+        <h2>班级投保名单</h2>
+        <p>按班级查看哪些学生已投保、哪些待跟进，一键通知未投保家长。</p>
+        <span class="tag">支持班主任 / 年级组长 / 校级三种视角</span>
+      </a>
+      <a class="card" href="学平险-学校端--投保二维码.html">
+        <div class="ic"><i class="fas fa-qrcode"></i></div>
+        <h2>投保二维码</h2>
+        <p>学校专属投保二维码，支持下载打印与基础扫码统计。</p>
+        <span class="tag">下载 · 打印 · 近 7 日扫码数据</span>
+      </a>
+      <a class="card" href="学平险-学校端--风险事件登记.html">
+        <div class="ic"><i class="fas fa-triangle-exclamation"></i></div>
+        <h2>风险事件登记</h2>
+        <p>磕碰、运动伤、意外事件登记台账，支持简单汇总与列表详情查看。</p>
+        <span class="tag">列表 → 详情</span>
+      </a>
+      <a class="card" href="学平险-学校端--安全教育.html">
+        <div class="ic"><i class="fas fa-shield-halved"></i></div>
+        <h2>安全教育</h2>
+        <p>平台下发安全主题，按班级组织学习打卡，查看各班完成进度。</p>
+        <span class="tag">事前预防 · 班级打卡</span>
+      </a>
+    </div>
+
+    <div id="sysSection">
+    <div class="section-title">系统管理 <span style="font-weight:400;color:#b8c5d0">（仅校级管理员）</span></div>
+    <div class="grid">
+      <a class="card" href="学平险-学校端--组织与成员.html">
+        <div class="ic"><i class="fas fa-sitemap"></i></div>
+        <h2>组织与成员</h2>
+        <p>校内年级 / 班级结构，成员与岗位分配，启用 / 禁用账号。</p>
+        <span class="tag">配套：<a href="学平险-学校端--组织弹窗原型.html" style="text-decoration:underline">组织弹窗原型</a></span>
+      </a>
+      <a class="card" href="学平险-学校端--操作日志.html">
+        <div class="ic"><i class="fas fa-clipboard-list"></i></div>
+        <h2>操作日志</h2>
+        <p>所有重要操作的审计记录，可按模块、时间、操作人筛选。</p>
+        <span class="tag">只读 · 可导出</span>
+      </a>
+    </div>
+    </div>
+
+    <p class="foot">
+      <a href="学平险-学校端--原型导航.html">← 返回原型导航</a>
+      · <a href="原型说明.md">原型说明</a>
+    </p>
+  </div>
+<script src="学平险-学校端-sidebar.js"></script>
+<script>
+(function(){
+  var role = (window.SchoolAccount && SchoolAccount.role) || 'admin';
+  if (role !== 'admin') {
+    var el = document.getElementById('sysSection');
+    if (el) el.style.display = 'none';
+  }
+})();
+</script>
+</body>
+</html>

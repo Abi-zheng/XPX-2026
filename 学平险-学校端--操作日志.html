@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学平险·学校端 | 操作日志</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', 'PingFang SC', sans-serif; background: #f3f6fc; color: #1E2F3E; font-size: 14px; }
+    .app-wrapper { display: flex; min-height: 100vh; }
+    .main-content { flex: 1; padding: 1.5rem 2rem 2rem; overflow-x: auto; }
+    .wire-note { background: #fffbe6; border: 1px dashed #d9b559; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; color: #856404; font-size: 13px; line-height: 1.6; }
+    .top-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 1.2rem; }
+    .welcome h2 { font-size: 1.5rem; font-weight: 600; }
+    .welcome p { color: #5e7f92; font-size: 0.85rem; margin-top: 4px; }
+    .card-panel { background: #fff; border-radius: 20px; border: 1px solid #eef2f8; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+    .tabs { display: flex; border-bottom: 1px solid #eef2f8; padding: 0 1rem; gap: 4px; flex-wrap: wrap; }
+    .tabs button { border: none; background: none; padding: 14px 12px; font-size: 14px; color: #88a3b5; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .tabs button.active { color: #1C6E5C; font-weight: 600; border-bottom-color: #1C6E5C; }
+    .tab-body { padding: 1.2rem 1.3rem 1.5rem; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
+    .toolbar input, .toolbar select { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; }
+    .btn { padding: 8px 16px; border-radius: 10px; font-size: 13px; cursor: pointer; border: none; font-weight: 500; }
+    .btn-primary { background: #1C6E5C; color: #fff; }
+    .btn-outline { background: #fff; border: 1px solid #cbdde6; color: #4c6a7e; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f0f4f9; }
+    th { color: #6792a8; font-weight: 600; font-size: 12px; background: #fafbfc; }
+    tr:hover td { background: #fafcfd; }
+    .link { color: #1C6E5C; cursor: pointer; }
+    .chip { display: inline-flex; padding: 2px 10px; border-radius: 999px; font-size: 12px; border: 1px solid #e2e8f0; background: #fff; }
+    .chip.admin { background: #eef6f3; border-color: #b8d9ce; color: #1C6E5C; }
+    .chip.grade { background: #eef2fa; border-color: #c5d4f0; color: #3d5a80; }
+    .chip.class { background: #fdf6ec; border-color: #f5dab1; color: #b88230; }
+    .chip.off { background: #fef0f0; border-color: #fbc4c4; color: #c45656; }
+    body[data-role="grade"] .admin-only, body[data-role="class"] .admin-only { display: none !important; }
+    body[data-role="grade"] .denied-banner, body[data-role="class"] .denied-banner { display: block; }
+    .denied-banner { display: none; background: #fef0f0; border: 1px solid #fbc4c4; color: #c45656; padding: 24px; border-radius: 16px; text-align: center; }
+    .form-row { margin-bottom: 14px; }
+    .form-row label { display: block; font-size: 12px; color: #6792a8; margin-bottom: 6px; }
+    .form-row input, .form-row select { width: 100%; max-width: 400px; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; }
+    .scope-hint { font-size: 12px; color: #88a3b5; margin-top: 8px; padding: 8px 12px; background: #f8fafc; border-radius: 8px; }
+    .info-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .info-card { background: #fff; border: 1px solid #eef2f8; border-radius: 12px; padding: 12px 14px; }
+    .info-card .label { font-size: 12px; color: #88a3b5; }
+    .info-card .val { font-size: 1.25rem; font-weight: 700; margin-top: 4px; color: #1C6E5C; }
+    code { font-size: 12px; background: #f0f4f9; padding: 2px 6px; border-radius: 4px; }
+</style>
+  <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="学平险-学校端-sidebar.css">
+  <link rel="stylesheet" href="学平险-学校端-b-end.css">
+</head>
+<body data-role="admin">
+<div class="app-wrapper">
+  <div class="sidebar" id="schoolSidebar"></div>
+  <main class="main-content">
+<div class="top-bar">
+      <div class="welcome"><h2>操作日志</h2><p>立德中学 · 只读</p></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-outline admin-only"><i class="fas fa-download"></i> 导出 CSV</button>
+        <div id="userMenuMount"></div>
+      </div>
+    </div>
+    <div class="denied-banner"><p style="font-weight:600;">无权限访问操作日志</p><p style="font-size:13px;margin-top:8px;">仅校级管理员可查看</p></div>
+    <div class="admin-only card-panel" style="padding:0;">
+      <div class="toolbar" style="padding:12px 16px 0;">
+        <input type="search" placeholder="操作人 / 对象" style="width:200px;">
+        <select><option>全部模块</option><option>统计看板</option><option>学生档案</option><option>班级投保名单</option><option>投保二维码</option><option>风险事件登记</option><option>安全教育</option><option>组织与成员</option></select>
+        <select><option>近 7 天</option><option>近 30 天</option><option>本学期</option></select>
+      </div>
+      <table>
+        <thead><tr><th>时间</th><th>操作人</th><th>角色</th><th>模块</th><th>动作</th><th>对象</th><th>IP</th></tr></thead>
+        <tbody>
+          <tr><td>2026-05-21 09:20</td><td>王芳</td><td>班主任</td><td>安全教育</td><td>班级打卡</td><td>春季运动会安全须知 · 高一(3)班</td><td>58.1.*.*</td></tr>
+          <tr><td>2026-05-21 11:45</td><td>王芳</td><td>班主任</td><td>学生档案</td><td>编辑档案</td><td>李明远 · 补充健康标签「过敏」</td><td>58.1.*.*</td></tr>
+          <tr><td>2026-05-21 11:30</td><td>王芳</td><td>班主任</td><td>风险事件登记</td><td>登记新事件</td><td>高一(3)班 李明远 · 体育课摔伤</td><td>58.1.*.*</td></tr>
+          <tr><td>2026-05-20 16:08</td><td>张敏</td><td>校级管理员</td><td>投保二维码</td><td>下载二维码</td><td>2026 春季 · PNG</td><td>10.2.*.*</td></tr>
+          <tr><td>2026-05-20 10:24</td><td>李建华</td><td>年级组长</td><td>班级投保名单</td><td>通知未投保家长</td><td>高三年级 · 18 人短信通知</td><td>58.1.*.*</td></tr>
+          <tr><td>2026-05-19 14:22</td><td>王芳</td><td>班主任</td><td>风险事件登记</td><td>登记新事件</td><td>高一(3)班 · 较严重 · 已启动理赔</td><td>58.1.*.*</td></tr>
+          <tr><td>2026-05-19 11:08</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>停用账号</td><td>赵静 · 152****1122</td><td>10.2.*.*</td></tr>
+          <tr><td>2026-05-18 16:45</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>添加成员</td><td>新用户 188****0099 · 班主任</td><td>10.2.*.*</td></tr>
+          <tr><td>2026-05-18 10:08</td><td>郭静</td><td>班主任</td><td>风险事件登记</td><td>登记新事件</td><td>初二(4)班 · 课间打闹</td><td>58.1.*.*</td></tr>
+          <tr><td>2026-05-17 15:02</td><td>王芳</td><td>班主任</td><td>班级投保名单</td><td>导出名单</td><td>高一(3)班 · 46 人</td><td>58.1.*.*</td></tr>
+          <tr><td>2026-05-15 14:22</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>调整岗位</td><td>李建华 · 年级组长</td><td>10.2.*.*</td></tr>
+          <tr><td>2026-05-15 11:30</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>新建班级</td><td>高一年级 · 高一(4)班</td><td>10.2.*.*</td></tr>
+          <tr><td>2026-05-14 08:55</td><td>张敏</td><td>校级管理员</td><td>系统</td><td>登录</td><td>学校端</td><td>10.2.*.*</td></tr>
+        </tbody>
+      </table>
+      <div class="pager" data-b-end-pager data-page-size="5"></div>
+    </div>
+
+  </main>
+</div>
+<script src="学平险-学校端-sidebar.js"></script>
+<script>
+  function syncBodyRole(){ document.body.setAttribute('data-role', (window.SchoolAccount&&SchoolAccount.role)||'admin'); }
+  syncBodyRole();
+  initSchoolSidebar('audit');
+  initSchoolUserMenu('#userMenuMount', syncBodyRole);
+</script>
+
+<script src="b-end-pager.js"></script>
+<script>BEndPager.initAll();</script>
+</body>
+</html>

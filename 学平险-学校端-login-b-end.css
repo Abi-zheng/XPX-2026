@@ -1,0 +1,112 @@
+/* 学校端登录页 · B 端参数 + 分辨率自适应 */
+@import url('b-end-responsive.css');
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-base);
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.wire-note {
+  font-size: var(--font-size-caption);
+  border-radius: var(--radius);
+  padding: var(--space-8) var(--space-12);
+}
+
+.login-panel h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+.login-panel .sub {
+  font-size: var(--font-size-sub);
+  color: var(--text-secondary);
+}
+
+.form-row label {
+  font-size: var(--font-size-caption);
+  color: var(--text-secondary);
+}
+
+.form-row input {
+  height: var(--control-h);
+  padding: 0 var(--space-12);
+  font-size: var(--font-size-body);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.btn-primary {
+  height: var(--control-h-lg);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius);
+  background: var(--primary);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.identity-card {
+  border-radius: var(--radius-md);
+  padding: var(--space-12) var(--space-16);
+  font-size: var(--font-size-body);
+}
+
+.brand-logo .icon {
+  border-radius: var(--radius-md);
+}
+
+.brand-logo h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-bold);
+}
+
+.brand-features li {
+  font-size: var(--font-size-sub);
+}
+
+/* 1280+ 左右分栏；以下堆叠 */
+@media (max-width: 1023.98px) {
+  body {
+    flex-direction: column !important;
+  }
+
+  .brand-panel {
+    padding: var(--space-24) var(--page-margin) !important;
+    min-height: auto !important;
+    flex: none !important;
+  }
+
+  .login-panel {
+    max-width: none !important;
+    width: 100% !important;
+    flex: 1 !important;
+    padding: var(--space-24) var(--page-margin) !important;
+    box-shadow: none !important;
+  }
+
+  .wire-note {
+    position: static !important;
+    margin: var(--space-12) var(--page-margin) 0 !important;
+    max-width: none !important;
+  }
+}
+
+@media (min-width: 1920px) {
+  .login-panel {
+    max-width: 520px !important;
+    padding-left: clamp(2rem, 4vw, 4rem) !important;
+    padding-right: clamp(2rem, 4vw, 4rem) !important;
+  }
+
+  .brand-panel {
+    padding: clamp(2rem, 5vw, 4rem) !important;
+  }
+}

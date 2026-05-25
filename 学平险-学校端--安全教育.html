@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学平险·学校端 | 安全教育</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter','PingFang SC',sans-serif;background:#f3f6fc;color:#1E2F3E;font-size:14px}
+    .app-wrapper{display:flex;min-height:100vh}
+    .main-content{flex:1;padding:1.5rem 2rem 2rem;overflow-x:auto}
+    .top-bar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:1rem;flex-wrap:wrap}
+    .welcome h2{font-size:1.5rem;font-weight:600;display:flex;align-items:center;gap:10px}
+    .welcome p{color:#5e7f92;font-size:.85rem;margin-top:4px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{padding:8px 16px;border-radius:10px;font-size:13px;cursor:pointer;border:none;font-weight:500;display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:inherit}
+    .btn-primary{background:#1C6E5C;color:#fff}
+    .btn-primary:hover{background:#155a4a}
+    .btn-outline{background:#fff;border:1px solid #cbdde6;color:#4c6a7e}
+    .btn-outline:hover{border-color:#1C6E5C;color:#1C6E5C}
+    .btn-warn{background:#fffbe6;border:1px solid #ffe7a3;color:#856404}
+    .btn-sm{padding:6px 10px;font-size:12px}
+
+    .view{display:none}
+    .view.active{display:block}
+
+    .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1rem}
+    @media(max-width:760px){.kpi-row{grid-template-columns:1fr}}
+    .kpi{background:#fff;border:1px solid #eef2f8;border-radius:14px;padding:14px 16px}
+    .kpi .label{font-size:12px;color:#88a3b5}
+    .kpi .val{font-size:1.6rem;font-weight:700;margin-top:4px}
+    .kpi .val small{font-size:12px;color:#88a3b5;font-weight:400;margin-left:6px}
+    .kpi.success .val{color:#1C6E5C}
+    .kpi.warn .val{color:#d4a514}
+    .kpi.danger .val{color:#c45656}
+
+    .panel{background:#fff;border:1px solid #eef2f8;border-radius:18px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.02)}
+    .panel-head{padding:14px 18px;border-bottom:1px solid #eef2f8;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:14px;gap:10px;flex-wrap:wrap}
+    .panel-head h3{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+    .panel-head h3 i{color:#1C6E5C}
+
+    .filter-bar{padding:12px 18px;background:#fafbfc;border-bottom:1px solid #eef2f8;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .filter-bar input,.filter-bar select{padding:7px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;background:#fff}
+    .filter-bar input[type=search]{width:220px}
+    .filter-bar .summary{margin-left:auto;font-size:12px;color:#88a3b5}
+
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{padding:11px 14px;text-align:left;border-bottom:1px solid #f0f4f9;vertical-align:middle}
+    th{color:#6792a8;font-size:12px;font-weight:600;background:#fafbfc}
+    tbody tr.clickable{cursor:pointer;transition:background .12s}
+    tbody tr.clickable:hover{background:#fafcfd}
+    td.num{text-align:right;font-variant-numeric:tabular-nums}
+
+    .pill{display:inline-flex;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:600;border:1px solid #e2e8f0}
+    .pill.done{background:#eef6f3;color:#1C6E5C;border-color:#b8d9ce}
+    .pill.doing{background:#fdf6ec;color:#b88230;border-color:#f5dab1}
+    .pill.overdue{background:#fef0f0;color:#c45656;border-color:#fbc4c4}
+    .pill.pending{background:#fafbfc;color:#6792a8}
+
+    .topic-cell{display:flex;align-items:center;gap:12px}
+    .topic-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#1C6E5C,#2d8f76);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .topic-icon.warn{background:linear-gradient(135deg,#b88230,#d4a514)}
+    .topic-icon.info{background:linear-gradient(135deg,#2d6a9f,#3d8acc)}
+    .topic-cell b{display:block;font-weight:600}
+    .topic-cell small{font-size:11px;color:#88a3b5;font-weight:400}
+
+    .progress-mini{display:flex;align-items:center;gap:8px;min-width:120px}
+    .progress-mini .bar{flex:1;height:6px;background:#eef2f8;border-radius:999px;overflow:hidden}
+    .progress-mini .bar>div{height:100%;background:#1C6E5C;border-radius:999px}
+    .progress-mini .bar.warn>div{background:#e6b422}
+    .progress-mini .pct{font-size:12px;font-weight:600;color:#1C6E5C;min-width:36px;text-align:right}
+    .progress-mini .pct.warn{color:#d4a514}
+
+    .detail-back{padding:0 0 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid #cbdde6;background:#fff;color:#4c6a7e;font-size:13px;cursor:pointer;font-weight:500}
+    .back-btn:hover{border-color:#1C6E5C;color:#1C6E5C}
+    .crumb{font-size:13px;color:#88a3b5}
+    .crumb b{color:#1E2F3E}
+
+    .detail-head{padding:22px 24px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;background:linear-gradient(180deg,#fafbfc 0%,#fff 100%);border-bottom:1px solid #eef2f8}
+    .detail-head .dh-main{display:flex;gap:16px;align-items:flex-start;flex:1;min-width:280px}
+    .detail-head .big-icon{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#1C6E5C,#2d8f76);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+    .detail-head h2{font-size:1.25rem;font-weight:700}
+    .detail-head .sub-meta{margin-top:6px;color:#5e7f92;font-size:13px;display:flex;flex-wrap:wrap;gap:14px}
+    .detail-head .sub-meta i{margin-right:5px;color:#1C6E5C}
+    .detail-body{padding:22px 24px}
+    .section-title{font-size:13px;font-weight:600;color:#1C6E5C;margin:18px 0 10px;display:flex;align-items:center;gap:6px}
+    .section-title:first-child{margin-top:0}
+    .desc-box{background:#fafbfc;border:1px solid #eef2f8;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.8;color:#4c6a7e}
+    .material-list{display:flex;flex-direction:column;gap:8px}
+    .material-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #eef2f8;border-radius:10px;background:#fff}
+    .material-item .mi-icon{width:36px;height:36px;border-radius:8px;background:#eef6f3;color:#1C6E5C;display:flex;align-items:center;justify-content:center}
+    .material-item .mi-body{flex:1}
+    .material-item .mi-body b{font-size:13px}
+    .material-item .mi-body small{display:block;font-size:11px;color:#88a3b5;margin-top:2px}
+    .material-item a{color:#1C6E5C;font-size:12px;font-weight:500;text-decoration:none}
+    .material-item a:hover{text-decoration:underline}
+
+    .hint-row{font-size:12px;color:#88a3b5;padding:10px 18px;background:#fafbfc;border-top:1px solid #eef2f8}
+    .hint-row i{margin-right:4px;color:#1C6E5C}
+    .link-btn{color:#1C6E5C;font-weight:500;cursor:pointer;background:none;border:none;font-size:13px;padding:0}
+    .link-btn:hover{text-decoration:underline}
+  </style>
+  <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="学平险-学校端-sidebar.css">
+  <link rel="stylesheet" href="学平险-学校端-b-end.css">
+</head>
+<body>
+<div class="app-wrapper">
+  <div class="sidebar" id="schoolSidebar"></div>
+  <main class="main-content">
+
+    <div class="top-bar">
+      <div class="welcome">
+        <h2><i class="fas fa-shield-halved" style="color:#1C6E5C"></i> 安全教育</h2>
+        <p id="topSub">平台下发安全主题 · 按班级组织学习与打卡</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" id="btnExport"><i class="fas fa-download"></i> 导出进度</button>
+        <div id="userMenuMount"></div>
+      </div>
+    </div>
+
+    <!-- 列表页 -->
+    <div class="view active" id="viewList">
+      <div class="kpi-row">
+        <div class="kpi"><div class="label">本学期任务</div><div class="val" id="kpiTasks">—</div></div>
+        <div class="kpi success"><div class="label">已完成班级</div><div class="val" id="kpiDone">—</div></div>
+        <div class="kpi warn"><div class="label">待完成 / 逾期</div><div class="val" id="kpiPending">—</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3><i class="fas fa-book-open"></i> 安全教育任务</h3>
+        </div>
+        <div class="filter-bar">
+          <input type="search" id="filterKw" placeholder="搜索主题名称">
+          <select id="filterStatus">
+            <option value="">全部状态</option>
+            <option value="doing">进行中</option>
+            <option value="done">已完成</option>
+            <option value="overdue">已逾期</option>
+          </select>
+          <span class="summary" id="listSummary">—</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>安全主题</th>
+                <th>适用学段</th>
+                <th>截止日期</th>
+                <th>班级完成进度</th>
+                <th>状态</th>
+                <th style="width:88px">操作</th>
+              </tr>
+            </thead>
+            <tbody id="taskList"></tbody>
+          </table>
+        </div>
+        <div class="pager" id="taskListPager" data-b-end-pager data-page-size="10"></div>
+        <div class="hint-row">
+          <i class="fas fa-circle-info"></i>
+          安全教育内容由平台统一下发，学校按班级组织学习；班主任在班级群分享材料并完成「班级打卡」即视为完成。与「风险事件登记」形成事前预防 + 事后记录闭环。
+        </div>
+      </div>
+    </div>
+
+    <!-- 详情页 -->
+    <div class="view" id="viewDetail">
+      <div class="detail-back">
+        <button type="button" class="back-btn" id="btnBack"><i class="fas fa-arrow-left"></i> 返回任务列表</button>
+        <span class="crumb">安全教育 / <b id="crumbName">—</b></span>
+      </div>
+
+      <div class="panel">
+        <div class="detail-head">
+          <div class="dh-main">
+            <div class="big-icon" id="detailIcon"><i class="fas fa-person-running"></i></div>
+            <div>
+              <h2 id="detailTitle">—</h2>
+              <div class="sub-meta" id="detailSub">—</div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-warn btn-sm" id="btnRemind"><i class="fas fa-bullhorn"></i> 提醒未完成班级</button>
+          </div>
+        </div>
+        <div class="detail-body">
+          <div class="section-title"><i class="fas fa-align-left"></i> 任务说明</div>
+          <div class="desc-box" id="detailDesc">—</div>
+
+          <div class="section-title"><i class="fas fa-photo-film"></i> 学习材料</div>
+          <div class="material-list" id="detailMaterials"></div>
+
+          <div class="section-title"><i class="fas fa-school"></i> 班级完成进度 <span id="classProgressHint" style="font-weight:400;color:#88a3b5;font-size:12px"></span></div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>班级</th>
+                  <th>班主任</th>
+                  <th>完成状态</th>
+                  <th>完成时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="classList"></tbody>
+            </table>
+          </div>
+          <div class="pager" id="classProgressPager" data-b-end-pager data-page-size="10"></div>
+        </div>
+        <div class="hint-row">
+          <i class="fas fa-circle-info"></i>
+          查看任务详情与各班级完成情况；「提醒」将向未完成班级的班主任发送通知。
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="学平险-学校端-sidebar.js"></script>
+<script src="b-end-pager.js"></script>
+<script>initSchoolSidebar("safetyEdu");</script>
+<script>
+  /* ====== 数据 ====== */
+  var TASKS = [
+    {
+      id:'SE-2026-01', icon:'person-running', iconCls:'', title:'春季运动会安全须知', grade:'全校', deadline:'2026-05-25',
+      status:'doing', desc:'涵盖热身拉伸、器材检查、突发不适处置与紧急联络流程，请在运动会前 3 日内完成班级学习并组织签字确认。',
+      materials:[
+        {type:'video', name:'运动会安全微课（8 分钟）', meta:'平台提供 · MP4'},
+        {type:'pdf', name:'班级安全 checklist', meta:'可打印张贴'},
+        {type:'link', name:'家长告知书模板', meta:'DOCX · 可编辑'}
+      ],
+      classes:[
+        {id:'g3-1',name:'高三(1)班',teacher:'李建华',done:true,time:'2026-05-18'},
+        {id:'g3-2',name:'高三(2)班',teacher:'陈志强',done:true,time:'2026-05-17'},
+        {id:'g1-3',name:'高一(3)班',teacher:'王芳',done:false,time:'—'},
+        {id:'g1-2',name:'高一(2)班',teacher:'孙宁',done:true,time:'2026-05-19'},
+        {id:'g1-1',name:'高一(1)班',teacher:'郑国华',done:false,time:'—'},
+        {id:'c3-2',name:'初三(2)班',teacher:'吴海',done:false,time:'—'},
+        {id:'c2-4',name:'初二(4)班',teacher:'郭静',done:true,time:'2026-05-16'},
+        {id:'c1-1',name:'初一(1)班',teacher:'许涛',done:true,time:'2026-05-15'}
+      ]
+    },
+    {
+      id:'SE-2026-02', icon:'fire', iconCls:'warn', title:'食堂与实验室消防安全', grade:'初中 / 高中', deadline:'2026-05-31',
+      status:'doing', desc:'结合近期食堂烫伤事件复盘，强化用火用电规范与灭火器使用要点。',
+      materials:[
+        {type:'video', name:'灭火器使用实操演示', meta:'5 分钟'},
+        {type:'pdf', name:'消防疏散路线图（本校版）', meta:'PDF'}
+      ],
+      classes:[
+        {id:'g2-1',name:'高二(1)班',teacher:'王芳',done:true,time:'2026-05-20'},
+        {id:'g2-2',name:'高二(2)班',teacher:'赵敏',done:false,time:'—'},
+        {id:'g1-3',name:'高一(3)班',teacher:'王芳',done:false,time:'—'},
+        {id:'c3-3',name:'初三(3)班',teacher:'马涛',done:true,time:'2026-05-14'}
+      ]
+    },
+    {
+      id:'SE-2026-03', icon:'bus', iconCls:'info', title:'上下学交通安全', grade:'全校', deadline:'2026-04-30',
+      status:'overdue', desc:'强调斑马线、头盔佩戴、校车乘车规范；逾期班级请尽快补学并打卡。',
+      materials:[
+        {type:'video', name:'交通安全动画（中学版）', meta:'6 分钟'},
+        {type:'video', name:'交通安全动画（中学版）', meta:'7 分钟'},
+        {type:'link', name:'班级承诺书电子签', meta:'在线表单'}
+      ],
+      classes:[
+        {id:'g3-3',name:'高三(3)班',teacher:'刘文',done:true,time:'2026-04-28'},
+        {id:'g1-3',name:'高一(3)班',teacher:'王芳',done:false,time:'—'},
+        {id:'c1-1',name:'初一(1)班',teacher:'许涛',done:true,time:'2026-04-25'}
+      ]
+    },
+    {
+      id:'SE-2025-12', icon:'heart-pulse', iconCls:'', title:'冬季呼吸道传染病预防', grade:'全校', deadline:'2025-12-20',
+      status:'done', desc:'已完成本学期全部班级学习打卡。',
+      materials:[
+        {type:'pdf', name:'冬季防病家长一封信', meta:'PDF'}
+      ],
+      classes:[
+        {id:'g3-1',name:'高三(1)班',teacher:'李建华',done:true,time:'2025-12-10'},
+        {id:'g1-3',name:'高一(3)班',teacher:'王芳',done:true,time:'2025-12-08'},
+        {id:'c2-4',name:'初二(4)班',teacher:'郭静',done:true,time:'2025-12-12'}
+      ]
+    }
+  ];
+
+  /* #原型说明：任务与班级进度按 SchoolAccount.role 过滤 */
+  var ROLE_MAP = {
+    admin:{filterClass:()=>true,filterTask:t=>t},
+    grade:{filterClass:c=>c.id.startsWith('g1-'),filterTask:t=>true},
+    class:{filterClass:c=>c.id==='g1-3',filterTask:t=>t.classes.some(c=>c.id==='g1-3')}
+  };
+  function getRole(){ return (window.SchoolAccount && SchoolAccount.role) || 'admin'; }
+
+  var STATUS_LABEL = {doing:'进行中',done:'已完成',overdue:'已逾期'};
+  var MAT_ICON = {video:'fa-circle-play',pdf:'fa-file-pdf',link:'fa-link'};
+
+  var currentView = 'list';
+  var currentTask = null;
+  var filters = {kw:'', status:''};
+
+  function visibleClassesForTask(task){
+    return task.classes.filter(ROLE_MAP[getRole()].filterClass);
+  }
+  function taskProgress(task){
+    var cls = visibleClassesForTask(task);
+    if(!cls.length) return {done:0,total:0,pct:0};
+    var done = cls.filter(c=>c.done).length;
+    return {done:done, total:cls.length, pct:Math.round(done/cls.length*100)};
+  }
+  function taskStatus(task){
+    var p = taskProgress(task);
+    if(task.status==='overdue' && p.pct<100) return 'overdue';
+    if(p.pct===100) return 'done';
+    return 'doing';
+  }
+
+  function visibleTasks(){
+    return TASKS.filter(ROLE_MAP[getRole()].filterTask).filter(t=>{
+      if(filters.status && taskStatus(t)!==filters.status) return false;
+      if(filters.kw && !t.title.includes(filters.kw)) return false;
+      return true;
+    });
+  }
+
+  function renderKpi(){
+    var tasks = visibleTasks();
+    var doneCls = 0, pendingCls = 0;
+    tasks.forEach(t=>{
+      var p = taskProgress(t);
+      doneCls += p.done;
+      pendingCls += (p.total - p.done);
+    });
+    document.getElementById('kpiTasks').textContent = tasks.length;
+    document.getElementById('kpiDone').innerHTML = doneCls+' <small>班次</small>';
+    document.getElementById('kpiPending').innerHTML = pendingCls+' <small>待跟进</small>';
+  }
+
+  function showList(){
+    currentView = 'list';
+    document.getElementById('viewList').classList.add('active');
+    document.getElementById('viewDetail').classList.remove('active');
+    document.getElementById('topSub').textContent = '平台下发安全主题 · 按班级组织学习与打卡';
+    if(location.search) history.replaceState(null,'',location.pathname);
+  }
+
+  function showDetail(id){
+    var t = TASKS.find(x=>x.id===id);
+    if(!t || !ROLE_MAP[getRole()].filterTask(t)){ alert('当前账号无权查看该任务'); return; }
+    currentTask = t;
+    currentView = 'detail';
+    document.getElementById('viewList').classList.remove('active');
+    document.getElementById('viewDetail').classList.add('active');
+    document.getElementById('crumbName').textContent = t.title;
+    renderDetail();
+    history.replaceState(null,'',location.pathname+'?id='+encodeURIComponent(id));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function renderList(){
+    renderKpi();
+    var list = visibleTasks();
+    document.getElementById('listSummary').textContent = '共 '+list.length+' 项任务';
+    document.getElementById('taskList').innerHTML = list.map(t=>{
+      var p = taskProgress(t);
+      var st = taskStatus(t);
+      var barCls = p.pct>=80?'':(p.pct>=50?' warn':' warn');
+      var pctCls = p.pct>=80?'':(p.pct>=50?' warn':' warn');
+      return '<tr class="clickable" data-id="'+t.id+'">'+
+        '<td><div class="topic-cell"><div class="topic-icon '+t.iconCls+'"><i class="fas fa-'+t.icon+'"></i></div><div><b>'+t.title+'</b><small>'+t.id+'</small></div></div></td>'+
+        '<td>'+t.grade+'</td>'+
+        '<td>'+t.deadline+'</td>'+
+        '<td><div class="progress-mini"><div class="bar'+barCls+'"><div style="width:'+p.pct+'%"></div></div><span class="pct'+pctCls+'">'+p.done+'/'+p.total+'</span></div></td>'+
+        '<td><span class="pill '+st+'">'+STATUS_LABEL[st]+'</span></td>'+
+        '<td><button type="button" class="link-btn" data-id="'+t.id+'">查看 →</button></td>'+
+      '</tr>';
+    }).join('') || '<tr><td colspan="6" style="text-align:center;padding:36px;color:#88a3b5">暂无任务</td></tr>';
+
+    document.querySelectorAll('#taskList tr.clickable').forEach(tr=>{
+      tr.addEventListener('click',()=>showDetail(tr.getAttribute('data-id')));
+    });
+    document.querySelectorAll('#taskList .link-btn').forEach(btn=>{
+      btn.addEventListener('click',e=>{ e.stopPropagation(); showDetail(btn.getAttribute('data-id')); });
+    });
+    if(window.BEndPager) BEndPager.remount('#taskListPager');
+  }
+
+  function renderDetail(){
+    var t = currentTask;
+    var p = taskProgress(t);
+    var st = taskStatus(t);
+    var iconEl = document.getElementById('detailIcon');
+    iconEl.className = 'big-icon'+(t.iconCls?' '+t.iconCls:'');
+    iconEl.innerHTML = '<i class="fas fa-'+t.icon+'"></i>';
+    document.getElementById('detailTitle').textContent = t.title;
+    document.getElementById('detailSub').innerHTML =
+      '<span><i class="fas fa-hashtag"></i>'+t.id+'</span>'+
+      '<span><i class="fas fa-graduation-cap"></i>'+t.grade+'</span>'+
+      '<span><i class="far fa-calendar"></i>截止 '+t.deadline+'</span>'+
+      '<span><i class="fas fa-chart-simple"></i>完成 '+p.done+'/'+p.total+' 班</span>'+
+      '<span class="pill '+st+'">'+STATUS_LABEL[st]+'</span>';
+    document.getElementById('detailDesc').textContent = t.desc;
+    document.getElementById('detailMaterials').innerHTML = t.materials.map(m=>
+      '<div class="material-item"><div class="mi-icon"><i class="fas '+MAT_ICON[m.type]+'"></i></div>'+
+      '<div class="mi-body"><b>'+m.name+'</b><small>'+m.meta+'</small></div>'+
+      '<a href="#">查看 / 下载</a></div>'
+    ).join('');
+
+    var cls = visibleClassesForTask(t);
+    document.getElementById('classProgressHint').textContent = '（共 '+cls.length+' 个班）';
+    document.getElementById('classList').innerHTML = cls.map(c=>{
+      var pill = c.done ? '<span class="pill done">已完成</span>' : '<span class="pill pending">未完成</span>';
+      var act = c.done ? '<span style="color:#88a3b5;font-size:12px">—</span>' : '<button type="button" class="link-btn remind-cls" data-cls="'+c.name+'">提醒班主任</button>';
+      return '<tr><td><b>'+c.name+'</b></td><td>'+c.teacher+'</td><td>'+pill+'</td><td>'+c.time+'</td><td>'+act+'</td></tr>';
+    }).join('') || '<tr><td colspan="5" style="text-align:center;padding:24px;color:#88a3b5">暂无班级数据</td></tr>';
+
+    document.querySelectorAll('.remind-cls').forEach(btn=>btn.addEventListener('click',()=>{
+      alert('已向 '+btn.getAttribute('data-cls')+' 班主任发送学习提醒');
+    }));
+
+    var pending = cls.filter(c=>!c.done).length;
+    document.getElementById('btnRemind').onclick = ()=>{
+      if(!pending) { alert('相关班级均已完成'); return; }
+      alert('已向 '+pending+' 个未完成班级发送提醒');
+    };
+    if(window.BEndPager) BEndPager.remount('#classProgressPager');
+  }
+
+  initSchoolUserMenu('#userMenuMount', function(){
+    renderList();
+    if(currentView==='detail'){
+      if(!currentTask || !ROLE_MAP[getRole()].filterTask(currentTask)) showList();
+      else renderDetail();
+    }
+  });
+  document.getElementById('filterKw').addEventListener('input',e=>{ filters.kw=e.target.value.trim(); renderList(); });
+  document.getElementById('filterStatus').addEventListener('change',e=>{ filters.status=e.target.value; renderList(); });
+  document.getElementById('btnBack').addEventListener('click',showList);
+  document.getElementById('btnExport').addEventListener('click',()=>alert('已导出安全教育进度表'));
+
+  renderList();
+  var initId = new URLSearchParams(location.search).get('id');
+  if(initId && TASKS.find(t=>t.id===initId)) showDetail(initId);
+  else showList();
+</script>
+</body>
+</html>

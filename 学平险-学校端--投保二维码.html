@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学平险·学校端 | 投保二维码</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter','PingFang SC',sans-serif;background:#f3f6fc;color:#1E2F3E;font-size:14px}
+    .app-wrapper{display:flex;min-height:100vh}
+    .main-content{flex:1;padding:1.5rem 2rem 2rem;overflow-x:auto}
+    .top-bar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:1rem;flex-wrap:wrap}
+    .welcome h2{font-size:1.5rem;font-weight:600;display:flex;align-items:center;gap:10px}
+    .welcome p{color:#5e7f92;font-size:.85rem;margin-top:4px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .btn{padding:8px 16px;border-radius:10px;font-size:13px;cursor:pointer;border:none;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+    .btn-primary{background:#1C6E5C;color:#fff}
+    .btn-primary:hover{background:#155a4a}
+    .btn-outline{background:#fff;border:1px solid #cbdde6;color:#4c6a7e}
+    .btn-outline:hover{border-color:#1C6E5C;color:#1C6E5C}
+
+    .layout{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:flex-start}
+    @media(max-width:960px){.layout{grid-template-columns:1fr}}
+    .panel{background:#fff;border:1px solid #eef2f8;border-radius:18px;padding:20px;box-shadow:0 4px 10px rgba(0,0,0,.02)}
+    .panel h3{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .panel h3 i{color:#1C6E5C}
+
+    /* —— 左侧：范围 + 海报样式选择 —— */
+    .scope-block{margin-bottom:18px}
+    .scope-hd{font-size:12px;color:#88a3b5;margin-bottom:6px;font-weight:500;letter-spacing:.02em}
+    .scope-tabs{display:flex;background:#fafbfc;border:1px solid #eef2f8;border-radius:10px;padding:4px;gap:4px}
+    .scope-tabs button{flex:1;border:none;background:transparent;padding:7px 8px;font-size:13px;color:#6792a8;border-radius:7px;cursor:pointer;font-weight:500}
+    .scope-tabs button.active{background:#1C6E5C;color:#fff;font-weight:600}
+    .scope-pick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+    .scope-pick select{padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;background:#fff;color:#1E2F3E;width:100%}
+    .scope-pick select:disabled{background:#fafbfc;color:#88a3b5;cursor:not-allowed}
+    .scope-summary{margin-top:10px;padding:9px 12px;background:#eef6f3;border:1px solid #b8d9ce;border-radius:8px;font-size:12px;color:#1C6E5C;line-height:1.6}
+    .scope-summary b{color:#1C6E5C}
+
+    .validity-block{margin-bottom:18px;padding-top:4px;border-top:1px solid #eef2f8}
+    .validity-dates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+    .validity-dates .field label{display:block;font-size:11px;color:#88a3b5;margin-bottom:4px}
+    .validity-dates input[type=date]{width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;background:#fff;color:#1E2F3E}
+    .validity-tip{margin-top:8px;font-size:11px;color:#88a3b5;line-height:1.5}
+    .validity-tip.warn{color:#c45656}
+
+    .style-list{display:flex;flex-direction:column;gap:10px}
+    .style-card{display:flex;gap:12px;padding:10px;border:1px solid #eef2f8;border-radius:12px;cursor:pointer;background:#fff;transition:.15s;align-items:center}
+    .style-card:hover{border-color:#cbdde6}
+    .style-card.active{border-color:#1C6E5C;background:#f5fbf8;box-shadow:0 0 0 3px rgba(28,110,92,.08)}
+    .style-thumb{width:60px;height:78px;border-radius:8px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:600;text-align:center;line-height:1.3;padding:6px;position:relative}
+    .style-thumb .dot{width:24px;height:24px;background:#fff;border-radius:4px;margin-bottom:6px}
+    .style-info{flex:1;min-width:0}
+    .style-info .name{font-size:13px;font-weight:600;color:#1E2F3E;display:flex;align-items:center;gap:6px}
+    .style-info .name i.check{color:#1C6E5C;font-size:12px;opacity:0;transition:.15s}
+    .style-card.active .style-info .name i.check{opacity:1}
+    .style-info .desc{font-size:11px;color:#88a3b5;margin-top:3px;line-height:1.5}
+
+    /* —— 右侧：海报预览 —— */
+    .preview-wrap{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:14px}
+    .preview-actions{display:flex;gap:8px;align-self:flex-end}
+    .poster{width:100%;max-width:380px;border-radius:20px;padding:28px 24px;text-align:center;box-shadow:0 8px 24px rgba(28,46,71,.08);position:relative;overflow:hidden}
+    .poster .school{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:14px;margin-bottom:8px}
+    .poster .term{display:inline-block;padding:3px 12px;border-radius:999px;font-size:11px;font-weight:600;margin-bottom:14px}
+    .poster h2{font-size:1.5rem;font-weight:800;letter-spacing:.04em;margin-bottom:6px}
+    .poster .sub{font-size:13px;margin-bottom:6px;opacity:.85}
+    .poster .scope-tag{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;margin-top:4px}
+    .qr-frame{width:220px;height:220px;margin:18px auto 12px;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;padding:14px;position:relative}
+    .qr-img{width:100%;height:100%;background:
+      conic-gradient(from 0deg at 50% 50%, #1E2F3E 0 90deg,transparent 90deg 180deg,#1E2F3E 180deg 270deg,transparent 270deg 360deg);
+      background-size:8px 8px;border-radius:8px;position:relative}
+    .qr-img::before,.qr-img::after,.qr-img>span{content:'';position:absolute;width:46px;height:46px;background:#fff;border:6px solid #1E2F3E;border-radius:8px}
+    .qr-img::before{top:6px;left:6px}
+    .qr-img::after{top:6px;right:6px}
+    .qr-img>span{bottom:6px;left:6px}
+    .qr-mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:40px;height:40px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+    .poster .scan-tip{font-size:13px;font-weight:600;margin-top:4px}
+    .poster .validity{font-size:12px;margin-top:12px;padding:8px 14px;border-radius:8px;display:inline-block;line-height:1.6}
+    .poster .deadline{font-size:12px;margin-top:8px;padding:0;background:transparent;border:none;display:block;opacity:.85}
+    .poster .foot{font-size:11px;margin-top:14px;opacity:.7}
+
+    /* 主题：清新绿 */
+    .poster.theme-green{background:linear-gradient(160deg,#eaf7f1 0%,#ffffff 60%);color:#1C6E5C;border:2px solid #b8d9ce}
+    .poster.theme-green .term{background:#1C6E5C;color:#fff}
+    .poster.theme-green .scope-tag{background:#fff;color:#1C6E5C;border:1px solid #b8d9ce}
+    .poster.theme-green .validity{background:#fff;color:#1C6E5C;border:1px solid #b8d9ce}
+    .poster.theme-green .deadline{color:#1C6E5C}
+    .poster.theme-green .qr-mid{color:#1C6E5C}
+    .style-thumb.theme-green{background:linear-gradient(160deg,#eaf7f1 0%,#ffffff 60%);color:#1C6E5C;border:1px solid #b8d9ce}
+
+    /* 主题：暖橙 */
+    .poster.theme-orange{background:linear-gradient(160deg,#fff5e6 0%,#ffffff 60%);color:#a85a1f;border:2px solid #f5c98f}
+    .poster.theme-orange .term{background:#e07a23;color:#fff}
+    .poster.theme-orange .scope-tag{background:#fff;color:#a85a1f;border:1px solid #f5c98f}
+    .poster.theme-orange .validity{background:#fff;color:#a85a1f;border:1px solid #f5c98f}
+    .poster.theme-orange .deadline{color:#a85a1f}
+    .poster.theme-orange .qr-mid{color:#e07a23}
+    .style-thumb.theme-orange{background:linear-gradient(160deg,#fff5e6 0%,#ffffff 60%);color:#a85a1f;border:1px solid #f5c98f}
+
+    /* 主题：商务蓝 */
+    .poster.theme-blue{background:linear-gradient(160deg,#1E2F3E 0%,#2c4a6b 100%);color:#fff;border:2px solid #2c4a6b}
+    .poster.theme-blue .term{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)}
+    .poster.theme-blue .scope-tag{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)}
+    .poster.theme-blue .validity{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)}
+    .poster.theme-blue .deadline{color:rgba(255,255,255,.9)}
+    .poster.theme-blue .qr-mid{color:#1E2F3E}
+    .style-thumb.theme-blue{background:linear-gradient(160deg,#1E2F3E 0%,#2c4a6b 100%);color:#fff;border:1px solid #2c4a6b}
+
+    .hint{font-size:12px;color:#88a3b5;line-height:1.7;margin-top:14px;padding:10px 12px;background:#fafbfc;border:1px solid #eef2f8;border-radius:10px;width:100%;max-width:380px}
+    .hint i{color:#1C6E5C;margin-right:4px}
+
+    @media print{
+      .sidebar,.top-bar,.panel.scope-panel,.preview-actions,.hint{display:none!important}
+      .main-content{padding:0}
+      .layout{grid-template-columns:1fr}
+      .poster{border:2px solid #000;box-shadow:none;max-width:100%}
+    }
+  </style>
+  <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="学平险-学校端-sidebar.css">
+  <link rel="stylesheet" href="学平险-学校端-b-end.css">
+</head>
+<body>
+<div class="app-wrapper">
+  <div class="sidebar" id="schoolSidebar"></div>
+  <main class="main-content">
+
+    <div class="top-bar">
+      <div class="welcome">
+        <h2><i class="fas fa-qrcode" style="color:#1C6E5C"></i> 投保二维码</h2>
+        <p>按范围生成投保二维码 · 选择海报风格 · 下载或打印分发</p>
+      </div>
+      <div class="actions">
+        <div id="userMenuMount"></div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- 左：范围 + 海报风格 -->
+      <div class="panel scope-panel">
+        <h3><i class="fas fa-bullseye"></i> 二维码范围</h3>
+        <div class="scope-block">
+          <div class="scope-hd">生成范围</div>
+          <div class="scope-tabs" id="scopeTabs">
+            <button type="button" data-scope="school" class="active">全校</button>
+            <button type="button" data-scope="grade">年级</button>
+            <button type="button" data-scope="class">班级</button>
+          </div>
+          <div class="scope-pick">
+            <select id="gradeSel" disabled>
+              <option value="">选择年级</option>
+            </select>
+            <select id="classSel" disabled>
+              <option value="">选择班级</option>
+            </select>
+          </div>
+          <div class="scope-summary" id="scopeSummary">
+            <b>当前：</b>立德中学 · 全校通用二维码
+          </div>
+        </div>
+
+        <div class="validity-block">
+          <div class="scope-hd">二维码有效时间</div>
+          <div class="validity-dates">
+            <div class="field">
+              <label for="validFrom">生效日期</label>
+              <input type="date" id="validFrom" value="2026-03-01">
+            </div>
+            <div class="field">
+              <label for="validTo">失效日期</label>
+              <input type="date" id="validTo" value="2026-05-31">
+            </div>
+          </div>
+          <p class="validity-tip" id="validityTip">过期后二维码将失效，家长扫码将无法进入投保页。</p>
+        </div>
+
+        <h3 style="margin-top:8px"><i class="fas fa-palette"></i> 海报风格</h3>
+        <div class="style-list" id="styleList">
+          <div class="style-card active" data-theme="green">
+            <div class="style-thumb theme-green"><div class="dot"></div>清新绿</div>
+            <div class="style-info">
+              <div class="name">清新绿 · 默认 <i class="fas fa-check check"></i></div>
+              <div class="desc">校园通用色调，适合大多数场景</div>
+            </div>
+          </div>
+          <div class="style-card" data-theme="orange">
+            <div class="style-thumb theme-orange"><div class="dot"></div>暖橙</div>
+            <div class="style-info">
+              <div class="name">暖橙 · 醒目 <i class="fas fa-check check"></i></div>
+              <div class="desc">家长群分享、张贴海报更显眼</div>
+            </div>
+          </div>
+          <div class="style-card" data-theme="blue">
+            <div class="style-thumb theme-blue"><div class="dot"></div>商务蓝</div>
+            <div class="style-info">
+              <div class="name">商务蓝 · 稳重 <i class="fas fa-check check"></i></div>
+              <div class="desc">深色背景，正式公告、文件附件适用</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右：海报预览 -->
+      <div class="preview-wrap">
+        <div class="preview-actions">
+          <button class="btn btn-outline" id="btnDownload"><i class="fas fa-download"></i> 下载海报</button>
+          <button class="btn btn-primary" id="btnPrint"><i class="fas fa-print"></i> 打印</button>
+        </div>
+
+        <div class="poster theme-green" id="poster">
+          <div class="school"><i class="fas fa-shield-heart"></i> 立德中学</div>
+          <h2>扫码投保</h2>
+          <span class="scope-tag" id="posterScopeTag">全校通用</span>
+          <div class="qr-frame">
+            <div class="qr-img"><span></span><div class="qr-mid"><i class="fas fa-shield-heart"></i></div></div>
+          </div>
+          <div class="scan-tip">扫码立即投保 极速出单</div>
+          <div class="validity" id="posterValidity"><i class="fas fa-calendar-check"></i> 有效时间：2026-03-01 至 2026-05-31</div>
+          <div class="deadline" id="posterDeadline"><i class="fas fa-clock"></i> 投保截止：2026-05-31</div>
+          <div class="foot">投保平台 · 学平险</div>
+        </div>
+
+        <div class="hint">
+          <i class="fas fa-circle-info"></i>
+          二维码生成后会带上范围与有效时间；过期后扫码将无法投保。投保完成后数据自动回传到「班级投保名单」。
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="学平险-学校端-sidebar.js"></script>
+<script>initSchoolSidebar("qrcode");</script>
+<script>initSchoolUserMenu('#userMenuMount');</script>
+<script>
+  /* #原型说明：年级 / 班级数据，按当前账号权限范围过滤；真实项目应取自「组织与成员」服务 */
+  var ORG = {
+    '高三年级':['高三(1)班','高三(2)班','高三(3)班'],
+    '高二年级':['高二(1)班','高二(2)班'],
+    '高一年级':['高一(1)班','高一(2)班','高一(3)班'],
+    '初三年级':['初三(2)班','初三(3)班'],
+    '初二年级':['初二(4)班'],
+    '初一年级':['初一(1)班']
+  };
+
+  var SCHOOL_NAME = '立德中学';
+  var state = { scope:'school', grade:'', cls:'', theme:'green', validFrom:'2026-03-01', validTo:'2026-05-31' };
+
+  var gradeSel = document.getElementById('gradeSel');
+  var classSel = document.getElementById('classSel');
+  var summary = document.getElementById('scopeSummary');
+  var posterScopeTag = document.getElementById('posterScopeTag');
+  var posterValidity = document.getElementById('posterValidity');
+  var posterDeadline = document.getElementById('posterDeadline');
+  var poster = document.getElementById('poster');
+  var validFrom = document.getElementById('validFrom');
+  var validTo = document.getElementById('validTo');
+  var validityTip = document.getElementById('validityTip');
+
+  function fmtDateShort(iso){
+    if(!iso) return '—';
+    return iso.replace(/-/g, '.');
+  }
+  function syncValidityFromInputs(){
+    state.validFrom = validFrom.value;
+    state.validTo = validTo.value;
+  }
+  function validityError(){
+    if(!state.validFrom || !state.validTo) return '请设置完整的有效时间';
+    if(state.validFrom > state.validTo) return '失效日期不能早于生效日期';
+    return '';
+  }
+
+  /* 初始化年级 */
+  Object.keys(ORG).forEach(function(g){
+    var op = document.createElement('option'); op.value=g; op.textContent=g;
+    gradeSel.appendChild(op);
+  });
+
+  function refreshClasses(){
+    classSel.innerHTML = '<option value="">选择班级</option>';
+    if(!state.grade){ classSel.disabled = true; return; }
+    (ORG[state.grade]||[]).forEach(function(c){
+      var op = document.createElement('option'); op.value=c; op.textContent=c;
+      classSel.appendChild(op);
+    });
+    classSel.disabled = (state.scope!=='class');
+  }
+
+  function updateScopeSelects(){
+    gradeSel.disabled = (state.scope==='school');
+    classSel.disabled = (state.scope!=='class' || !state.grade);
+    if(state.scope==='school'){
+      state.grade = ''; state.cls = '';
+      gradeSel.value = ''; classSel.innerHTML='<option value="">选择班级</option>';
+    } else if(state.scope==='grade'){
+      state.cls = '';
+      classSel.innerHTML='<option value="">选择班级</option>';
+    }
+  }
+
+  function render(){
+    var scopeText, tagText;
+    if(state.scope==='school'){
+      scopeText = SCHOOL_NAME + ' · 全校通用二维码';
+      tagText = '全校通用';
+    } else if(state.scope==='grade'){
+      if(!state.grade){
+        scopeText = '请选择年级';
+        tagText = '待选择年级';
+      } else {
+        scopeText = SCHOOL_NAME + ' · ' + state.grade + '专属二维码';
+        tagText = state.grade;
+      }
+    } else {
+      if(!state.grade){
+        scopeText = '请选择年级';
+        tagText = '待选择班级';
+      } else if(!state.cls){
+        scopeText = '请选择班级';
+        tagText = '待选择班级';
+      } else {
+        scopeText = SCHOOL_NAME + ' · ' + state.cls + '专属二维码';
+        tagText = state.cls;
+      }
+    }
+    var err = validityError();
+    var validLine = '有效 ' + fmtDateShort(state.validFrom) + ' ～ ' + fmtDateShort(state.validTo);
+    summary.innerHTML = '<b>当前：</b>' + scopeText + '<br><span style="opacity:.9">' + validLine + '</span>';
+    posterScopeTag.textContent = tagText;
+    posterValidity.innerHTML = '<i class="fas fa-calendar-check"></i> 有效时间：' + fmtDateShort(state.validFrom) + ' 至 ' + fmtDateShort(state.validTo);
+    posterDeadline.innerHTML = '<i class="fas fa-clock"></i> 投保截止：' + fmtDateShort(state.validTo);
+
+    validityTip.className = 'validity-tip' + (err ? ' warn' : '');
+    validityTip.textContent = err || '过期后二维码将失效，家长扫码将无法进入投保页。';
+
+    poster.className = 'poster theme-' + state.theme;
+  }
+
+  /* 范围 tab */
+  document.querySelectorAll('#scopeTabs button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#scopeTabs button').forEach(function(b){ b.classList.toggle('active', b===btn); });
+      state.scope = btn.getAttribute('data-scope');
+      updateScopeSelects();
+      refreshClasses();
+      render();
+    });
+  });
+
+  gradeSel.addEventListener('change', function(){
+    state.grade = gradeSel.value;
+    state.cls = '';
+    refreshClasses();
+    render();
+  });
+  classSel.addEventListener('change', function(){
+    state.cls = classSel.value;
+    render();
+  });
+
+  validFrom.addEventListener('change', function(){ syncValidityFromInputs(); render(); });
+  validTo.addEventListener('change', function(){ syncValidityFromInputs(); render(); });
+
+  /* 海报风格 */
+  document.querySelectorAll('#styleList .style-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      document.querySelectorAll('#styleList .style-card').forEach(function(c){ c.classList.toggle('active', c===card); });
+      state.theme = card.getAttribute('data-theme');
+      render();
+    });
+  });
+
+  /* 下载 / 打印 */
+  function currentScopeLabel(){
+    if(state.scope==='school') return SCHOOL_NAME + '_全校';
+    if(state.scope==='grade')  return SCHOOL_NAME + '_' + (state.grade || '请先选择年级');
+    return SCHOOL_NAME + '_' + (state.cls || '请先选择班级');
+  }
+  function validateBeforeExport(){
+    if((state.scope==='grade' && !state.grade) || (state.scope==='class' && (!state.grade||!state.cls))){
+      alert('请先选择对应的年级 / 班级');
+      return false;
+    }
+    var err = validityError();
+    if(err){ alert(err); return false; }
+    return true;
+  }
+  document.getElementById('btnDownload').addEventListener('click', function(){
+    if(!validateBeforeExport()) return;
+    alert('已下载海报：' + currentScopeLabel() + '_学平险二维码.png\n有效时间：' + fmtDateShort(state.validFrom) + ' 至 ' + fmtDateShort(state.validTo));
+  });
+  document.getElementById('btnPrint').addEventListener('click', function(){
+    if(!validateBeforeExport()) return;
+    window.print();
+  });
+
+  render();
+</script>
+</body>
+</html>

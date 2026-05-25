@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学平险·学校端 | 登录</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', 'PingFang SC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      background: #f3f6fc;
+      color: #1E2F3E;
+      font-size: 14px;
+    }
+    .wire-note {
+      position: fixed; top: 12px; left: 12px; right: 12px; max-width: 520px; z-index: 10;
+      background: #fffbe6; border: 1px dashed #d9b559; padding: 10px 14px; border-radius: 8px;
+      color: #856404; font-size: 12px; line-height: 1.5;
+    }
+    .brand-panel {
+      flex: 1;
+      background: linear-gradient(145deg, #1C6E5C 0%, #2d8f78 45%, #1a4d42 100%);
+      color: #fff;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .brand-panel::after {
+      content: "";
+      position: absolute;
+      width: 400px; height: 400px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50%;
+      right: -120px; bottom: -80px;
+    }
+    .brand-logo {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 2.5rem;
+    }
+    .brand-logo .icon {
+      width: 48px; height: 48px; background: rgba(255,255,255,0.2);
+      border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .brand-logo h1 { font-size: 1.6rem; font-weight: 700; }
+    .brand-panel p { opacity: 0.9; line-height: 1.7; max-width: 360px; margin-bottom: 1.5rem; }
+    .brand-features { list-style: none; }
+    .brand-features li {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 12px; font-size: 13px; opacity: 0.95;
+    }
+    .login-panel {
+      width: 100%; max-width: 480px;
+      background: #fff;
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: -4px 0 24px rgba(0,0,0,0.04);
+    }
+    .step { display: none; }
+    .step.active { display: block; }
+    .login-panel h2 { font-size: 1.35rem; margin-bottom: 6px; }
+    .login-panel .sub { color: #5e7f92; font-size: 13px; margin-bottom: 24px; }
+    .form-row { margin-bottom: 16px; }
+    .form-row label { display: block; font-size: 12px; color: #6792a8; margin-bottom: 6px; }
+    .form-row input { width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; }
+    .form-row input:focus { outline: none; border-color: #1C6E5C; box-shadow: 0 0 0 2px rgba(28,110,92,0.12); }
+    .pwd-wrap { position: relative; }
+    .pwd-wrap input { padding-right: 42px; }
+    .pwd-toggle {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      border: none; background: none; color: #88a3b5; cursor: pointer; font-size: 14px;
+    }
+  .form-extra {
+      display: flex; justify-content: space-between; align-items: center;
+      margin: -4px 0 12px; font-size: 13px;
+    }
+    .form-extra label { display: flex; align-items: center; gap: 6px; color: #6792a8; cursor: pointer; }
+    .form-extra a { color: #1C6E5C; text-decoration: none; }
+    .form-extra a:hover { text-decoration: underline; }
+    .btn-primary {
+      width: 100%; padding: 12px; border: none; border-radius: 10px;
+      background: #1C6E5C; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px;
+    }
+    .btn-primary:hover { background: #165a4b; }
+    .identity-list { display: flex; flex-direction: column; gap: 10px; }
+    .identity-card {
+      border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px;
+      cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 12px;
+    }
+    .identity-card:hover, .identity-card.selected {
+      border-color: #1C6E5C; background: #eef6f3;
+    }
+    .identity-card .avatar {
+      width: 40px; height: 40px; border-radius: 50%; background: #1C6E5C; color: #fff;
+      display: flex; align-items: center; justify-content: center; font-weight: 600;
+    }
+    .identity-card .meta { flex: 1; }
+    .identity-card .meta strong { display: block; font-size: 14px; }
+    .identity-card .meta span { font-size: 12px; color: #88a3b5; }
+    .chip {
+      display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px;
+      border: 1px solid #e2e8f0;
+    }
+    .chip.admin { background: #eef6f3; border-color: #b8d9ce; color: #1C6E5C; }
+    .chip.grade { background: #eef2fa; color: #3d5a80; }
+    .chip.class { background: #fdf6ec; color: #b88230; }
+    .back-link { margin-top: 16px; font-size: 13px; color: #1C6E5C; cursor: pointer; border: none; background: none; }
+    .error-msg { display: none; background: #fef0f0; color: #c45656; padding: 10px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
+    .error-msg.show { display: block; }
+    .demo-hint {
+      margin-top: 20px; padding: 12px; background: #f8fafc; border-radius: 10px;
+      font-size: 12px; color: #88a3b5; line-height: 1.6;
+    }
+    .demo-hint code { background: #eef2f8; padding: 1px 4px; border-radius: 4px; }
+    @media (max-width: 800px) {
+      body { flex-direction: column; }
+      .brand-panel { padding: 2rem; min-height: auto; }
+      .wire-note { position: static; margin: 12px; max-width: none; }
+      .login-panel { max-width: none; }
+    }
+  </style>
+  <link rel="stylesheet" href="b-end-tokens.css">
+  <link rel="stylesheet" href="学平险-学校端-login-b-end.css">
+</head>
+<body>
+<div class="brand-panel">
+    <div class="brand-logo">
+      <div class="icon"><i class="fas fa-shield-heart"></i></div>
+      <h1>立德中学 · 学校端</h1>
+    </div>
+    <p>学平险参保、续保、班级安全与数据洞察，服务校级、年级、班级三级管理。</p>
+    <ul class="brand-features">
+      <li><i class="fas fa-check-circle"></i> 账号由校级管理员在「组织与成员」开通</li>
+      <li><i class="fas fa-check-circle"></i> 账号归属学校租户，数据按岗位范围隔离</li>
+      <li><i class="fas fa-check-circle"></i> 一人多岗时登录后选择当前身份</li>
+    </ul>
+  </div>
+
+  <div class="login-panel">
+    <div class="step active" id="step-login">
+      <h2>欢迎登录</h2>
+      <p class="sub">请使用账号与密码登录学校端</p>
+      <div class="error-msg" id="loginError"></div>
+      <div class="form-row">
+        <label>账号</label>
+        <input type="text" id="account" placeholder="手机号或登录账号" autocomplete="username" value="13800138000">
+      </div>
+      <div class="form-row">
+        <label>密码</label>
+        <div class="pwd-wrap">
+          <input type="password" id="password" placeholder="请输入密码" autocomplete="current-password" value="123456">
+          <button type="button" class="pwd-toggle" id="btnTogglePwd" aria-label="显示密码"><i class="fas fa-eye"></i></button>
+        </div>
+      </div>
+      <div class="form-extra">
+        <label><input type="checkbox" id="remember" checked> 记住账号</label>
+        <a href="#" id="linkForgot" onclick="alert('请联系校级管理员重置密码');return false;">忘记密码？</a>
+      </div>
+      <button type="button" class="btn-primary" id="btnLogin">登录</button>
+      <div class="demo-hint">
+        <b>#原型说明：以下信息仅供联调，不写入正式登录页</b><br>
+        测试账号（密码 <code>123456</code>）：<br>
+        <code>13800138000</code> 张敏 · 校级管理员<br>
+        <code>13900139000</code> 李建华 · 年级组长（高三）<br>
+        <code>13600136000</code> 王芳 · 年级组长+班主任（多身份）<br>
+        <code>18700187000</code> 陈志强 · 班主任（高三2班）<br>
+        <code>18888889999</code> 赵敏 · 多学校（含选校步骤）<br>
+        <a href="学平险-学校端--原型导航.html" style="color:#1C6E5C;">原型导航</a>
+      </div>
+    </div>
+
+    <div class="step" id="step-school">
+      <h2>选择学校</h2>
+      <p class="sub">您的账号关联了多个学校，请选择本次要进入的租户</p>
+      <div class="identity-list" id="schoolList"></div>
+      <button type="button" class="back-link" data-back="login">← 返回重新登录</button>
+    </div>
+
+    <div class="step" id="step-identity">
+      <h2>选择登录身份</h2>
+      <p class="sub" id="identitySub">立德中学 · 请选择本次操作使用的角色与岗位范围</p>
+      <div class="identity-list" id="identityList"></div>
+      <button type="button" class="btn-primary" id="btnEnter" style="margin-top:16px;">进入工作台</button>
+      <button type="button" class="back-link" data-back="school" id="backFromIdentity" style="display:none;">← 更换学校</button>
+    </div>
+  </div>
+
+<script>
+  const DEMO_PASSWORD = '123456';
+
+  const USERS = {
+    '13800138000': {
+      name: '张敏', display: '张敏主任',
+      schools: [{
+        id: 'school_ld', name: '立德中学',
+        identities: [{ role: 'admin', roleLabel: '校级管理员', scope: '全校', chip: 'admin' }]
+      }]
+    },
+    '13900139000': {
+      name: '李建华', display: '李建华',
+      schools: [{
+        id: 'school_ld', name: '立德中学',
+        identities: [{ role: 'grade', roleLabel: '年级组长', scope: '高三年级', chip: 'grade' }]
+      }]
+    },
+    '13600136000': {
+      name: '王芳', display: '王芳',
+      schools: [{
+        id: 'school_ld', name: '立德中学',
+        identities: [
+          { role: 'grade', roleLabel: '年级组长', scope: '高二年级', chip: 'grade' },
+          { role: 'class', roleLabel: '班主任', scope: '高二(1)班', chip: 'class' }
+        ]
+      }]
+    },
+    '18700187000': {
+      name: '陈志强', display: '陈志强',
+      schools: [{
+        id: 'school_ld', name: '立德中学',
+        identities: [{ role: 'class', roleLabel: '班主任', scope: '高三(2)班', chip: 'class' }]
+      }]
+    },
+    '18888889999': {
+      name: '赵敏', display: '赵敏',
+      schools: [
+        { id: 'school_ld', name: '立德中学', identities: [{ role: 'admin', roleLabel: '校级管理员', scope: '全校', chip: 'admin' }] },
+        { id: 'school_ex', name: '实验中学', identities: [{ role: 'grade', roleLabel: '年级组长', scope: '初一年级', chip: 'grade' }] }
+      ]
+    }
+  };
+
+  let session = { account: '', user: null, school: null, identity: null };
+
+  function showStep(id) {
+    document.querySelectorAll('.step').forEach(s => s.classList.toggle('active', s.id === 'step-' + id));
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('loginError');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+  function hideError() { document.getElementById('loginError').classList.remove('show'); }
+
+  function resolveUser(account) {
+    const key = account.trim();
+    return USERS[key] || null;
+  }
+
+  function doLogin() {
+    hideError();
+    const account = document.getElementById('account').value.trim();
+    const password = document.getElementById('password').value;
+    if (!account) { showError('请输入账号'); return; }
+    if (!password) { showError('请输入密码'); return; }
+    if (password !== DEMO_PASSWORD) { showError('账号或密码错误'); return; }
+    const user = resolveUser(account);
+    if (!user) { showError('账号不存在或已停用，请联系校级管理员'); return; }
+    session.account = account;
+    session.user = user;
+    session.school = null;
+    session.identity = null;
+    if (user.schools.length > 1) renderSchools();
+    else { session.school = user.schools[0]; renderIdentities(); }
+  }
+
+  function renderSchools() {
+    const list = document.getElementById('schoolList');
+    list.innerHTML = session.user.schools.map((s, i) => `
+      <div class="identity-card${i === 0 ? ' selected' : ''}" data-school-idx="${i}">
+        <div class="avatar"><i class="fas fa-school"></i></div>
+        <div class="meta"><strong>${s.name}</strong><span>${s.identities.map(id => id.roleLabel).join('、')}</span></div>
+      </div>
+    `).join('');
+    list.querySelectorAll('.identity-card').forEach(card => {
+      card.addEventListener('click', () => {
+        list.querySelectorAll('.identity-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        session.school = session.user.schools[+card.dataset.schoolIdx];
+        setTimeout(() => renderIdentities(), 200);
+      });
+    });
+    showStep('school');
+  }
+
+  function renderIdentities() {
+    const school = session.school;
+    document.getElementById('identitySub').textContent = school.name + ' · 请选择本次操作使用的角色与岗位范围';
+    document.getElementById('backFromIdentity').style.display = session.user.schools.length > 1 ? 'block' : 'none';
+    const list = document.getElementById('identityList');
+    list.innerHTML = school.identities.map((id, i) => `
+      <div class="identity-card${i === 0 ? ' selected' : ''}" data-idx="${i}">
+        <div class="avatar">${session.user.name[0]}</div>
+        <div class="meta">
+          <strong>${session.user.display} <span class="chip ${id.chip}">${id.roleLabel}</span></strong>
+          <span>岗位范围：${id.scope}</span>
+        </div>
+        <i class="fas fa-chevron-right" style="color:#c0c4cc;"></i>
+      </div>
+    `).join('');
+    session.identity = school.identities[0];
+    list.querySelectorAll('.identity-card').forEach(card => {
+      card.addEventListener('click', () => {
+        list.querySelectorAll('.identity-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        session.identity = school.identities[+card.dataset.idx];
+      });
+    });
+    if (school.identities.length === 1) {
+      session.identity = school.identities[0];
+      enterApp();
+      return;
+    }
+    showStep('identity');
+  }
+
+  function enterApp() {
+    const q = new URLSearchParams({
+      role: session.identity.role,
+      name: encodeURIComponent(session.user.display),
+      school: encodeURIComponent(session.school.name)
+    });
+    localStorage.setItem('school_session', JSON.stringify({
+      account: session.account,
+      role: session.identity.role,
+      roleLabel: session.identity.roleLabel,
+      scope: session.identity.scope,
+      school: session.school.name,
+      userName: session.user.display
+    }));
+    window.location.href = '学平险-学校端--工作台.html?' + q.toString();
+  }
+
+  document.getElementById('btnTogglePwd').addEventListener('click', function() {
+    const input = document.getElementById('password');
+    const isPwd = input.type === 'password';
+    input.type = isPwd ? 'text' : 'password';
+    this.innerHTML = isPwd ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+  });
+
+  document.getElementById('btnLogin').addEventListener('click', doLogin);
+  document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('account').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+  document.getElementById('btnEnter').addEventListener('click', enterApp);
+
+  document.querySelectorAll('[data-back]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const t = btn.dataset.back;
+      if (t === 'login') showStep('login');
+      else if (t === 'school') renderSchools();
+    });
+  });
+</script>
+</body>
+</html>
