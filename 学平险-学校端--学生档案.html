@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学平险·学校端 | 学生档案</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter','PingFang SC',sans-serif;background:#f3f6fc;color:#1E2F3E;font-size:14px}
+    .app-wrapper{display:flex;min-height:100vh}
+    .main-content{flex:1;padding:1.5rem 2rem 2rem;overflow-x:auto}
+    .top-bar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:1rem;flex-wrap:wrap}
+    .welcome h2{font-size:1.5rem;font-weight:600;display:flex;align-items:center;gap:10px}
+    .welcome p{color:#5e7f92;font-size:.85rem;margin-top:4px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{padding:8px 16px;border-radius:10px;font-size:13px;cursor:pointer;border:none;font-weight:500;display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:inherit}
+    .btn-primary{background:#1C6E5C;color:#fff}
+    .btn-primary:hover{background:#155a4a}
+    .btn-outline{background:#fff;border:1px solid #cbdde6;color:#4c6a7e}
+    .btn-outline:hover{border-color:#1C6E5C;color:#1C6E5C}
+    .btn-sm{padding:6px 10px;font-size:12px}
+
+    /* 顶部 KPI */
+    .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:1rem}
+    .kpi{background:#fff;border:1px solid #eef2f8;border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+    .kpi .info .label{font-size:12px;color:#88a3b5}
+    .kpi .info .val{font-size:1.4rem;font-weight:700;margin-top:4px}
+    .kpi .info .delta{font-size:11px;color:#88a3b5;margin-top:2px}
+    .kpi .ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0}
+    .kpi.t1 .ic{background:#1C6E5C}
+    .kpi.t3 .ic{background:#b88230}
+    .kpi.t4 .ic{background:#6c5ce7}
+
+    /* 列表 / 详情 视图切换 */
+    .view{display:none}
+    .view.active{display:block}
+    .panel{background:#fff;border:1px solid #eef2f8;border-radius:18px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.02)}
+    .panel-head{padding:14px 16px;border-bottom:1px solid #eef2f8;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:14px;gap:8px;flex-wrap:wrap}
+    .panel-head h3{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+    .panel-head h3 i{color:#1C6E5C}
+
+    .list-filter{padding:12px 16px;background:#fafbfc;border-bottom:1px solid #eef2f8;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .list-filter input,.list-filter select{padding:7px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;background:#fff}
+    .list-filter input[type=search]{width:220px}
+    .tag-row{display:flex;gap:6px;flex-wrap:wrap}
+    .tag-chip{font-size:11px;padding:3px 10px;border-radius:999px;border:1px solid #e2e8f0;background:#fff;color:#4c6a7e;cursor:pointer}
+    .tag-chip.active{border-color:#1C6E5C;background:#eef6f3;color:#1C6E5C;font-weight:600}
+    .list-summary{margin-left:auto;font-size:12px;color:#88a3b5}
+
+    table.stu-table{width:100%;border-collapse:collapse;font-size:13px}
+    table.stu-table th,table.stu-table td{padding:11px 14px;text-align:left;border-bottom:1px solid #f0f4f9}
+    table.stu-table th{color:#6792a8;font-size:12px;font-weight:600;background:#fafbfc}
+    table.stu-table tbody tr{cursor:pointer;transition:background .12s}
+    table.stu-table tbody tr:hover{background:#fafcfd}
+    .stu-name-cell{display:flex;align-items:center;gap:10px}
+    .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1C6E5C,#2d8f76);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;flex-shrink:0}
+    .avatar.f{background:linear-gradient(135deg,#c45656,#e07171)}
+    .stu-name-cell b{font-weight:600}
+    .stu-name-cell small{display:block;font-weight:400;color:#88a3b5;font-size:11px;margin-top:1px}
+    .link-btn{color:#1C6E5C;font-weight:500;cursor:pointer;background:none;border:none;font-size:13px;padding:0}
+    .link-btn:hover{text-decoration:underline}
+    .link-btn.link-danger{color:#c45656}
+    .link-btn.link-danger:hover{color:#a03838}
+    .btn-danger-outline{background:#fff;border:1px solid #fbc4c4;color:#c45656}
+    .btn-danger-outline:hover{background:#fef0f0;border-color:#c45656}
+    .btn-danger{background:#c45656;color:#fff}
+    .btn-danger:hover{background:#a03838}
+
+    .detail-back{padding:12px 0 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .detail-back .back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid #cbdde6;background:#fff;color:#4c6a7e;font-size:13px;cursor:pointer;font-weight:500}
+    .detail-back .back-btn:hover{border-color:#1C6E5C;color:#1C6E5C}
+    .detail-back .crumb{font-size:13px;color:#88a3b5}
+    .detail-back .crumb b{color:#1E2F3E}
+
+    /* 右侧：详情 */
+    .profile-head{padding:22px 24px;display:flex;align-items:flex-start;gap:18px;background:linear-gradient(135deg,#fff 0%,#fafbfc 100%);border-bottom:1px solid #eef2f8;flex-wrap:wrap}
+    .profile-head .big-avatar{width:84px;height:84px;border-radius:18px;background:linear-gradient(135deg,#1C6E5C,#2d8f76);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:28px;flex-shrink:0}
+    .profile-head .big-avatar.f{background:linear-gradient(135deg,#c45656,#e07171)}
+    .profile-head .ph-body{flex:1;min-width:240px}
+    .profile-head h2{font-size:1.4rem;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .profile-head h2 .gender{font-size:12px;padding:2px 8px;border-radius:999px;font-weight:500}
+    .gender.m{background:#eef2fa;color:#3d5a80;border:1px solid #c5d4f0}
+    .gender.f{background:#fef0f0;color:#c45656;border:1px solid #fbc4c4}
+    .profile-head .sub-meta{margin-top:6px;font-size:13px;color:#5e7f92;display:flex;flex-wrap:wrap;gap:16px}
+    .profile-head .sub-meta i{margin-right:5px;color:#1C6E5C}
+    .profile-head .tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .tag{font-size:11px;padding:3px 10px;border-radius:999px;border:1px solid #e2e8f0;background:#fff;color:#4c6a7e}
+    .tag.danger{background:#fef0f0;color:#c45656;border-color:#fbc4c4;font-weight:600}
+    .tag.warn{background:#fff7e6;color:#b88230;border-color:#f5dab1;font-weight:600}
+    .tag.info{background:#eef2fa;color:#3d5a80;border-color:#c5d4f0;font-weight:500}
+    .tag.ok{background:#eef6f3;color:#1C6E5C;border-color:#b8d9ce;font-weight:500}
+    .profile-head .ph-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+
+    /* 详情 Tab */
+    .tabs{display:flex;border-bottom:1px solid #eef2f8;padding:0 22px;background:#fff;overflow-x:auto}
+    .tabs button{border:none;background:none;padding:13px 18px;font-size:13px;color:#88a3b5;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;font-weight:500}
+    .tabs button.active{color:#1C6E5C;border-bottom-color:#1C6E5C;font-weight:600}
+    .tab-body{padding:18px 24px 22px}
+    .tab-pane{display:none}
+    .tab-pane.active{display:block}
+
+    /* 基础信息：键值对网格 */
+    .kv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 22px}
+    @media(max-width:760px){.kv-grid{grid-template-columns:1fr 1fr}}
+    .kv .label{font-size:11px;color:#88a3b5;letter-spacing:.04em}
+    .kv .val{font-size:13px;color:#1E2F3E;margin-top:4px;word-break:break-all}
+    .kv .val .copy{color:#88a3b5;cursor:pointer;margin-left:4px}
+    .section-title{font-size:13px;font-weight:600;color:#1C6E5C;margin:18px 0 10px;display:flex;align-items:center;gap:6px}
+    .section-title:first-child{margin-top:0}
+
+    /* 监护人卡 */
+    .guardian-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:760px){.guardian-grid{grid-template-columns:1fr}}
+    .guardian{border:1px solid #eef2f8;border-radius:14px;padding:14px 16px;background:#fafbfc}
+    .guardian .gd-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .guardian .gd-name{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+    .guardian .gd-rel{font-size:11px;background:#1C6E5C;color:#fff;padding:2px 8px;border-radius:999px;font-weight:500}
+    .guardian .gd-row{font-size:12.5px;color:#4c6a7e;display:flex;justify-content:space-between;padding:4px 0;align-items:center;gap:8px}
+    .guardian .gd-row i{margin-right:6px;color:#1C6E5C;width:14px;text-align:center}
+    .guardian .gd-tag{font-size:11px;padding:2px 8px;border-radius:999px;border:1px dashed #b8d9ce;color:#1C6E5C;background:#fff}
+
+    /* 手机号脱敏 / 明文切换 */
+    .phone-cell{display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+    .phone-cell .pv{letter-spacing:.5px}
+    .phone-toggle{background:none;border:none;color:#88a3b5;cursor:pointer;padding:2px 4px;border-radius:4px;font-size:12px;line-height:1}
+    .phone-toggle:hover{color:#1C6E5C;background:#eef6f3}
+    .phone-toggle.on{color:#1C6E5C}
+
+    /* 健康档案 */
+    .health-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .health-card{border:1px solid #eef2f8;border-radius:12px;padding:14px;background:#fff}
+    .health-card .hc-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;margin-bottom:8px}
+    .health-card .hc-head i{color:#1C6E5C}
+    .health-card .hc-val{font-size:14px;color:#1E2F3E;line-height:1.7}
+    .health-card.warn{border-color:#f5dab1;background:#fffdf5}
+    .health-card.warn .hc-head i{color:#b88230}
+    .health-card.danger{border-color:#fbc4c4;background:#fef9f9}
+    .health-card.danger .hc-head i{color:#c45656}
+    .restrict-list{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+    .restrict-list .rl{font-size:12px;color:#4c6a7e;display:flex;align-items:center;gap:6px}
+    .restrict-list .rl i{color:#b88230}
+
+    /* 投保历史 */
+    table.records{width:100%;border-collapse:collapse;font-size:13px}
+    table.records th,table.records td{padding:10px 12px;text-align:left;border-bottom:1px solid #f0f4f9}
+    table.records th{color:#6792a8;font-size:12px;font-weight:600;background:#fafbfc}
+    table.records tr:hover td{background:#fafcfd}
+    .pill{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:500;border:1px solid #e2e8f0}
+    .pill.insured{background:#eef6f3;color:#1C6E5C;border-color:#b8d9ce}
+    .pill.expired{background:#fafbfc;color:#6792a8}
+    .pill.pending{background:#fdf6ec;color:#b88230;border-color:#f5dab1}
+    .pill.claimed{background:#fef0f0;color:#c45656;border-color:#fbc4c4}
+    .pill.lv-light{background:#eef6f3;color:#1C6E5C;border-color:#b8d9ce}
+    .pill.lv-warn{background:#fff7e6;color:#b88230;border-color:#f5dab1}
+    .pill.lv-high{background:#fef0f0;color:#c45656;border-color:#fbc4c4}
+
+    /* 事件时间线（精简版） */
+    .ev-timeline{padding-left:14px;position:relative}
+    .ev-timeline::before{content:'';position:absolute;left:4px;top:6px;bottom:6px;width:2px;background:#eef2f8}
+    .ev-item{position:relative;padding-bottom:14px;font-size:13px}
+    .ev-item::before{content:'';position:absolute;left:-14px;top:4px;width:10px;height:10px;border-radius:50%;background:#1C6E5C;border:2px solid #fff;box-shadow:0 0 0 1px #1C6E5C}
+    .ev-item.warn::before{background:#e6b422;box-shadow:0 0 0 1px #e6b422}
+    .ev-item.high::before{background:#c45656;box-shadow:0 0 0 1px #c45656}
+    .ev-item .ev-t{font-size:11px;color:#88a3b5}
+    .ev-item .ev-title{font-weight:600;margin-top:2px}
+    .ev-item .ev-desc{color:#5e7f92;margin-top:3px;line-height:1.6}
+    .ev-item .ev-meta{font-size:11px;color:#88a3b5;margin-top:4px;display:flex;gap:12px;flex-wrap:wrap}
+
+    /* 备注/批注 */
+    .note-item{padding:12px 14px;border:1px solid #eef2f8;border-radius:10px;margin-bottom:10px;background:#fff}
+    .note-item .nh{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#88a3b5;margin-bottom:6px}
+    .note-item .nh b{color:#1E2F3E}
+    .note-item .ntxt{font-size:13px;line-height:1.7;color:#4c6a7e}
+    .add-note{display:flex;gap:8px;margin-top:14px}
+    .add-note input{flex:1;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px}
+
+    /* 弹窗 */
+    .modal-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:20px}
+    .modal-mask.open{display:flex}
+    .modal{background:#fff;border-radius:16px;width:100%;max-width:760px;max-height:92vh;overflow-y:auto}
+    .modal-hd{padding:16px 22px;border-bottom:1px solid #eef2f8;display:flex;justify-content:space-between;align-items:center;background:#fafbfc;border-radius:16px 16px 0 0}
+    .modal-hd h3{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+    .modal-bd{padding:20px 22px}
+    .modal-ft{padding:14px 22px;border-top:1px solid #eef2f8;display:flex;justify-content:flex-end;gap:8px;background:#fafbfc;border-radius:0 0 16px 16px}
+    .close-x{background:none;border:none;font-size:20px;color:#88a3b5;cursor:pointer}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px 18px}
+    .form-grid .full{grid-column:1 / -1}
+    .form-grid .span2{grid-column:span 2}
+    @media (max-width:680px){.form-grid{grid-template-columns:1fr}.form-grid .span2{grid-column:span 1}}
+    .form-row{display:flex;flex-direction:column;gap:6px}
+    .form-row label{font-size:12px;color:#88a3b5;font-weight:500}
+    .form-row label .req{color:#c45656}
+    .form-row label .src{margin-left:6px;font-size:11px;color:#88a3b5;font-weight:400;background:#f0f4f9;padding:1px 7px;border-radius:999px}
+    .form-row input,.form-row select,.form-row textarea{padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;color:#1E2F3E}
+    .form-row input:disabled,.form-row input[readonly]{background:#fafbfc;color:#5e7f92}
+    .form-row textarea{min-height:60px;resize:vertical;line-height:1.6}
+
+    /* 弹窗内分组 */
+    .form-section{margin-bottom:18px}
+    .form-section:last-child{margin-bottom:4px}
+    .form-section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .form-section-hd .ttl{font-size:13px;font-weight:600;color:#1C6E5C;display:flex;align-items:center;gap:6px}
+    .form-section-hd .ttl i{font-size:12px}
+    .form-section-hd .sub{font-size:11px;color:#88a3b5}
+    .form-section-bd{background:#fafbfc;border:1px solid #eef2f8;border-radius:12px;padding:14px 16px}
+
+    /* 监护人列表 */
+    .guardian-edit{background:#fff;border:1px solid #eef2f8;border-radius:10px;padding:12px;margin-bottom:10px;position:relative}
+    .guardian-edit:last-child{margin-bottom:0}
+    .guardian-edit .grid{display:grid;grid-template-columns:140px 1fr 1fr 1fr;gap:10px}
+    @media (max-width:680px){.guardian-edit .grid{grid-template-columns:1fr 1fr}}
+    .guardian-edit .gd-foot{margin-top:8px;display:flex;justify-content:space-between;align-items:center;font-size:12px}
+    .guardian-edit .gd-foot label{display:inline-flex;align-items:center;gap:6px;color:#4c6a7e;cursor:pointer}
+    .guardian-edit .gd-del{color:#c45656;background:none;border:none;cursor:pointer;font-size:12px;padding:4px 8px;border-radius:6px}
+    .guardian-edit .gd-del:hover{background:#fef0f0}
+    .guardian-add{margin-top:8px;text-align:center}
+    .guardian-add button{background:#fff;border:1px dashed #cbdde6;color:#1C6E5C;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;width:100%}
+    .guardian-add button:hover{background:#fafcfd;border-color:#1C6E5C}
+
+    /* 编辑表单里的标签 chips */
+    .chip-picker{display:flex;flex-wrap:wrap;gap:6px}
+    .chip-picker .chip{font-size:12px;padding:5px 12px;border-radius:999px;border:1px solid #e2e8f0;background:#fff;color:#4c6a7e;cursor:pointer;user-select:none}
+    .chip-picker .chip:hover{border-color:#1C6E5C}
+    .chip-picker .chip.active{border-color:#1C6E5C;background:#eef6f3;color:#1C6E5C;font-weight:600}
+    .chip-picker .chip.warn.active{border-color:#e6b422;background:#fff7e6;color:#b88230}
+    .chip-picker .chip.danger.active{border-color:#fbc4c4;background:#fef0f0;color:#c45656}
+
+    /* 限制条目可增删 */
+    .restrict-edit{display:flex;flex-direction:column;gap:6px}
+    .restrict-edit .row{display:flex;gap:6px;align-items:center}
+    .restrict-edit input{flex:1}
+    .restrict-edit .del{background:none;border:none;color:#c45656;cursor:pointer;font-size:13px;padding:6px 8px}
+    .restrict-add{background:none;border:1px dashed #cbdde6;color:#1C6E5C;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;align-self:flex-start;margin-top:2px}
+
+    /* 弹窗顶部辅助说明 */
+    .modal-tip{font-size:12px;color:#5e7f92;background:#eef6f3;border:1px solid #b8d9ce;border-radius:10px;padding:8px 12px;margin-bottom:16px;display:flex;align-items:center;gap:8px;line-height:1.5}
+    .modal-tip i{color:#1C6E5C}
+
+    /* 批量导入弹窗 */
+    #importModal .modal{max-width:840px}
+    #importModal .modal-bd{overflow-x:hidden}
+    #importModal .modal-ft{flex-wrap:nowrap;gap:10px}
+    #importModal .modal-ft .btn{flex-shrink:0;white-space:nowrap}
+
+    .step-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px;padding:12px 14px;background:#fafbfc;border:1px solid #eef2f8;border-radius:12px;flex-wrap:nowrap}
+    .step-bar .step{display:flex;align-items:center;gap:6px;color:#88a3b5;font-size:13px;white-space:nowrap;flex-shrink:0}
+    .step-bar .step b{width:22px;height:22px;border-radius:50%;background:#fff;border:1px solid #cbdde6;color:#88a3b5;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+    .step-bar .step.active{color:#1C6E5C;font-weight:600}
+    .step-bar .step.active b{background:#1C6E5C;border-color:#1C6E5C;color:#fff}
+    .step-bar .sep{width:20px;height:1px;background:#cbdde6;flex-shrink:0}
+
+    .tpl-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:#eef6f3;border:1px solid #b8d9ce;border-radius:12px;margin-bottom:16px;flex-wrap:nowrap}
+    .tpl-card .info{flex:1;min-width:0}
+    .tpl-card .info b{font-size:14px;color:#1C6E5C;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tpl-card .info p{font-size:12px;color:#4c6a7e;margin-top:4px;line-height:1.6}
+    .tpl-card .btn{flex-shrink:0;white-space:nowrap}
+
+    .import-block{margin-bottom:16px}
+    .import-block-hd{font-size:13px;font-weight:600;color:#1C6E5C;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    #importModal .import-upload-wrap{display:flex;flex-direction:column;gap:10px}
+
+    .spec-collapse{border:1px solid #eef2f8;border-radius:12px;margin-bottom:0;overflow:hidden;background:#fff}
+    .spec-collapse-hd{width:100%;display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fafbfc;border:none;cursor:pointer;text-align:left;font:inherit}
+    .spec-collapse-hd:hover{background:#f3f7fa}
+    .spec-collapse-title{font-size:13px;font-weight:600;color:#1C6E5C;display:flex;align-items:center;gap:6px;flex-shrink:0}
+    .spec-collapse-meta{flex:1;min-width:0;font-size:12px;color:#6792a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .spec-collapse-meta .req-pill{margin:0 2px}
+    .spec-chevron{color:#88a3b5;font-size:12px;transition:transform .2s;flex-shrink:0}
+    .spec-collapse.open .spec-chevron{transform:rotate(180deg)}
+    .spec-collapse-bd{display:none;padding:0 14px 14px;border-top:1px solid #eef2f8}
+    .spec-collapse.open .spec-collapse-bd{display:block}
+    .spec-table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #eef2f8;border-radius:8px;margin-top:10px}
+    table.spec-table{width:100%;min-width:480px;border-collapse:collapse;font-size:12px}
+    table.spec-table th,table.spec-table td{padding:8px 10px;text-align:left;border-bottom:1px solid #f0f4f9;vertical-align:top}
+    table.spec-table th{color:#6792a8;background:#fafbfc;font-weight:600;white-space:nowrap}
+    table.spec-table tbody tr:last-child td{border-bottom:none}
+    table.spec-table td.field{font-weight:500;color:#1E2F3E;white-space:nowrap}
+    .req-pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600}
+    .req-pill.req{background:#fef0f0;color:#c45656;border:1px solid #fbc4c4}
+    .req-pill.opt{background:#f0f4f9;color:#6792a8;border:1px solid #e2e8f0}
+    .spec-opt-box{margin-top:10px;padding:10px 12px;background:#fafbfc;border:1px solid #eef2f8;border-radius:8px}
+    .spec-opt-box .opt-hd{font-size:12px;font-weight:600;color:#6792a8;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+    .spec-opt-line{font-size:12px;color:#4c6a7e;line-height:1.65;word-break:break-all}
+    .spec-opt-hint{font-size:11px;color:#88a3b5;margin-top:8px;line-height:1.5}
+    .spec-opt-hint code{font-family:inherit;color:#1C6E5C;background:#eef6f3;padding:1px 5px;border-radius:4px}
+
+    #importModal .drop-zone{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      width:100%;box-sizing:border-box;margin:0;
+      border:2px dashed #cbdde6;border-radius:12px;padding:28px 20px;
+      text-align:center;background:#fafbfc;transition:border-color .15s,background .15s;
+      cursor:pointer;user-select:none;
+    }
+    #importModal .drop-zone:hover,#importModal .drop-zone.dragover{border-color:#1C6E5C;background:#f0f7f3}
+    #importModal .drop-zone .ic{display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin:0 0 12px;border-radius:50%;background:#eef6f3;font-size:22px;color:#1C6E5C;line-height:1}
+    #importModal .drop-zone .drop-title{display:block;margin:0;font-size:14px;font-weight:600;color:#1E2F3E;line-height:1.5}
+    #importModal .drop-zone .sub{display:block;margin:6px 0 0;font-size:12px;color:#88a3b5;line-height:1.6}
+    #importModal .drop-zone input{display:none!important}
+    #importModal .file-info{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#eef6f3;border:1px solid #b8d9ce;border-radius:10px;margin:0;font-size:13px;color:#1C6E5C;flex-wrap:nowrap}
+    .file-info .fname{flex:1;min-width:0;font-weight:500;color:#1E2F3E;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .file-info .fsize{color:#88a3b5;font-size:12px;white-space:nowrap;flex-shrink:0}
+    .file-info .fclear{background:none;border:none;color:#c45656;cursor:pointer;font-size:13px;padding:4px 8px;border-radius:6px;flex-shrink:0;white-space:nowrap}
+
+  </style>
+  <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="学平险-学校端-sidebar.css">
+  <link rel="stylesheet" href="学平险-学校端-b-end.css">
+</head>
+<body>
+<div class="app-wrapper">
+  <div class="sidebar" id="schoolSidebar"></div>
+  <main class="main-content">
+
+    <div class="top-bar">
+      <div class="welcome">
+        <h2><i class="fas fa-address-card" style="color:#1C6E5C"></i> 学生档案</h2>
+        <p>列表浏览学生 · 点击进入详情查看完整档案</p>
+      </div>
+      <div class="actions">
+        <div id="userMenuMount"></div>
+      </div>
+    </div>
+
+    <!-- KPI（仅列表页） -->
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi t1"><div class="info"><div class="label">在校学生总数</div><div class="val" id="kTotal">—</div><div class="delta" id="kClassesMeta">—</div></div><div class="ic"><i class="fas fa-graduation-cap"></i></div></div>
+      <div class="kpi t3"><div class="info"><div class="label">特殊群体</div><div class="val" id="kSpecial">—</div><div class="delta">低保 / 留守</div></div><div class="ic"><i class="fas fa-heart"></i></div></div>
+      <div class="kpi t4"><div class="info"><div class="label">健康关注</div><div class="val" id="kHealth">—</div><div class="delta">慢性病 / 过敏 / 运动限制</div></div><div class="ic"><i class="fas fa-stethoscope"></i></div></div>
+    </div>
+
+    <!-- 列表页 -->
+    <div class="view active" id="viewList">
+      <div class="panel">
+        <div class="panel-head">
+          <h3><i class="fas fa-users"></i> 学生列表</h3>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-outline btn-sm" id="btnImport"><i class="fas fa-upload"></i> 批量导入</button>
+            <button class="btn btn-primary btn-sm" id="btnAdd"><i class="fas fa-plus"></i> 新增</button>
+          </div>
+        </div>
+        <div class="list-filter">
+          <input type="search" id="kw" placeholder="姓名 / 学籍号 / 身份证后 4 位">
+          <select id="gradeSel"><option value="">全部年级</option><option>高三年级</option><option>高二年级</option><option>高一年级</option><option>初三年级</option><option>初二年级</option><option>初一年级</option></select>
+          <select id="classSel"><option value="">全部班级</option></select>
+          <div class="tag-row" id="tagFilters">
+            <span class="tag-chip active" data-tag="">全部</span>
+            <span class="tag-chip" data-tag="低保">低保</span>
+            <span class="tag-chip" data-tag="留守儿童">留守儿童</span>
+            <span class="tag-chip" data-tag="慢性病">慢性病</span>
+            <span class="tag-chip" data-tag="过敏">过敏</span>
+          </div>
+          <span class="list-summary" id="listSummary">共 8 人</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="stu-table">
+            <thead>
+              <tr>
+                <th>姓名</th>
+                <th>班级</th>
+                <th>性别 / 年龄</th>
+                <th>标签</th>
+                <th style="width:100px">操作</th>
+              </tr>
+            </thead>
+            <tbody id="studentList"></tbody>
+          </table>
+        </div>
+        <div class="pager" id="stuListPager" data-b-end-pager data-page-size="10"></div>
+      </div>
+    </div>
+
+    <!-- 详情页 -->
+    <div class="view" id="viewDetail">
+      <div class="detail-back">
+        <button type="button" class="back-btn" id="btnBack"><i class="fas fa-arrow-left"></i> 返回列表</button>
+        <span class="crumb">学生档案 / <b id="crumbName">—</b></span>
+      </div>
+      <div class="panel">
+        <div id="profileWrap"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- 新增 / 编辑学生弹窗 -->
+<div class="modal-mask" id="editModal">
+  <div class="modal" style="max-width:880px">
+    <div class="modal-hd">
+      <h3><i class="fas fa-user-pen"></i> <span id="editTitle">新增学生档案</span></h3>
+      <button class="close-x" onclick="closeEdit()">×</button>
+    </div>
+    <div class="modal-bd" id="editBody"></div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeEdit()">取消</button>
+      <button class="btn btn-primary" onclick="saveEdit()"><i class="fas fa-check"></i> 保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 批量导入学生档案弹窗 -->
+<div class="modal-mask" id="importModal">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3><i class="fas fa-file-import"></i> 批量导入学生档案</h3>
+      <button class="close-x" onclick="closeImport()">×</button>
+    </div>
+    <div class="modal-bd">
+
+      <div class="step-bar">
+        <div class="step active"><b>1</b> 下载模板</div>
+        <div class="sep"></div>
+        <div class="step active"><b>2</b> 上传文件</div>
+        <div class="sep"></div>
+        <div class="step active"><b>3</b> 开始导入</div>
+      </div>
+
+      <div class="tpl-card">
+        <div class="info">
+          <b><i class="fas fa-file-csv"></i> 学生档案导入模板.csv</b>
+        </div>
+        <button class="btn btn-primary" onclick="downloadImportTemplate()"><i class="fas fa-download"></i> 下载模板</button>
+      </div>
+
+      <div class="import-block">
+        <div class="import-block-hd"><i class="fas fa-cloud-upload-alt"></i> 上传填好的文件</div>
+        <div class="import-upload-wrap">
+          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="选择或拖拽上传文件">
+            <div class="ic"><i class="fas fa-file-arrow-up"></i></div>
+            <span class="drop-title">点击选择文件或将文件拖拽到此处</span>
+            <span class="sub">支持 .csv / .xlsx / .xls 格式，单次最多 1,000 行</span>
+          </div>
+          <input type="file" id="importFile" accept=".csv,.xlsx,.xls" hidden>
+          <div class="file-info" id="fileInfo" style="display:none">
+            <i class="fas fa-file-csv"></i>
+            <span class="fname" id="fileName">—</span>
+            <span class="fsize" id="fileSize">—</span>
+            <button type="button" class="fclear" onclick="clearImportFile()"><i class="fas fa-times"></i> 移除</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="spec-collapse" id="importSpecCollapse">
+        <button type="button" class="spec-collapse-hd" id="importSpecToggle" aria-expanded="false">
+          <span class="spec-collapse-title"><i class="fas fa-list-check"></i> 字段说明</span>
+          <span class="spec-collapse-meta">共 26 列 · <span class="req-pill req">必填</span> 6 项 · <span class="req-pill opt">非必填</span> 20 项 · 点击展开查看</span>
+          <i class="fas fa-chevron-down spec-chevron"></i>
+        </button>
+        <div class="spec-collapse-bd" id="importSpecPanel">
+          <div class="spec-table-scroll">
+            <table class="spec-table">
+              <thead>
+                <tr>
+                  <th style="width:140px">列名</th>
+                  <th style="width:72px">必填</th>
+                  <th>说明 / 示例</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="field">姓名 *</td><td><span class="req-pill req">必填</span></td><td>学生姓名，如「李明远」</td></tr>
+                <tr><td class="field">性别 *</td><td><span class="req-pill req">必填</span></td><td>仅可填「男」或「女」</td></tr>
+                <tr><td class="field">出生日期 *</td><td><span class="req-pill req">必填</span></td><td>YYYY-MM-DD，如 2009-03-15</td></tr>
+                <tr><td class="field">学籍号 *</td><td><span class="req-pill req">必填</span></td><td>全校唯一；重复则按更新处理</td></tr>
+                <tr><td class="field">年级 *</td><td><span class="req-pill req">必填</span></td><td>初一 / 初二 / 初三 / 高一 / 高二 / 高三</td></tr>
+                <tr><td class="field">班级 *</td><td><span class="req-pill req">必填</span></td><td>须在「组织与成员」已建班，如「高三(1)班」</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="spec-opt-box">
+            <div class="opt-hd"><span class="req-pill opt">非必填</span> 20 项（可留空，一行对应模板列顺序）</div>
+            <p class="spec-opt-line">身份证号；血型；入学日期；户籍类型；家庭住址；校内紧急联系人；监护人1关系；监护人1姓名；监护人1电话；监护人1工作单位；监护人1是否主要；监护人2关系；监护人2姓名；监护人2电话；监护人2工作单位；过敏史；慢性病；体育活动限制；特殊群体标签；健康关注标签</p>
+            <p class="spec-opt-hint">同一单元格内多项内容统一用英文分号 <code>;</code> 分隔（如过敏史「花粉;芒果」、标签「低保;留守儿童」、活动限制「避免长跑;禁忌粉尘环境」）。监护人建议至少填 1 位，最多 2 位。</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeImport()">取消</button>
+      <button class="btn btn-primary" id="btnImportSubmit" onclick="submitImport()"><i class="fas fa-cloud-arrow-up"></i> 开始导入</button>
+    </div>
+  </div>
+</div>
+
+<!-- 删除确认弹窗 -->
+<div class="modal-mask" id="deleteModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hd">
+      <h3><i class="fas fa-trash" style="color:#c45656"></i> 删除学生档案</h3>
+      <button class="close-x" onclick="closeDelete()">×</button>
+    </div>
+    <div class="modal-bd">
+      <p style="font-size:14px;line-height:1.7;color:#4c6a7e;margin-bottom:12px">
+        确认删除 <strong id="deleteTargetName" style="color:#1E2F3E">—</strong>
+        （<span id="deleteTargetId" style="font-variant-numeric:tabular-nums">—</span>）？
+      </p>
+      <p style="font-size:13px;line-height:1.65;color:#88a3b5">
+        删除后档案不可恢复。已有投保订单与风险事件记录将保留，但不再关联该学生档案。
+      </p>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeDelete()">取消</button>
+      <button class="btn btn-danger" onclick="confirmDelete()"><i class="fas fa-trash"></i> 确认删除</button>
+    </div>
+  </div>
+</div>
+
+<script src="学平险-学校端-school-stats.js"></script>
+<script src="学平险-学校端-sidebar.js"></script>
+<script src="b-end-pager.js"></script>
+<script>initSchoolSidebar("studentProfile");</script>
+<script>
+  /* ============ 数据 ============ */
+  var STUDENTS = [
+    {
+      id:'S20240001', name:'李明远', gender:'男', birth:'2009-03-15', age:17,
+      grade:'高三年级', cls:'高三(1)班', idcard:'4101**********1234',
+      addr:'郑州市金水区文化路 88 号', hk:'城镇', joinDate:'2021-09-01',
+      tags:['优秀班干'], healthTags:['过敏'],
+      allergy:'花粉、芒果',
+      chronic:'',
+      restrict:['剧烈运动后避免长时间户外'],
+      bloodType:'O+',
+      complete:100,
+      guardians:[
+        {rel:'父亲',name:'李建国',phone:'13812341122',work:'郑州中铝',main:true},
+        {rel:'母亲',name:'王秀英',phone:'13923453345',work:'家庭主妇'}
+      ],
+      emergency:'班主任 王芳 13056787711',
+      insurance:[
+        {product:'学平险 A 款',amount:120,status:'expired',date:'2024-09-01',coverage:'2024-09-01 至 2025-01-31'},
+        {product:'学平险 A 款',amount:120,status:'expired',date:'2025-02-20',coverage:'2025-02-01 至 2025-08-31'},
+        {product:'学平险 B 款',amount:160,status:'expired',date:'2025-09-01',coverage:'2025-09-01 至 2026-01-31'},
+        {product:'学平险 B 款',amount:160,status:'insured',date:'2026-02-10',coverage:'2026-02-01 至 2026-08-31'}
+      ],
+      events:[
+        {time:'2025-10-12',lv:'light',title:'课间擦伤',desc:'课间追逐时膝盖擦伤，校医室处理，无理赔',claim:'—'},
+        {time:'2026-05-19',lv:'high',title:'体育课摔伤',desc:'800m 测试摔倒，右脚踝韧带 1 级损伤',claim:'¥ 4,200 · 已申报'}
+      ],
+      notes:[
+        {who:'王芳 · 班主任',time:'2026-05-20',text:'右脚踝伤恢复期约 2 周，体育课请避免剧烈运动'},
+        {who:'校医 张老师',time:'2025-05-08',text:'对花粉过敏，春季校外活动需提前提醒家长'}
+      ]
+    },
+    {
+      id:'S20240002', name:'王思琪', gender:'女', birth:'2009-07-22', age:16,
+      grade:'高三年级', cls:'高三(2)班', idcard:'4101**********2345',
+      addr:'郑州市金水区花园路 56 号', hk:'城镇', joinDate:'2021-09-01',
+      tags:['班长'], healthTags:[],
+      allergy:'',chronic:'',restrict:[],bloodType:'A+',complete:100,
+      guardians:[
+        {rel:'母亲',name:'王芳',phone:'13987652345',work:'郑州大学',main:true}
+      ],
+      emergency:'班主任 陈志强 13056787712',
+      insurance:[
+        {product:'学平险 A 款',amount:120,status:'expired',date:'2025-02-15',coverage:'2025-02-01 至 2025-08-31'},
+        {product:'学平险 A 款',amount:120,status:'expired',date:'2025-09-01',coverage:'2025-09-01 至 2026-01-31'},
+        {product:'学平险 B 款',amount:160,status:'insured',date:'2026-02-25',coverage:'2026-02-01 至 2026-08-31'}
+      ],
+      events:[],
+      notes:[]
+    },
+    {
+      id:'S20240003', name:'赵一航', gender:'男', birth:'2010-01-10', age:16,
+      grade:'高二年级', cls:'高二(1)班', idcard:'4101**********3456',
+      addr:'郑州市二七区建设路 12 号', hk:'城镇', joinDate:'2022-09-01',
+      tags:[], healthTags:['哮喘'],
+      allergy:'',chronic:'哮喘（轻症，备有应急喷剂）',restrict:['冬季晨跑请评估','禁忌粉尘环境'],bloodType:'B+',complete:90,
+      guardians:[
+        {rel:'父亲',name:'赵东',phone:'15212347890',work:'富士康',main:true},
+        {rel:'母亲',name:'李娟',phone:'15823456611',work:'医院护士'}
+      ],
+      emergency:'校医 张老师 13056780001',
+      insurance:[
+        {product:'学平险 A 款',amount:120,status:'expired',date:'2025-09-01',coverage:'2025-09-01 至 2026-01-31'},
+        {product:'学平险 B 款',amount:160,status:'insured',date:'2026-03-15',coverage:'2026-02-01 至 2026-08-31'}
+      ],
+      events:[],
+      notes:[
+        {who:'王芳 · 班主任',time:'2026-03-10',text:'家长反馈最近哮喘有过 1 次小发作，已知悉，备喷剂'}
+      ]
+    },
+    {
+      id:'S20240004', name:'陈雨桐', gender:'女', birth:'2010-05-19', age:16,
+      grade:'高二年级', cls:'高二(1)班', idcard:'4101**********4567',
+      addr:'郑州市惠济区花园口村', hk:'农村', joinDate:'2022-09-01',
+      tags:['低保'], healthTags:['低保'],
+      allergy:'',chronic:'',restrict:[],bloodType:'O+',complete:88,
+      guardians:[
+        {rel:'母亲',name:'陈敏',phone:'18712344521',work:'保洁',main:true}
+      ],
+      emergency:'班主任 赵敏 13056787713',
+      insurance:[
+        {product:'学平险 A 款（民政补贴）',amount:0,status:'expired',date:'2025-02-18',coverage:'2025-02-01 至 2025-08-31'},
+        {product:'学平险 A 款（民政补贴）',amount:0,status:'expired',date:'2025-09-01',coverage:'2025-09-01 至 2026-01-31'}
+      ],
+      events:[],
+      notes:[
+        {who:'张敏 · 校级管理员',time:'2025-09-01',text:'低保家庭，由民政统一补贴投保，无需家长支付'}
+      ]
+    },
+    {
+      id:'S20240005', name:'刘子轩', gender:'男', birth:'2010-11-03', age:15,
+      grade:'高一年级', cls:'高一(3)班', idcard:'4101**********5678',
+      addr:'郑州市管城区南关街 23 号', hk:'城镇', joinDate:'2023-09-01',
+      tags:[], healthTags:[],
+      allergy:'',chronic:'',restrict:[],bloodType:'AB+',complete:100,
+      guardians:[
+        {rel:'父亲',name:'刘伟',phone:'13623459988',main:true},
+        {rel:'母亲',name:'陈艳',phone:'13834561199'}
+      ],
+      emergency:'',
+      insurance:[
+        {product:'学平险 A 款',amount:120,status:'expired',date:'2025-09-01',coverage:'2025-09-01 至 2026-01-31'},
+        {product:'学平险 B 款',amount:160,status:'insured',date:'2026-02-15',coverage:'2026-02-01 至 2026-08-31'}
+      ],
+      events:[
+        {time:'2026-05-08',lv:'light',title:'课间打闹擦伤',desc:'操场西侧课间游戏摔倒，膝盖轻微擦伤，校医碘伏处理',claim:'—'}
+      ],
+      notes:[]
+    },
+    {
+      id:'S20240006', name:'吴欣然', gender:'女', birth:'2011-04-18', age:14,
+      grade:'初三年级', cls:'初三(2)班', idcard:'4101**********6789',
+      addr:'郑州市金水区如意西路 36 号', hk:'城镇', joinDate:'2024-09-01',
+      tags:[], healthTags:['过敏'],
+      allergy:'海鲜、芒果',chronic:'',restrict:['食堂请避免海鲜'],bloodType:'A-',complete:95,
+      guardians:[
+        {rel:'母亲',name:'吴海芳',phone:'15012346643',main:true}
+      ],
+      emergency:'',
+      insurance:[
+        {product:'学平险 A 款',amount:120,status:'expired',date:'2024-09-01',coverage:'2024-09-01 至 2025-01-31'},
+        {product:'学平险 A 款',amount:120,status:'expired',date:'2025-02-20',coverage:'2025-02-01 至 2025-08-31'}
+      ],
+      events:[],
+      notes:[]
+    },
+    {
+      id:'S20240007', name:'郑子涵', gender:'男', birth:'2011-09-22', age:14,
+      grade:'初三年级', cls:'初三(3)班', idcard:'4101**********7890',
+      addr:'郑州市中原区中原西路 18 号', hk:'农村', joinDate:'2024-09-01',
+      tags:['留守儿童'], healthTags:['留守儿童'],
+      allergy:'',chronic:'',restrict:[],bloodType:'O+',complete:82,
+      guardians:[
+        {rel:'爷爷',name:'郑国华',phone:'15187652233',work:'已退休',main:true},
+        {rel:'父亲（外出）',name:'郑勇',phone:'18934563210',work:'外地务工'}
+      ],
+      emergency:'班主任 马涛 13056787714',
+      insurance:[
+        {product:'学平险 A 款',amount:120,status:'expired',date:'2025-03-01',coverage:'2025-02-01 至 2025-08-31'}
+      ],
+      events:[
+        {time:'2026-05-15',lv:'warn',title:'食堂烫伤',desc:'打饭时手部接触汤汁，左手背一级烫伤，已就医',claim:'待定'}
+      ],
+      notes:[
+        {who:'马涛 · 班主任',time:'2026-05-16',text:'已及时电话联系爷爷与父亲，家长态度积极'}
+      ]
+    },
+    {
+      id:'S20240008', name:'林佳怡', gender:'女', birth:'2012-02-08', age:13,
+      grade:'初二年级', cls:'初二(4)班', idcard:'4101**********8901',
+      addr:'郑州市经开区第八大街 5 号', hk:'城镇', joinDate:'2024-09-01',
+      tags:['留守儿童'], healthTags:['留守儿童','关爱对象'],
+      allergy:'',chronic:'',restrict:[],bloodType:'A+',complete:90,
+      guardians:[
+        {rel:'外婆',name:'林国栋',phone:'17712346547',main:true}
+      ],
+      emergency:'班主任 王芳 13056787715',
+      insurance:[
+        {product:'学平险 A 款',amount:120,status:'expired',date:'2025-02-22',coverage:'2025-02-01 至 2025-08-31'},
+        {product:'学平险 A 款',amount:120,status:'expired',date:'2025-09-01',coverage:'2025-09-01 至 2026-01-31'},
+        {product:'学平险 B 款',amount:160,status:'insured',date:'2026-02-08',coverage:'2026-02-01 至 2026-08-31'}
+      ],
+      events:[],
+      notes:[
+        {who:'班主任',time:'2025-09-15',text:'父母均在外务工，外婆抚养，建议持续关注情绪与心理状态'}
+      ]
+    }
+  ];
+  var INS_STATUS_LABEL = {insured:'已投保',expired:'已失效'};
+  /* #原型说明：学期划分（春季 2/1—8/31，秋季 9/1—次年 1/31），按投保日期自动归属 */
+  function termFromInsuranceDate(dateStr){
+    if(!dateStr) return '—';
+    var y = parseInt(dateStr.slice(0,4), 10);
+    var m = parseInt(dateStr.slice(5,7), 10);
+    if(m >= 2 && m <= 8) return y + ' 春季';
+    if(m >= 9 && m <= 12) return y + ' 秋季';
+    return (y - 1) + ' 秋季';
+  }
+  function formatInsPayment(i){
+    if(i.amount===0) return '¥ 0';
+    return '¥ '+i.amount;
+  }
+  function renderInsRow(i){
+    var term = i.term || termFromInsuranceDate(i.date);
+    return '<tr><td>'+term+'</td><td>'+i.product+'</td><td>'+formatInsPayment(i)+'</td><td>'+i.date+'</td><td>'+i.coverage+'</td><td><span class="pill '+i.status+'">'+INS_STATUS_LABEL[i.status]+'</span></td></tr>';
+  }
+  var LV_LABEL = {light:'轻微',warn:'一般',high:'较严重'};
+
+  /* #原型说明：手机号默认脱敏（前 3 后 4），点击可切换明文；切换在前端原型里走 toggle，正式接口需走鉴权+审计 */
+  function maskPhone(p){
+    if(!p) return '';
+    var s = String(p).replace(/\D/g,'');
+    if(s.length < 7) return p;
+    return s.slice(0,3)+'****'+s.slice(-4);
+  }
+  function renderPhone(p){
+    if(!p) return '<span style="color:#88a3b5">—</span>';
+    var raw = String(p);
+    return '<span class="phone-cell" data-phone="'+raw+'">'+
+             '<span class="pv">'+maskPhone(raw)+'</span>'+
+             '<button type="button" class="phone-toggle" title="点击查看明文" onclick="togglePhone(this)" aria-label="切换手机号显示">'+
+               '<i class="far fa-eye"></i>'+
+             '</button>'+
+           '</span>';
+  }
+  function renderInlinePhones(text){
+    if(!text) return text;
+    return String(text).replace(/(\d{11})/g, function(m){ return renderPhone(m); });
+  }
+  function togglePhone(btn){
+    var cell = btn.closest('.phone-cell');
+    if(!cell) return;
+    var pv = cell.querySelector('.pv');
+    var icon = btn.querySelector('i');
+    var raw = cell.getAttribute('data-phone');
+    var showing = cell.getAttribute('data-show') === '1';
+    if(showing){
+      pv.textContent = maskPhone(raw);
+      icon.className = 'far fa-eye';
+      btn.classList.remove('on');
+      btn.title = '点击查看明文';
+      cell.setAttribute('data-show','0');
+    } else {
+      pv.textContent = raw;
+      icon.className = 'far fa-eye-slash';
+      btn.classList.add('on');
+      btn.title = '点击隐藏';
+      cell.setAttribute('data-show','1');
+    }
+  }
+  window.togglePhone = togglePhone;
+
+  /* #原型说明：列表数据按 SchoolAccount.role 过滤，不在页面单独展示角色状态条 */
+  function roleTotals(role){
+    return SchoolStats.roleScopeTotals(role);
+  }
+  var ROLE_MAP = {
+    admin:{filter:s=>true},
+    grade:{filter:s=>s.grade==='高一年级'},
+    class:{filter:s=>s.cls==='高一(3)班'}
+  };
+  function getRole(){ return (window.SchoolAccount && SchoolAccount.role) || 'admin'; }
+  var visibleStudents = STUDENTS.slice();
+  var currentTag = '';
+  var currentGrade = '';
+  var currentClass = '';
+  var currentKw = '';
+  var currentSel = STUDENTS[0];
+  var currentView = 'list';
+
+  /* ============ 视图切换 ============ */
+  function showList(){
+    currentView = 'list';
+    document.getElementById('viewList').classList.add('active');
+    document.getElementById('viewDetail').classList.remove('active');
+    document.getElementById('kpiRow').style.display = '';
+    if(location.search) history.replaceState(null,'',location.pathname);
+  }
+  function showDetail(id){
+    var s = STUDENTS.find(x=>x.id===id);
+    if(!s) return;
+    currentSel = s;
+    currentView = 'detail';
+    document.getElementById('viewList').classList.remove('active');
+    document.getElementById('viewDetail').classList.add('active');
+    document.getElementById('kpiRow').style.display = 'none';
+    document.getElementById('crumbName').textContent = s.name;
+    renderProfile();
+    history.replaceState(null,'',location.pathname+'?id='+encodeURIComponent(id));
+  }
+
+  /* ============ 渲染 ============ */
+  function applyScopeAndFilters(){
+    var role = ROLE_MAP[getRole()];
+    var list = STUDENTS.filter(role.filter);
+    if(currentGrade) list = list.filter(s=>s.grade===currentGrade);
+    if(currentClass) list = list.filter(s=>s.cls===currentClass);
+    if(currentTag) list = list.filter(s=>s.tags.includes(currentTag) || s.healthTags.includes(currentTag));
+    if(currentKw){
+      var k = currentKw.toLowerCase();
+      list = list.filter(s=>s.name.includes(currentKw) || s.id.toLowerCase().includes(k) || s.idcard.slice(-4).includes(currentKw));
+    }
+    visibleStudents = list;
+    if(currentView==='detail' && !list.find(s=>s.id===currentSel.id)) showList();
+  }
+
+  function renderScope(){
+    var r = getRole();
+    var role = ROLE_MAP[r];
+    var totals = roleTotals(r);
+    document.getElementById('kTotal').textContent = totals.students.toLocaleString();
+    document.getElementById('kClassesMeta').textContent = totals.classes + ' 个班级 · ' + SchoolStats.getStatTerm().label;
+    if(r === 'admin'){
+      document.getElementById('kSpecial').textContent = SchoolStats.DEMO_META.specialGroups;
+      document.getElementById('kHealth').textContent = SchoolStats.DEMO_META.healthWatch;
+    } else {
+      document.getElementById('kSpecial').textContent = '—';
+      document.getElementById('kHealth').textContent = '—';
+    }
+
+    /* 班级选项跟随年级 / 角色 */
+    var classSel = document.getElementById('classSel');
+    var allClasses = Array.from(new Set(STUDENTS.filter(role.filter).filter(s=>!currentGrade||s.grade===currentGrade).map(s=>s.cls)));
+    classSel.innerHTML = '<option value="">全部班级</option>' + allClasses.map(c=>'<option>'+c+'</option>').join('');
+    if(r==='class'){
+      classSel.value='高一(3)班'; classSel.disabled=true;
+      document.getElementById('gradeSel').value='高一年级'; document.getElementById('gradeSel').disabled=true;
+    }else if(r==='grade'){
+      document.getElementById('gradeSel').value='高一年级'; document.getElementById('gradeSel').disabled=true;
+      classSel.disabled=false;
+    }else{
+      document.getElementById('gradeSel').disabled=false; classSel.disabled=false;
+    }
+  }
+
+  function renderList(){
+    document.getElementById('listSummary').textContent = '共 '+visibleStudents.length+' 人';
+    var html = visibleStudents.map(s=>{
+      var av = s.gender==='男'?'':'f';
+      var tags = (s.tags.concat(s.healthTags)).slice(0,2);
+      var tagHtml = tags.length ? tags.map(t=>'<span class="tag" style="font-size:10px;padding:1px 6px">'+t+'</span>').join(' ') : '—';
+      return '<tr data-id="'+s.id+'">'+
+        '<td><div class="stu-name-cell"><div class="avatar '+av+'">'+s.name.charAt(0)+'</div><div><b>'+s.name+'</b><small>'+s.id+'</small></div></div></td>'+
+        '<td>'+s.cls+'</td>'+
+        '<td>'+s.gender+' · '+s.age+'岁</td>'+
+        '<td>'+tagHtml+'</td>'+
+        '<td><button type="button" class="link-btn" data-id="'+s.id+'">查看</button> <button type="button" class="link-btn link-danger" data-del="'+s.id+'">删除</button></td>'+
+      '</tr>';
+    }).join('');
+    document.getElementById('studentList').innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:40px;color:#88a3b5">没有符合条件的学生</td></tr>';
+
+    document.querySelectorAll('#studentList tr[data-id]').forEach(tr=>{
+      tr.addEventListener('click',e=>{
+        if(e.target.closest('.link-btn')) return;
+        showDetail(tr.getAttribute('data-id'));
+      });
+    });
+    document.querySelectorAll('#studentList .link-btn[data-id]').forEach(btn=>{
+      btn.addEventListener('click',e=>{ e.stopPropagation(); showDetail(btn.getAttribute('data-id')); });
+    });
+    document.querySelectorAll('#studentList .link-btn[data-del]').forEach(btn=>{
+      btn.addEventListener('click',e=>{ e.stopPropagation(); openDeleteConfirm(btn.getAttribute('data-del')); });
+    });
+    if(window.BEndPager) BEndPager.remount('#stuListPager');
+  }
+
+  function renderProfile(){
+    var s = currentSel;
+    var av = s.gender==='男'?'':'f';
+    var allTags = s.tags.concat(s.healthTags);
+    var tagsHtml = allTags.map(t=>{
+      var cls = ['低保','建档立卡'].includes(t)?'danger':(['留守儿童','慢性病','哮喘','过敏','心脏'].includes(t)?'warn':(['关爱对象'].includes(t)?'info':'ok'));
+      return '<span class="tag '+cls+'">'+t+'</span>';
+    }).join('');
+
+    var eventsHtml = s.events.length? '<div class="ev-timeline">' + s.events.map(e=>
+      '<div class="ev-item '+e.lv+'"><div class="ev-t">'+e.time+'</div>'+
+      '<div class="ev-title">'+e.title+' <span class="pill lv-'+e.lv+'" style="margin-left:6px">'+LV_LABEL[e.lv]+'</span></div>'+
+      '<div class="ev-desc">'+e.desc+'</div>'+
+      '<div class="ev-meta"><span><i class="fas fa-coins"></i> 理赔：'+e.claim+'</span><a href="学平险-学校端--风险事件登记.html" style="color:#1C6E5C">前往事件登记 →</a></div></div>'
+    ).join('') + '</div>' : '<div style="padding:24px;text-align:center;color:#88a3b5;background:#fafbfc;border-radius:10px">暂无风险事件 / 理赔记录</div>';
+
+    var notesHtml = s.notes.length? s.notes.map(n=>
+      '<div class="note-item"><div class="nh"><b>'+n.who+'</b><span>'+n.time+'</span></div><div class="ntxt">'+n.text+'</div></div>'
+    ).join('') : '<div style="padding:14px;color:#88a3b5;font-size:13px;border:1px dashed #cbdde6;border-radius:10px;text-align:center;background:#fafbfc">暂无备注</div>';
+
+    var guardiansHtml = s.guardians.map(g=>
+      '<div class="guardian"><div class="gd-head"><div class="gd-name">'+g.name+(g.main?' <span class="gd-tag">主要联系人</span>':'')+'</div><span class="gd-rel">'+g.rel+'</span></div>'+
+      '<div class="gd-row"><span><i class="fas fa-phone"></i>联系电话</span>'+renderPhone(g.phone)+'</div>'+
+      (g.work?'<div class="gd-row"><span><i class="fas fa-briefcase"></i>工作单位</span><span>'+g.work+'</span></div>':'')+
+      '</div>'
+    ).join('');
+
+    document.getElementById('profileWrap').innerHTML =
+      '<div class="profile-head">'+
+        '<div class="big-avatar '+av+'">'+s.name.charAt(0)+'</div>'+
+        '<div class="ph-body">'+
+          '<h2>'+s.name+' <span class="gender '+(s.gender==='男'?'m':'f')+'">'+s.gender+' · '+s.age+'岁</span></h2>'+
+          '<div class="sub-meta">'+
+            '<span><i class="fas fa-id-card"></i>'+s.id+'</span>'+
+            '<span><i class="fas fa-school"></i>'+s.cls+'</span>'+
+            '<span><i class="fas fa-calendar"></i>'+s.birth+'</span>'+
+            '<span><i class="fas fa-droplet"></i>'+s.bloodType+'</span>'+
+          '</div>'+
+          (tagsHtml?'<div class="tags-row">'+tagsHtml+'</div>':'')+
+        '</div>'+
+        '<div class="ph-actions">'+
+          '<a class="btn btn-outline btn-sm" href="学平险-学校端--风险事件登记.html"><i class="fas fa-triangle-exclamation"></i> 登记事件</a>'+
+          '<button class="btn btn-outline btn-sm" onclick="openEdit(currentSel)"><i class="fas fa-pen"></i> 编辑</button>'+
+          '<button class="btn btn-outline btn-sm btn-danger-outline" onclick="openDeleteConfirm(currentSel.id)"><i class="fas fa-trash"></i> 删除</button>'+
+          '<button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> 导出</button>'+
+        '</div>'+
+      '</div>'+
+
+      '<div class="tabs" id="profileTabs">'+
+        '<button class="active" data-tab="basic">基础信息</button>'+
+        '<button data-tab="guardian">监护人</button>'+
+        '<button data-tab="health">健康档案</button>'+
+        '<button data-tab="event">风险 ('+s.events.length+')</button>'+
+        '<button data-tab="note">备注与批注 ('+s.notes.length+')</button>'+
+      '</div>'+
+
+      '<div class="tab-body">'+
+        /* 基础信息 */
+        '<div class="tab-pane active" data-tab="basic">'+
+          '<div class="kv-grid">'+
+            '<div class="kv"><div class="label">姓名</div><div class="val">'+s.name+'</div></div>'+
+            '<div class="kv"><div class="label">性别 / 年龄</div><div class="val">'+s.gender+' · '+s.age+'岁</div></div>'+
+            '<div class="kv"><div class="label">出生日期</div><div class="val">'+s.birth+'</div></div>'+
+            '<div class="kv"><div class="label">学籍号</div><div class="val">'+s.id+'</div></div>'+
+            '<div class="kv"><div class="label">身份证号</div><div class="val">'+s.idcard+' <i class="fas fa-copy copy" title="复制"></i></div></div>'+
+            '<div class="kv"><div class="label">血型</div><div class="val">'+s.bloodType+'</div></div>'+
+            '<div class="kv"><div class="label">年级班级</div><div class="val">'+s.cls+'</div></div>'+
+            '<div class="kv"><div class="label">入学日期</div><div class="val">'+s.joinDate+'</div></div>'+
+            '<div class="kv"><div class="label">户籍类型</div><div class="val">'+s.hk+'</div></div>'+
+            '<div class="kv" style="grid-column:span 3"><div class="label">家庭住址</div><div class="val">'+s.addr+'</div></div>'+
+            '<div class="kv" style="grid-column:span 3"><div class="label">紧急联系人（校内）</div><div class="val">'+(s.emergency?renderInlinePhones(s.emergency):'—')+'</div></div>'+
+          '</div>'+
+        '</div>'+
+
+        /* 监护人 */
+        '<div class="tab-pane" data-tab="guardian">'+
+          '<div class="section-title"><i class="fas fa-people-roof"></i> 监护人（'+s.guardians.length+'）</div>'+
+          '<div class="guardian-grid">'+guardiansHtml+'</div>'+
+          '<div class="section-title" style="margin-top:18px"><i class="fas fa-phone-volume"></i> 紧急联系（校内）</div>'+
+          '<div style="font-size:13px;color:#4c6a7e;background:#fafbfc;border:1px solid #eef2f8;border-radius:10px;padding:12px 14px">'+(s.emergency?renderInlinePhones(s.emergency):'未设置紧急联系人')+'</div>'+
+        '</div>'+
+
+        /* 健康档案 */
+        '<div class="tab-pane" data-tab="health">'+
+          '<div class="health-grid">'+
+            '<div class="health-card'+(s.allergy?' warn':'')+'"><div class="hc-head"><span><i class="fas fa-virus"></i> 过敏史</span></div><div class="hc-val">'+(s.allergy||'未填写')+'</div></div>'+
+            '<div class="health-card'+(s.chronic?' danger':'')+'"><div class="hc-head"><span><i class="fas fa-heart-pulse"></i> 慢性病</span></div><div class="hc-val">'+(s.chronic||'无')+'</div></div>'+
+            '<div class="health-card"><div class="hc-head"><span><i class="fas fa-droplet"></i> 血型</span></div><div class="hc-val">'+s.bloodType+'</div></div>'+
+            '<div class="health-card'+(s.restrict.length?' warn':'')+'"><div class="hc-head"><span><i class="fas fa-person-running"></i> 体育 / 活动限制</span></div>'+
+              '<div class="restrict-list">'+(s.restrict.length?s.restrict.map(r=>'<div class="rl"><i class="fas fa-circle-info"></i>'+r+'</div>').join(''):'<div class="hc-val">无</div>')+'</div></div>'+
+          '</div>'+
+          '<div class="section-title" style="margin-top:18px"><i class="fas fa-shield-heart"></i> 安全 / 关爱标签</div>'+
+          '<div style="display:flex;gap:6px;flex-wrap:wrap">'+(allTags.length?tagsHtml:'<span style="color:#88a3b5;font-size:13px">无特殊标签</span>')+'</div>'+
+        '</div>'+
+
+        /* 风险事件 */
+        '<div class="tab-pane" data-tab="event">'+
+          eventsHtml+
+          '<div style="margin-top:14px;text-align:right"><a href="学平险-学校端--风险事件登记.html" class="btn btn-outline btn-sm"><i class="fas fa-plus"></i> 登记新事件</a></div>'+
+        '</div>'+
+
+        /* 备注 */
+        '<div class="tab-pane" data-tab="note">'+
+          notesHtml+
+          '<div class="add-note"><input placeholder="添加一条批注（仅校内可见）…"><button class="btn btn-primary btn-sm" onclick="alert(\'已添加\')"><i class="fas fa-paper-plane"></i> 添加</button></div>'+
+        '</div>'+
+      '</div>';
+
+    /* Tab 切换 */
+    document.querySelectorAll('#profileTabs button').forEach(b=>b.addEventListener('click',()=>{
+      var t = b.getAttribute('data-tab');
+      document.querySelectorAll('#profileTabs button').forEach(x=>x.classList.toggle('active',x===b));
+      document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p.getAttribute('data-tab')===t));
+    }));
+  }
+
+  /* ============ 事件绑定 ============ */
+  initSchoolUserMenu('#userMenuMount', function(){
+    currentGrade=''; currentClass=''; currentTag=''; currentKw='';
+    document.getElementById('kw').value='';
+    document.getElementById('tagFilters').querySelectorAll('.tag-chip').forEach(c=>c.classList.toggle('active',c.getAttribute('data-tag')===''));
+    renderScope(); applyScopeAndFilters(); renderList();
+    if(currentView==='detail') renderProfile();
+  });
+  document.getElementById('kw').addEventListener('input',e=>{ currentKw=e.target.value.trim(); applyScopeAndFilters(); renderList(); if(currentView==='detail') renderProfile(); });
+  document.getElementById('gradeSel').addEventListener('change',e=>{ currentGrade=e.target.value; currentClass=''; renderScope(); applyScopeAndFilters(); renderList(); });
+  document.getElementById('classSel').addEventListener('change',e=>{ currentClass=e.target.value; applyScopeAndFilters(); renderList(); });
+  document.querySelectorAll('#tagFilters .tag-chip').forEach(c=>c.addEventListener('click',()=>{
+    document.querySelectorAll('#tagFilters .tag-chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    currentTag = c.getAttribute('data-tag');
+    applyScopeAndFilters(); renderList();
+  }));
+
+  document.getElementById('btnBack').addEventListener('click',showList);
+  document.getElementById('btnAdd').addEventListener('click',function(){ openEdit(null); });
+
+  /* ============ 新增 / 编辑表单（字段与详情严格对齐） ============ */
+  var SPECIAL_TAGS = ['优秀班干','班长','低保','建档立卡','留守儿童','单亲','关爱对象'];
+  var HEALTH_TAGS  = ['过敏','慢性病','哮喘','心脏','视力关注','运动限制'];
+  var GRADES = ['初一年级','初二年级','初三年级','高一年级','高二年级','高三年级'];
+
+  function htmlEscape(v){ return (v==null?'':String(v)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  function openEdit(s){
+    var isEdit = !!s;
+    document.getElementById('editTitle').textContent = isEdit ? ('编辑档案 · '+s.name) : '新增学生档案';
+    renderEditForm(s);
+    document.getElementById('editModal').classList.add('open');
+  }
+  function closeEdit(){ document.getElementById('editModal').classList.remove('open'); }
+
+  /* ============ 删除档案 ============ */
+  var pendingDeleteId = null;
+  function openDeleteConfirm(id){
+    var s = STUDENTS.find(function(x){ return x.id===id; });
+    if(!s) return;
+    pendingDeleteId = id;
+    document.getElementById('deleteTargetName').textContent = s.name;
+    document.getElementById('deleteTargetId').textContent = s.id;
+    document.getElementById('deleteModal').classList.add('open');
+  }
+  function closeDelete(){
+    pendingDeleteId = null;
+    document.getElementById('deleteModal').classList.remove('open');
+  }
+  function confirmDelete(){
+    if(!pendingDeleteId) return;
+    var id = pendingDeleteId;
+    var idx = STUDENTS.findIndex(function(x){ return x.id===id; });
+    if(idx < 0){ closeDelete(); return; }
+    var name = STUDENTS[idx].name;
+    STUDENTS.splice(idx, 1);
+    if(window.SchoolStats && SchoolStats.PROFILE_STUDENTS){
+      var pi = SchoolStats.PROFILE_STUDENTS.findIndex(function(p){ return p.id===id; });
+      if(pi >= 0) SchoolStats.PROFILE_STUDENTS.splice(pi, 1);
+    }
+    closeDelete();
+    if(currentView==='detail' && currentSel && currentSel.id===id) showList();
+    renderScope();
+    applyScopeAndFilters();
+    renderList();
+    alert('已删除学生档案：'+name);
+  }
+  window.openDeleteConfirm = openDeleteConfirm;
+  window.closeDelete = closeDelete;
+  window.confirmDelete = confirmDelete;
+
+  function renderEditForm(s){
+    s = s || {gender:'男',hk:'城镇',guardians:[],restrict:[],tags:[],healthTags:[]};
+    var classOptions = Array.from(new Set(STUDENTS.map(x=>x.cls))).map(function(c){
+      return '<option'+(s.cls===c?' selected':'')+'>'+c+'</option>';
+    }).join('');
+
+    var chipsSpecial = SPECIAL_TAGS.map(function(t){
+      var ac = (s.tags||[]).includes(t)?' active':'';
+      return '<span class="chip'+ac+'" data-group="tags" data-v="'+t+'">'+t+'</span>';
+    }).join('');
+    var chipsHealth = HEALTH_TAGS.map(function(t){
+      var ac = (s.healthTags||[]).includes(t)?' active warn':'';
+      return '<span class="chip warn'+ac+'" data-group="healthTags" data-v="'+t+'">'+t+'</span>';
+    }).join('');
+
+    document.getElementById('editBody').innerHTML =
+      '<div class="modal-tip"><i class="fas fa-circle-info"></i> 风险事件与批注在详情页单独维护，本表单仅编辑学校可手工维护的字段。</div>'+
+
+      /* —— 基础信息 —— */
+      '<div class="form-section"><div class="form-section-hd"><div class="ttl"><i class="fas fa-id-card"></i> 基础信息</div><div class="sub">与详情「基础信息」一致</div></div>'+
+      '<div class="form-section-bd"><div class="form-grid">'+
+        '<div class="form-row"><label>姓名 <span class="req">*</span></label><input id="f_name" value="'+htmlEscape(s.name)+'"></div>'+
+        '<div class="form-row"><label>性别 <span class="req">*</span></label><select id="f_gender"><option'+(s.gender==='男'?' selected':'')+'>男</option><option'+(s.gender==='女'?' selected':'')+'>女</option></select></div>'+
+        '<div class="form-row"><label>出生日期 <span class="req">*</span></label><input id="f_birth" type="date" value="'+htmlEscape(s.birth)+'"></div>'+
+        '<div class="form-row"><label>学籍号 <span class="req">*</span></label><input id="f_id" value="'+htmlEscape(s.id)+'" '+(s.id?'readonly':'')+' placeholder="S2024xxxx"></div>'+
+        '<div class="form-row"><label>身份证号</label><input id="f_idcard" placeholder="18 位" value="'+htmlEscape(s.idcard)+'"></div>'+
+        '<div class="form-row"><label>血型</label><select id="f_blood">'+['','A+','A-','B+','B-','O+','O-','AB+','AB-'].map(function(b){return '<option'+(s.bloodType===b?' selected':'')+'>'+b+'</option>';}).join('')+'</select></div>'+
+        '<div class="form-row"><label>年级 <span class="req">*</span></label><select id="f_grade">'+GRADES.map(function(g){return '<option'+(s.grade===g?' selected':'')+'>'+g+'</option>';}).join('')+'</select></div>'+
+        '<div class="form-row"><label>班级 <span class="req">*</span></label><select id="f_cls">'+classOptions+'</select></div>'+
+        '<div class="form-row"><label>入学日期</label><input id="f_join" type="date" value="'+htmlEscape(s.joinDate)+'"></div>'+
+        '<div class="form-row"><label>户籍类型</label><select id="f_hk"><option'+(s.hk==='城镇'?' selected':'')+'>城镇</option><option'+(s.hk==='农村'?' selected':'')+'>农村</option></select></div>'+
+        '<div class="form-row span2"><label>家庭住址</label><input id="f_addr" placeholder="详细住址" value="'+htmlEscape(s.addr)+'"></div>'+
+        '<div class="form-row full"><label>校内紧急联系人</label><input id="f_emer" placeholder="例：班主任 王芳 130****7711" value="'+htmlEscape(s.emergency)+'"></div>'+
+      '</div></div></div>'+
+
+      /* —— 监护人 —— */
+      '<div class="form-section"><div class="form-section-hd"><div class="ttl"><i class="fas fa-people-roof"></i> 监护人</div><div class="sub">与详情「监护人」一致，可多位</div></div>'+
+      '<div class="form-section-bd"><div id="guardianList"></div>'+
+      '<div class="guardian-add"><button type="button" id="addGuardian"><i class="fas fa-plus"></i> 添加监护人</button></div>'+
+      '</div></div>'+
+
+      /* —— 健康档案 —— */
+      '<div class="form-section"><div class="form-section-hd"><div class="ttl"><i class="fas fa-heart-pulse"></i> 健康档案</div><div class="sub">与详情「健康档案」一致</div></div>'+
+      '<div class="form-section-bd"><div class="form-grid">'+
+        '<div class="form-row span2"><label>过敏史</label><input id="f_allergy" placeholder="如：花粉、芒果" value="'+htmlEscape(s.allergy)+'"></div>'+
+        '<div class="form-row"><label>慢性病</label><input id="f_chronic" placeholder="如：哮喘、心脏病；无则留空" value="'+htmlEscape(s.chronic)+'"></div>'+
+        '<div class="form-row full"><label>体育 / 活动限制 <span class="src">每行一条</span></label><div id="restrictList" class="restrict-edit"></div></div>'+
+      '</div></div></div>'+
+
+      /* —— 关爱标签 —— */
+      '<div class="form-section"><div class="form-section-hd"><div class="ttl"><i class="fas fa-tags"></i> 关爱 / 健康标签</div><div class="sub">影响学生档案列表的「标签」过滤</div></div>'+
+      '<div class="form-section-bd">'+
+        '<div class="form-row" style="margin-bottom:12px"><label>特殊群体（多选）</label><div class="chip-picker" id="chipsSpecial">'+chipsSpecial+'</div></div>'+
+        '<div class="form-row"><label>健康关注（多选）</label><div class="chip-picker" id="chipsHealth">'+chipsHealth+'</div></div>'+
+      '</div></div>';
+
+    /* 渲染监护人列表 */
+    var glist = (s.guardians && s.guardians.length) ? s.guardians.slice() : [{rel:'',name:'',phone:'',work:'',main:true}];
+    renderGuardians(glist);
+    document.getElementById('addGuardian').addEventListener('click',function(){
+      var rows = collectGuardians();
+      rows.push({rel:'',name:'',phone:'',work:'',main:false});
+      renderGuardians(rows);
+    });
+
+    /* 渲染运动限制 */
+    renderRestricts((s.restrict && s.restrict.length) ? s.restrict.slice() : []);
+
+    /* 标签 chip 点击切换 */
+    document.querySelectorAll('#chipsSpecial .chip, #chipsHealth .chip').forEach(function(c){
+      c.addEventListener('click',function(){ c.classList.toggle('active'); });
+    });
+  }
+
+  function renderGuardians(list){
+    var wrap = document.getElementById('guardianList');
+    wrap.innerHTML = list.map(function(g, i){
+      return '<div class="guardian-edit" data-idx="'+i+'">'+
+        '<div class="grid">'+
+          '<select class="g-rel"><option value="">关系</option>'+['父亲','母亲','爷爷','奶奶','外公','外婆','其他'].map(function(r){return '<option'+(g.rel===r?' selected':'')+'>'+r+'</option>';}).join('')+'</select>'+
+          '<input class="g-name" placeholder="姓名" value="'+htmlEscape(g.name)+'">'+
+          '<input class="g-phone" placeholder="联系电话" value="'+htmlEscape(g.phone)+'">'+
+          '<input class="g-work" placeholder="工作单位（可选）" value="'+htmlEscape(g.work)+'">'+
+        '</div>'+
+        '<div class="gd-foot">'+
+          '<label><input type="radio" name="mainGuardian" value="'+i+'"'+(g.main?' checked':'')+'> 设为主要联系人</label>'+
+          (list.length>1?'<button type="button" class="gd-del" data-del="'+i+'"><i class="fas fa-trash"></i> 删除</button>':'<span></span>')+
+        '</div>'+
+      '</div>';
+    }).join('');
+    wrap.querySelectorAll('[data-del]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var rows = collectGuardians();
+        rows.splice(parseInt(b.getAttribute('data-del'),10),1);
+        renderGuardians(rows);
+      });
+    });
+  }
+  function collectGuardians(){
+    return Array.prototype.map.call(document.querySelectorAll('#guardianList .guardian-edit'), function(row, i){
+      return {
+        rel:   row.querySelector('.g-rel').value,
+        name:  row.querySelector('.g-name').value.trim(),
+        phone: row.querySelector('.g-phone').value.trim(),
+        work:  row.querySelector('.g-work').value.trim(),
+        main:  row.querySelector('input[name="mainGuardian"]').checked
+      };
+    });
+  }
+
+  function renderRestricts(list){
+    var wrap = document.getElementById('restrictList');
+    if(!list.length) list = [''];
+    wrap.innerHTML = list.map(function(r){
+      return '<div class="row"><input value="'+htmlEscape(r)+'" placeholder="如：剧烈运动后避免长时间户外"><button type="button" class="del" title="移除"><i class="fas fa-times"></i></button></div>';
+    }).join('') + '<button type="button" class="restrict-add"><i class="fas fa-plus"></i> 添加一条</button>';
+    wrap.querySelectorAll('.del').forEach(function(b){
+      b.addEventListener('click',function(){ b.parentElement.remove(); if(!wrap.querySelector('.row')) renderRestricts([]); });
+    });
+    wrap.querySelector('.restrict-add').addEventListener('click',function(){
+      var arr = Array.prototype.map.call(wrap.querySelectorAll('.row input'), function(i){return i.value;});
+      arr.push(''); renderRestricts(arr);
+    });
+  }
+
+  function saveEdit(){
+    var name = document.getElementById('f_name').value.trim();
+    var sid  = document.getElementById('f_id').value.trim();
+    if(!name || !sid){ alert('请填写姓名与学籍号'); return; }
+    alert('已保存：'+name+' · '+sid);
+    closeEdit();
+  }
+
+  /* ============ 批量导入（弹窗 + 模板下载 + 文件选择） ============ */
+  /* #原型说明：表头需与后端导入解析约定保持一致；必填字段在表头末尾加 *，同一单元格多项统一用英文分号 ; 分隔 */
+  var IMPORT_HEADERS = [
+    '姓名*','性别*','出生日期*','学籍号*','年级*','班级*',
+    '身份证号','血型','入学日期','户籍类型','家庭住址','校内紧急联系人',
+    '监护人1关系','监护人1姓名','监护人1电话','监护人1工作单位','监护人1是否主要',
+    '监护人2关系','监护人2姓名','监护人2电话','监护人2工作单位',
+    '过敏史','慢性病','体育活动限制',
+    '特殊群体标签','健康关注标签'
+  ];
+  var IMPORT_SAMPLES = [
+    /* 示例 1：完整字段示例 */
+    ['李明远','男','2009-03-15','S20240001','高三年级','高三(1)班',
+     '410100200903150123','O+','2021-09-01','城镇','郑州市金水区文化路 88 号','班主任 王芳 130****7711',
+     '父亲','李建国','138****1122','郑州中铝','是',
+     '母亲','王秀英','139****3345','家庭主妇',
+     '花粉;芒果','无','剧烈运动后避免长时间户外',
+     '优秀班干','过敏'],
+    /* 示例 2：仅必填字段，其它留空 */
+    ['赵雨欣','女','2010-07-22','S20240002','高二年级','高二(3)班',
+     '','','','','','',
+     '','','','','',
+     '','','','',
+     '','','',
+     '','']
+  ];
+
+  function escapeCsvCell(v){
+    v = (v==null?'':String(v));
+    if(/[",\n\r]/.test(v)) return '"'+v.replace(/"/g,'""')+'"';
+    return v;
+  }
+  function downloadImportTemplate(){
+    var rows = [IMPORT_HEADERS.map(escapeCsvCell).join(',')];
+    IMPORT_SAMPLES.forEach(function(r){ rows.push(r.map(escapeCsvCell).join(',')); });
+    /* 末尾留 3 行空模板供直接填写 */
+    for(var i=0;i<3;i++){ rows.push(IMPORT_HEADERS.map(function(){return '';}).join(',')); }
+    /* UTF-8 BOM 让 Excel / WPS 自动识别中文编码 */
+    var csv = '\ufeff' + rows.join('\r\n');
+    var blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '学生档案导入模板.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function toggleImportSpec(){
+    var box = document.getElementById('importSpecCollapse');
+    var btn = document.getElementById('importSpecToggle');
+    if(!box || !btn) return;
+    var open = box.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    var meta = btn.querySelector('.spec-collapse-meta');
+    if(meta) meta.textContent = open
+      ? '共 26 列 · 必填 6 项 · 非必填 20 项 · 点击收起'
+      : '共 26 列 · 必填 6 项 · 非必填 20 项 · 点击展开查看';
+  }
+  function openImport(){
+    clearImportFile();
+    var box = document.getElementById('importSpecCollapse');
+    var btn = document.getElementById('importSpecToggle');
+    if(box) box.classList.remove('open');
+    if(btn){
+      btn.setAttribute('aria-expanded', 'false');
+      var meta = btn.querySelector('.spec-collapse-meta');
+      if(meta) meta.textContent = '共 26 列 · 必填 6 项 · 非必填 20 项 · 点击展开查看';
+    }
+    document.getElementById('importModal').classList.add('open');
+  }
+  function closeImport(){
+    document.getElementById('importModal').classList.remove('open');
+  }
+  function clearImportFile(){
+    var f = document.getElementById('importFile'); if(f) f.value = '';
+    var info = document.getElementById('fileInfo'); if(info) info.style.display = 'none';
+  }
+  function formatSize(n){
+    if(n<1024) return n+' B';
+    if(n<1024*1024) return (n/1024).toFixed(1)+' KB';
+    return (n/1024/1024).toFixed(2)+' MB';
+  }
+  function showImportFile(file){
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileSize').textContent = formatSize(file.size);
+    document.getElementById('fileInfo').style.display = 'flex';
+  }
+  function submitImport(){
+    var f = document.getElementById('importFile').files[0];
+    if(!f){ alert('请先选择需要导入的文件'); return; }
+    var ok = /\.(csv|xlsx|xls)$/i.test(f.name);
+    if(!ok){ alert('仅支持 .csv / .xlsx / .xls 格式'); return; }
+    alert('已提交导入任务：'+f.name+'\n导入完成后系统将推送通知，结果可在「操作日志」查看。');
+    closeImport();
+  }
+
+  /* 绑定批量导入入口与拖拽 */
+  document.getElementById('btnImport').addEventListener('click', openImport);
+  document.getElementById('importSpecToggle').addEventListener('click', toggleImportSpec);
+  (function bindDropZone(){
+    var dz = document.getElementById('dropZone');
+    var input = document.getElementById('importFile');
+    if(!dz || !input) return;
+    dz.addEventListener('click', function(){ input.click(); });
+    dz.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); input.click(); } });
+    input.addEventListener('change', function(){ if(input.files[0]) showImportFile(input.files[0]); });
+    ['dragenter','dragover'].forEach(function(ev){
+      dz.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); dz.classList.add('dragover'); });
+    });
+    ['dragleave','drop'].forEach(function(ev){
+      dz.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); dz.classList.remove('dragover'); });
+    });
+    dz.addEventListener('drop', function(e){
+      var files = e.dataTransfer && e.dataTransfer.files;
+      if(files && files[0]){ input.files = files; showImportFile(files[0]); }
+    });
+  })();
+
+  /* 初始化：支持 ?id= 从其他页跳入详情 */
+  renderScope();
+  applyScopeAndFilters();
+  renderList();
+  var initId = new URLSearchParams(location.search).get('id');
+  if(initId && STUDENTS.find(s=>s.id===initId)){
+    showDetail(initId);
+  } else {
+    showList();
+  }
+</script>
+</body>
+</html>
