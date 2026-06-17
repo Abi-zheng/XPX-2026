@@ -30,13 +30,7 @@
     /* —— 左侧：范围 + 海报样式选择 —— */
     .scope-block{margin-bottom:18px}
     .scope-hd{font-size:12px;color:#88a3b5;margin-bottom:6px;font-weight:500;letter-spacing:.02em}
-    .scope-tabs{display:flex;background:#fafbfc;border:1px solid #eef2f8;border-radius:10px;padding:4px;gap:4px}
-    .scope-tabs button{flex:1;border:none;background:transparent;padding:7px 8px;font-size:13px;color:#6792a8;border-radius:7px;cursor:pointer;font-weight:500}
-    .scope-tabs button.active{background:#1C6E5C;color:#fff;font-weight:600}
-    .scope-pick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-    .scope-pick select{padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;background:#fff;color:#1E2F3E;width:100%}
-    .scope-pick select:disabled{background:#fafbfc;color:#88a3b5;cursor:not-allowed}
-    .scope-summary{margin-top:10px;padding:9px 12px;background:#eef6f3;border:1px solid #b8d9ce;border-radius:8px;font-size:12px;color:#1C6E5C;line-height:1.6}
+    .scope-summary{margin-top:4px;padding:9px 12px;background:#eef6f3;border:1px solid #b8d9ce;border-radius:8px;font-size:12px;color:#1C6E5C;line-height:1.6}
     .scope-summary b{color:#1C6E5C}
 
     .validity-block{margin-bottom:18px;padding-top:4px;border-top:1px solid #eef2f8}
@@ -130,7 +124,7 @@
     <div class="top-bar">
       <div class="welcome">
         <h2><i class="fas fa-qrcode" style="color:#1C6E5C"></i> 投保二维码</h2>
-        <p>按范围生成投保二维码 · 选择海报风格 · 下载或打印分发</p>
+        <p>生成学校投保二维码 · 选择海报风格 · 下载或打印分发</p>
       </div>
       <div class="actions">
         <div id="userMenuMount"></div>
@@ -143,21 +137,8 @@
         <h3><i class="fas fa-bullseye"></i> 二维码范围</h3>
         <div class="scope-block">
           <div class="scope-hd">生成范围</div>
-          <div class="scope-tabs" id="scopeTabs">
-            <button type="button" data-scope="school" class="active">全校</button>
-            <button type="button" data-scope="grade">年级</button>
-            <button type="button" data-scope="class">班级</button>
-          </div>
-          <div class="scope-pick">
-            <select id="gradeSel" disabled>
-              <option value="">选择年级</option>
-            </select>
-            <select id="classSel" disabled>
-              <option value="">选择班级</option>
-            </select>
-          </div>
           <div class="scope-summary" id="scopeSummary">
-            <b>当前：</b>立德中学 · 全校通用二维码
+            <b>当前：</b>立德中学 · 学校通用二维码
           </div>
         </div>
 
@@ -212,7 +193,7 @@
         <div class="poster theme-green" id="poster">
           <div class="school"><i class="fas fa-shield-heart"></i> 立德中学</div>
           <h2>扫码投保</h2>
-          <span class="scope-tag" id="posterScopeTag">全校通用</span>
+          <span class="scope-tag" id="posterScopeTag">学校通用</span>
           <div class="qr-frame">
             <div class="qr-img"><span></span><div class="qr-mid"><i class="fas fa-shield-heart"></i></div></div>
           </div>
@@ -224,7 +205,7 @@
 
         <div class="hint">
           <i class="fas fa-circle-info"></i>
-          二维码生成后会带上范围与有效时间；过期后扫码将无法投保。投保完成后数据自动回传到「班级投保名单」。
+          二维码生成后会带上学校与有效时间；过期后扫码将无法投保。投保完成后数据自动回传到「班级投保名单」。
         </div>
       </div>
     </div>
@@ -236,21 +217,9 @@
 <script>initSchoolSidebar("qrcode");</script>
 <script>initSchoolUserMenu('#userMenuMount');</script>
 <script>
-  /* #原型说明：年级 / 班级数据，按当前账号权限范围过滤；真实项目应取自「组织与成员」服务 */
-  var ORG = {
-    '高三年级':['高三(1)班','高三(2)班','高三(3)班'],
-    '高二年级':['高二(1)班','高二(2)班'],
-    '高一年级':['高一(1)班','高一(2)班','高一(3)班'],
-    '初三年级':['初三(2)班','初三(3)班'],
-    '初二年级':['初二(4)班'],
-    '初一年级':['初一(1)班']
-  };
-
   var SCHOOL_NAME = '立德中学';
-  var state = { scope:'school', grade:'', cls:'', theme:'green', validFrom:'2026-03-01', validTo:'2026-05-31' };
+  var state = { theme:'green', validFrom:'2026-03-01', validTo:'2026-05-31' };
 
-  var gradeSel = document.getElementById('gradeSel');
-  var classSel = document.getElementById('classSel');
   var summary = document.getElementById('scopeSummary');
   var posterScopeTag = document.getElementById('posterScopeTag');
   var posterValidity = document.getElementById('posterValidity');
@@ -274,59 +243,9 @@
     return '';
   }
 
-  /* 初始化年级 */
-  Object.keys(ORG).forEach(function(g){
-    var op = document.createElement('option'); op.value=g; op.textContent=g;
-    gradeSel.appendChild(op);
-  });
-
-  function refreshClasses(){
-    classSel.innerHTML = '<option value="">选择班级</option>';
-    if(!state.grade){ classSel.disabled = true; return; }
-    (ORG[state.grade]||[]).forEach(function(c){
-      var op = document.createElement('option'); op.value=c; op.textContent=c;
-      classSel.appendChild(op);
-    });
-    classSel.disabled = (state.scope!=='class');
-  }
-
-  function updateScopeSelects(){
-    gradeSel.disabled = (state.scope==='school');
-    classSel.disabled = (state.scope!=='class' || !state.grade);
-    if(state.scope==='school'){
-      state.grade = ''; state.cls = '';
-      gradeSel.value = ''; classSel.innerHTML='<option value="">选择班级</option>';
-    } else if(state.scope==='grade'){
-      state.cls = '';
-      classSel.innerHTML='<option value="">选择班级</option>';
-    }
-  }
-
   function render(){
-    var scopeText, tagText;
-    if(state.scope==='school'){
-      scopeText = SCHOOL_NAME + ' · 全校通用二维码';
-      tagText = '全校通用';
-    } else if(state.scope==='grade'){
-      if(!state.grade){
-        scopeText = '请选择年级';
-        tagText = '待选择年级';
-      } else {
-        scopeText = SCHOOL_NAME + ' · ' + state.grade + '专属二维码';
-        tagText = state.grade;
-      }
-    } else {
-      if(!state.grade){
-        scopeText = '请选择年级';
-        tagText = '待选择班级';
-      } else if(!state.cls){
-        scopeText = '请选择班级';
-        tagText = '待选择班级';
-      } else {
-        scopeText = SCHOOL_NAME + ' · ' + state.cls + '专属二维码';
-        tagText = state.cls;
-      }
-    }
+    var scopeText = SCHOOL_NAME + ' · 学校通用二维码';
+    var tagText = '学校通用';
     var err = validityError();
     var validLine = '有效 ' + fmtDateShort(state.validFrom) + ' ～ ' + fmtDateShort(state.validTo);
     summary.innerHTML = '<b>当前：</b>' + scopeText + '<br><span style="opacity:.9">' + validLine + '</span>';
@@ -339,28 +258,6 @@
 
     poster.className = 'poster theme-' + state.theme;
   }
-
-  /* 范围 tab */
-  document.querySelectorAll('#scopeTabs button').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('#scopeTabs button').forEach(function(b){ b.classList.toggle('active', b===btn); });
-      state.scope = btn.getAttribute('data-scope');
-      updateScopeSelects();
-      refreshClasses();
-      render();
-    });
-  });
-
-  gradeSel.addEventListener('change', function(){
-    state.grade = gradeSel.value;
-    state.cls = '';
-    refreshClasses();
-    render();
-  });
-  classSel.addEventListener('change', function(){
-    state.cls = classSel.value;
-    render();
-  });
 
   validFrom.addEventListener('change', function(){ syncValidityFromInputs(); render(); });
   validTo.addEventListener('change', function(){ syncValidityFromInputs(); render(); });
@@ -376,15 +273,9 @@
 
   /* 下载 / 打印 */
   function currentScopeLabel(){
-    if(state.scope==='school') return SCHOOL_NAME + '_全校';
-    if(state.scope==='grade')  return SCHOOL_NAME + '_' + (state.grade || '请先选择年级');
-    return SCHOOL_NAME + '_' + (state.cls || '请先选择班级');
+    return SCHOOL_NAME + '_学校';
   }
   function validateBeforeExport(){
-    if((state.scope==='grade' && !state.grade) || (state.scope==='class' && (!state.grade||!state.cls))){
-      alert('请先选择对应的年级 / 班级');
-      return false;
-    }
     var err = validityError();
     if(err){ alert(err); return false; }
     return true;
