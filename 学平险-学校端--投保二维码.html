@@ -21,7 +21,8 @@
     .btn-outline{background:#fff;border:1px solid #cbdde6;color:#4c6a7e}
     .btn-outline:hover{border-color:#1C6E5C;color:#1C6E5C}
 
-    .layout{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:flex-start}
+    .layout{display:grid;grid-template-columns:360px minmax(280px,1fr) 340px;gap:16px;align-items:start}
+    @media(max-width:1200px){.layout{grid-template-columns:360px 1fr}.proto-notes-section{grid-column:1/-1}}
     @media(max-width:960px){.layout{grid-template-columns:1fr}}
     .panel{background:#fff;border:1px solid #eef2f8;border-radius:18px;padding:20px;box-shadow:0 4px 10px rgba(0,0,0,.02)}
     .panel h3{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
@@ -105,8 +106,83 @@
     .hint{font-size:12px;color:#88a3b5;line-height:1.7;margin-top:14px;padding:10px 12px;background:#fafbfc;border:1px solid #eef2f8;border-radius:10px;width:100%;max-width:380px}
     .hint i{color:#1C6E5C;margin-right:4px}
 
+    /* —— 原型批注标记（非正式页面内容） —— */
+    .proto-mark{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:18px;height:18px;margin-left:4px;
+      border-radius:50%;background:#f5a623;color:#fff;
+      font-size:11px;font-weight:700;line-height:1;flex-shrink:0;
+      vertical-align:middle;position:relative;top:-1px;
+      cursor:help;
+    }
+    .proto-mark:hover{background:#e09400}
+    h3 .proto-mark,h2 .proto-mark{margin-left:6px}
+
+    .proto-notes-section{
+      position:sticky;top:1rem;align-self:start;
+      max-height:calc(100vh - 3rem);overflow-y:auto;
+      padding:16px 14px 18px;
+      background:#fffbeb;border:2px dashed #f0c040;border-radius:16px;
+    }
+    .proto-notes-header{
+      display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+      margin-bottom:14px;padding-bottom:12px;
+      border-bottom:1px dashed #f0c040;
+    }
+    .proto-notes-header h3{
+      font-size:14px;font-weight:700;color:#8a6d1d;
+      display:flex;align-items:center;gap:8px;margin:0;line-height:1.35;
+    }
+    .proto-notes-header h3 i{color:#c99700}
+    .proto-notes-badge{
+      font-size:11px;font-weight:600;color:#a16207;
+      background:#fef3c7;border:1px solid #fcd34d;
+      padding:4px 10px;border-radius:999px;
+    }
+    .proto-notes-grid{
+      display:flex;flex-direction:column;gap:10px;
+    }
+    .proto-note-card{
+      background:#fff;border:1px dashed #f0c040;border-radius:12px;
+      padding:10px 12px;display:flex;gap:8px;align-items:flex-start;
+    }
+    .proto-note-num{
+      width:26px;height:26px;border-radius:50%;background:#f5a623;color:#fff;
+      font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+    }
+    .proto-note-body{flex:1;min-width:0;font-size:11px;line-height:1.55;color:#57534e}
+    .proto-note-row{margin-bottom:5px}
+    .proto-note-row:last-child{margin-bottom:0}
+    .proto-note-row b{
+      display:block;color:#92400e;font-size:10px;
+      font-weight:700;margin-bottom:1px;
+    }
+    .proto-note-row.type b{min-width:0}
+    .proto-note-row.type span{
+      display:inline-block;font-size:10px;font-weight:600;color:#a16207;
+      background:#fef9c3;border:1px solid #fde047;padding:1px 7px;border-radius:999px;
+    }
+    .proto-scan-sample{
+      margin-top:6px;padding:8px 10px;background:#fafafa;
+      border:1px solid #e7e5e4;border-left:3px solid #f5a623;border-radius:8px;
+    }
+    .proto-scan-sample .sample-title{
+      font-size:11px;font-weight:800;color:#1E2F3E;margin-bottom:4px;
+    }
+    .proto-scan-sample .sample-body{
+      font-size:10.5px;color:#57534e;line-height:1.55;
+    }
+    .proto-scan-sample .sample-action{
+      margin-top:5px;font-size:10px;color:#88a3b5;
+    }
+    .proto-scan-sample code{
+      font-size:10px;background:#fef3c7;padding:1px 4px;border-radius:4px;
+    }
+
     @media print{
-      .sidebar,.top-bar,.panel.scope-panel,.preview-actions,.hint{display:none!important}
+      .sidebar,.top-bar,.panel.scope-panel,.preview-actions,.hint,
+      .proto-mark,.proto-notes-section{display:none!important}
       .main-content{padding:0}
       .layout{grid-template-columns:1fr}
       .poster{border:2px solid #000;box-shadow:none;max-width:100%}
@@ -134,7 +210,7 @@
     <div class="layout">
       <!-- 左：范围 + 海报风格 -->
       <div class="panel scope-panel">
-        <h3><i class="fas fa-bullseye"></i> 二维码范围</h3>
+        <h3><i class="fas fa-bullseye"></i> 二维码范围<span class="proto-mark" title="见右侧批注 ①">①</span></h3>
         <div class="scope-block">
           <div class="scope-hd">生成范围</div>
           <div class="scope-summary" id="scopeSummary">
@@ -143,7 +219,7 @@
         </div>
 
         <div class="validity-block">
-          <div class="scope-hd">二维码有效时间</div>
+          <div class="scope-hd">二维码有效时间<span class="proto-mark" title="见右侧批注 ②">②</span></div>
           <div class="validity-dates">
             <div class="field">
               <label for="validFrom">生效日期</label>
@@ -154,10 +230,10 @@
               <input type="date" id="validTo" value="2026-05-31">
             </div>
           </div>
-          <p class="validity-tip" id="validityTip">过期后二维码将失效，家长扫码将无法进入投保页。</p>
+          <p class="validity-tip" id="validityTip"><span id="validityTipText">过期后二维码将失效，家长扫码将无法进入投保页。</span><span class="proto-mark" title="见右侧批注 ⑨⑩⑪">⑨</span></p>
         </div>
 
-        <h3 style="margin-top:8px"><i class="fas fa-palette"></i> 海报风格</h3>
+        <h3 style="margin-top:8px"><i class="fas fa-palette"></i> 海报风格<span class="proto-mark" title="见右侧批注 ③">③</span></h3>
         <div class="style-list" id="styleList">
           <div class="style-card active" data-theme="green">
             <div class="style-thumb theme-green"><div class="dot"></div>清新绿</div>
@@ -186,28 +262,177 @@
       <!-- 右：海报预览 -->
       <div class="preview-wrap">
         <div class="preview-actions">
-          <button class="btn btn-outline" id="btnDownload"><i class="fas fa-download"></i> 下载海报</button>
+          <button class="btn btn-outline" id="btnDownload"><i class="fas fa-download"></i> 下载海报<span class="proto-mark" title="见右侧批注 ④">④</span></button>
           <button class="btn btn-primary" id="btnPrint"><i class="fas fa-print"></i> 打印</button>
         </div>
 
         <div class="poster theme-green" id="poster">
-          <div class="school"><i class="fas fa-shield-heart"></i> 立德中学</div>
+          <div class="school"><i class="fas fa-shield-heart"></i> 立德中学<span class="proto-mark" title="见右侧批注 ⑤">⑤</span></div>
           <h2>扫码投保</h2>
           <span class="scope-tag" id="posterScopeTag">学校通用</span>
           <div class="qr-frame">
+            <span class="proto-mark" style="position:absolute;top:8px;right:8px;z-index:2" title="见右侧批注 ⑥">⑥</span>
             <div class="qr-img"><span></span><div class="qr-mid"><i class="fas fa-shield-heart"></i></div></div>
           </div>
           <div class="scan-tip">扫码立即投保 极速出单</div>
-          <div class="validity" id="posterValidity"><i class="fas fa-calendar-check"></i> 有效时间：2026-03-01 至 2026-05-31</div>
+          <div class="validity" id="posterValidity"><i class="fas fa-calendar-check"></i> <span id="posterValidityText">有效时间：2026-03-01 至 2026-05-31</span><span class="proto-mark" title="见右侧批注 ⑦">⑦</span></div>
           <div class="deadline" id="posterDeadline"><i class="fas fa-clock"></i> 投保截止：2026-05-31</div>
           <div class="foot">投保平台 · 学平险</div>
         </div>
 
         <div class="hint">
           <i class="fas fa-circle-info"></i>
-          二维码生成后会带上学校与有效时间；过期后扫码将无法投保。投保完成后数据自动回传到「班级投保名单」。
+          二维码生成后会带上学校与有效时间；过期后扫码将无法投保。投保完成后数据自动回传到「班级投保名单」。<span class="proto-mark" title="见右侧批注 ⑧">⑧</span>
         </div>
       </div>
+
+      <!-- 右侧：产品批注 / 开发注意点（仅原型说明，非正式页面内容） -->
+      <section class="proto-notes-section" aria-label="产品批注与开发注意点">
+      <div class="proto-notes-header">
+        <h3><i class="fas fa-clipboard-list"></i> 产品批注 / 开发注意点</h3>
+        <span class="proto-notes-badge">仅原型说明 · 非用户可见正式内容</span>
+      </div>
+      <div class="proto-notes-grid">
+        <article class="proto-note-card" id="proto-note-1">
+          <div class="proto-note-num">①</div>
+          <div class="proto-note-body">
+            <div class="proto-note-row"><b>位置</b>左侧「二维码范围 · 生成范围」摘要区</div>
+            <div class="proto-note-row type"><b>类型</b><span>业务规则</span></div>
+            <div class="proto-note-row"><b>说明</b>当前版本按「全校通用」生成投保码，摘要展示本校名称与适用范围；暂不支持按年级、班级单独发码。</div>
+            <div class="proto-note-row"><b>体验要求</b>校名随登录账号自动带出，管理员不可手改；若后续支持分班发码，摘要与海报上的范围标签需同步更新。</div>
+            <div class="proto-note-row"><b>规则要求</b>每个二维码必须对应唯一学校与投保渠道；家长扫码时，系统需校验码与学校信息一致，防止扫错校。</div>
+          </div>
+        </article>
+        <article class="proto-note-card" id="proto-note-2">
+          <div class="proto-note-num">②</div>
+          <div class="proto-note-body">
+            <div class="proto-note-row"><b>位置</b>左侧「生效日期 / 失效日期」</div>
+            <div class="proto-note-row type"><b>类型</b><span>校验规则</span></div>
+            <div class="proto-note-row"><b>说明</b>设定家长可扫码办理的时间区间，分为三种状态：尚未生效、正常可用、已经失效。生效前与失效后均不允许进入产品页，详见批注 ⑨、⑩。</div>
+            <div class="proto-note-row"><b>体验要求</b>失效日期不能早于生效日期；修改日期后，左侧摘要与右侧海报立即同步；下载或打印前，若日期不完整或不合法需给出提示。</div>
+            <div class="proto-note-row"><b>规则要求</b>以系统服务器日期为准判断是否可投保，不能仅依赖用户手机时间；生成二维码时需一并保存生效日与失效日。</div>
+          </div>
+        </article>
+        <article class="proto-note-card" id="proto-note-3">
+          <div class="proto-note-num">③</div>
+          <div class="proto-note-body">
+            <div class="proto-note-row"><b>位置</b>左侧「海报风格」卡片列表</div>
+            <div class="proto-note-row type"><b>类型</b><span>展示配置</span></div>
+            <div class="proto-note-row"><b>说明</b>提供清新绿、暖橙、商务蓝三种海报样式，仅改变视觉呈现，不影响二维码内容与投保规则。</div>
+            <div class="proto-note-row"><b>体验要求</b>选中某风格后，右侧预览即时切换；下载或打印出的海报须与当前选中风格一致。</div>
+            <div class="proto-note-row"><b>规则要求</b>可按学校或渠道预设默认风格；若平台端配置了品牌色，下发可选风格列表与之对齐。</div>
+          </div>
+        </article>
+        <article class="proto-note-card" id="proto-note-4">
+          <div class="proto-note-num">④</div>
+          <div class="proto-note-body">
+            <div class="proto-note-row"><b>位置</b>右侧预览区「下载海报 / 打印」</div>
+            <div class="proto-note-row type"><b>类型</b><span>分发能力</span></div>
+            <div class="proto-note-row"><b>说明</b>供学校管理员下载图片或打印后，在家长群、公告栏等场景分发；打印时只输出海报本身，不含配置面板与批注。</div>
+            <div class="proto-note-row"><b>体验要求</b>下载前校验有效期是否合法；打印预览干净，仅保留海报内容。</div>
+            <div class="proto-note-row"><b>规则要求</b>正式环境应生成含真实二维码的高清图片；建议记录谁在何时下载/打印，便于追溯。</div>
+          </div>
+        </article>
+        <article class="proto-note-card" id="proto-note-5">
+          <div class="proto-note-num">⑤</div>
+          <div class="proto-note-body">
+            <div class="proto-note-row"><b>位置</b>海报顶部学校名称</div>
+            <div class="proto-note-row type"><b>类型</b><span>信息展示</span></div>
+            <div class="proto-note-row"><b>说明</b>海报上的校名必须与当前登录学校一致，避免家长误认或扫错学校。</div>
+            <div class="proto-note-row"><b>体验要求</b>校名自动填充，不提供手工修改入口。</div>
+            <div class="proto-note-row"><b>规则要求</b>生成海报与二维码时，校名由系统按登录身份写入，不允许前端自行替换。</div>
+          </div>
+        </article>
+        <article class="proto-note-card" id="proto-note-6">
+          <div class="proto-note-num">⑥</div>
+          <div class="proto-note-body">
+            <div class="proto-note-row"><b>位置</b>海报中央二维码区域</div>
+            <div class="proto-note-row type"><b>类型</b><span>核心能力</span></div>
+            <div class="proto-note-row"><b>说明</b>家长扫码后的唯一入口；原型为示意图案，正式环境需替换为可扫描的真实二维码。</div>
+            <div class="proto-note-row"><b>体验要求</b>二维码清晰可扫，手机屏上显示完整；中心可保留平台或保司标识。</div>
+            <div class="proto-note-row"><b>规则要求</b>一校一码（或含有效期的专用码）；扫码后应能识别学校、渠道与学期；渠道停售或码过期后，旧码须立即不可用。</div>
+          </div>
+        </article>
+        <article class="proto-note-card" id="proto-note-7">
+          <div class="proto-note-num">⑦</div>
+          <div class="proto-note-body">
+            <div class="proto-note-row"><b>位置</b>海报「有效时间 / 投保截止」</div>
+            <div class="proto-note-row type"><b>类型</b><span>业务规则</span></div>
+            <div class="proto-note-row"><b>说明</b>「有效时间」指二维码可扫码的起止区间；「投保截止」可与失效日相同，也可能由平台单独配置。只有处于有效期内，家长才能进入产品页；生效前、失效后的处理见 ⑨、⑩。</div>
+            <div class="proto-note-row"><b>体验要求</b>海报上的日期与左侧设置保持一致；若平台另有「投保截止日」，文案需区分展示，避免家长混淆。</div>
+            <div class="proto-note-row"><b>规则要求</b>进入投保流程时，仍需校验是否在渠道可售期与当前学期范围内；海报文案与实际规则须一致。</div>
+          </div>
+        </article>
+        <article class="proto-note-card" id="proto-note-8">
+          <div class="proto-note-num">⑧</div>
+          <div class="proto-note-body">
+            <div class="proto-note-row"><b>位置</b>预览区底部灰色提示条</div>
+            <div class="proto-note-row type"><b>类型</b><span>说明文案</span></div>
+            <div class="proto-note-row"><b>说明</b>告知学校管理员：家长扫码投保成功后，订单会自动出现在「班级投保名单」，无需手工登记。</div>
+            <div class="proto-note-row"><b>体验要求</b>仅学校端管理员可见；正式版可增加「查看名单」或帮助说明链接。</div>
+            <div class="proto-note-row"><b>规则要求</b>每笔订单需带上学校与班级信息；名单按学期、班级汇总；未建档学生按姓名+班级做关联匹配。</div>
+          </div>
+        </article>
+        <article class="proto-note-card" id="proto-note-9">
+          <div class="proto-note-num">⑨</div>
+          <div class="proto-note-body">
+            <div class="proto-note-row"><b>位置</b>家长扫码 · 尚未到生效日</div>
+            <div class="proto-note-row type"><b>类型</b><span>异常拦截</span></div>
+            <div class="proto-note-row"><b>说明</b>海报可提前发放，但在生效日之前扫码时，不允许进入产品页（含产品详情、选方案、填写投保等任何步骤），只展示提示页。</div>
+            <div class="proto-note-row"><b>体验要求</b>用整页提示而非轻弹窗；不出现「继续投保」「查看产品」等按钮；可展示生效日期与完整有效区间。</div>
+            <div class="proto-note-row"><b>规则要求</b>以生效日当天 0 点为界；未到时间一律拦截，不向家长展示产品与方案信息；需统计「因未生效被拦截」的扫码次数。</div>
+            <div class="proto-scan-sample">
+              <div class="sample-title">家长端提示（尚未生效）</div>
+              <div class="sample-body"><b>标题：</b>二维码尚未生效<br><b>正文：</b>投保通道将于 3 月 1 日开放，请在生效后再扫码办理。如有疑问，请联系客服（400-816-1767）。<br><b>辅助信息：</b>有效时间 2026.03.01 至 2026.05.31</div>
+              <div class="sample-action">按钮：我知道了 · 可选「联系客服」</div>
+            </div>
+          </div>
+        </article>
+        <article class="proto-note-card" id="proto-note-10">
+          <div class="proto-note-num">⑩</div>
+          <div class="proto-note-body">
+            <div class="proto-note-row"><b>位置</b>家长扫码 · 已过失效日</div>
+            <div class="proto-note-row type"><b>类型</b><span>异常拦截</span></div>
+            <div class="proto-note-row"><b>说明</b>超过失效日后，即使手中仍有旧海报，扫码也不允许进入产品页，须提示失效并引导联系平台客服补投。</div>
+            <div class="proto-note-row"><b>体验要求</b>整页展示失效说明；不展示产品信息或投保步骤；不可通过返回、改链接等方式绕过进入投保。</div>
+            <div class="proto-note-row"><b>规则要求</b>以失效日当天 24 点为界（以系统时间为准）；旧码永久不可用；学校重新设置有效期后应发放新码，旧码不自动复活。</div>
+            <div class="proto-scan-sample">
+              <div class="sample-title">家长端提示（已经失效）</div>
+              <div class="sample-body"><b>标题：</b>二维码已失效<br><b>正文：</b>该投保二维码已失效，无法继续投保。如需办理，请联系平台客服补投。<br><b>辅助信息：</b>客服电话 400-816-1767</div>
+              <div class="sample-action">按钮：我知道了 · 可选「联系客服」</div>
+            </div>
+          </div>
+        </article>
+        <article class="proto-note-card" id="proto-note-11">
+          <div class="proto-note-num">⑪</div>
+          <div class="proto-note-body">
+            <div class="proto-note-row"><b>位置</b>家长扫码 · 其他异常情况</div>
+            <div class="proto-note-row type"><b>类型</b><span>异常拦截</span></div>
+            <div class="proto-note-row"><b>说明</b>除「尚未生效」「已经失效」外，扫码失败或业务不满足时，也应给出明确说明，不让家长进入不完整的投保流程。</div>
+            <div class="proto-note-row"><b>体验要求</b>同类异常使用统一提示页样式；网络异常单独提示「请稍后重试」；上述拦截不计入正常投保转化。</div>
+            <div class="proto-note-row"><b>规则要求</b>按优先级依次判断：码是否有效 → 学校是否开通 → 渠道是否在售 → 是否在有效期内 → 所选班级是否在码的适用范围内。</div>
+            <div class="proto-scan-sample">
+              <div class="sample-title">其他常见提示（摘录）</div>
+              <div class="sample-body">
+                <b>无法识别</b><br>
+                标题：无法识别二维码<br>
+                正文：请确认扫描的是学校发放的官方学平险投保码。若仍无法打开，请联系学校老师重新获取海报。<br><br>
+                <b>学校未开通</b><br>
+                标题：学校暂未开通投保<br>
+                正文：该校尚未开通本学年学平险投保服务，请稍后再试或联系学校确认。<br><br>
+                <b>渠道停售</b><br>
+                标题：暂不可投保<br>
+                正文：当前区域学平险已暂停新单投保，恢复时间请关注学校通知。<br><br>
+                <b>范围不符</b>（已进入投保流程时）<br>
+                标题：不在本二维码投保范围<br>
+                正文：所选年级/班级不在本海报适用范围内，请核对海报上的适用范围或联系老师确认。
+              </div>
+              <div class="sample-action">统一按钮：我知道了 · 可选「联系客服 400-816-1767」</div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
     </div>
 
   </main>
@@ -223,11 +448,13 @@
   var summary = document.getElementById('scopeSummary');
   var posterScopeTag = document.getElementById('posterScopeTag');
   var posterValidity = document.getElementById('posterValidity');
+  var posterValidityText = document.getElementById('posterValidityText');
   var posterDeadline = document.getElementById('posterDeadline');
   var poster = document.getElementById('poster');
   var validFrom = document.getElementById('validFrom');
   var validTo = document.getElementById('validTo');
   var validityTip = document.getElementById('validityTip');
+  var validityTipText = document.getElementById('validityTipText');
 
   function fmtDateShort(iso){
     if(!iso) return '—';
@@ -250,11 +477,11 @@
     var validLine = '有效 ' + fmtDateShort(state.validFrom) + ' ～ ' + fmtDateShort(state.validTo);
     summary.innerHTML = '<b>当前：</b>' + scopeText + '<br><span style="opacity:.9">' + validLine + '</span>';
     posterScopeTag.textContent = tagText;
-    posterValidity.innerHTML = '<i class="fas fa-calendar-check"></i> 有效时间：' + fmtDateShort(state.validFrom) + ' 至 ' + fmtDateShort(state.validTo);
+    posterValidityText.textContent = '有效时间：' + fmtDateShort(state.validFrom) + ' 至 ' + fmtDateShort(state.validTo);
     posterDeadline.innerHTML = '<i class="fas fa-clock"></i> 投保截止：' + fmtDateShort(state.validTo);
 
     validityTip.className = 'validity-tip' + (err ? ' warn' : '');
-    validityTip.textContent = err || '过期后二维码将失效，家长扫码将无法进入投保页。';
+    validityTipText.textContent = err || '过期后二维码将失效，家长扫码将无法进入投保页。';
 
     poster.className = 'poster theme-' + state.theme;
   }
