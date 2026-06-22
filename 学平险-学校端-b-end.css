@@ -62,7 +62,8 @@ h2 { font-size: var(--font-size-h2) !important; font-weight: var(--font-weight-b
 .welcome p,
 .top-bar .sub,
 .login-panel .sub,
-.breadcrumb { font-size: var(--font-size-sub) !important; color: var(--text-secondary) !important; line-height: var(--line-height-base) !important; }
+.breadcrumb { font-size: var(--font-size-sub) !important; color: var(--text-secondary) !important; line-height: var(--line-height-base) !important; margin: 0 0 var(--space-8) !important; }
+.view > .breadcrumb { margin-bottom: var(--space-12) !important; }
 
 /* 卡片 */
 .card-panel,

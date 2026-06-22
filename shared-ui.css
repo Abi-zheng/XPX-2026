@@ -139,13 +139,92 @@ body {
   font-weight: var(--font-weight-bold);
   color: var(--text);
   line-height: var(--line-height-tight);
+  margin: 0;
+}
+
+.page-head {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-head .welcome {
+  margin-top: 0;
 }
 
 .breadcrumb {
   font-size: var(--font-size-caption);
   color: var(--text-secondary);
-  margin-top: var(--space-4);
+  margin: 0 0 var(--space-6);
   line-height: var(--line-height-base);
+}
+
+.breadcrumb a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb b,
+.breadcrumb .current {
+  color: var(--text);
+  font-weight: var(--font-weight-medium);
+}
+
+/* 标题行：返回在标题左侧 */
+.page-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+}
+
+.page-title-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-title-main h1,
+.page-title-main h2 {
+  margin: 0;
+}
+
+.page-title-main .page-sub,
+.page-title-main p {
+  margin: var(--space-4) 0 0;
+  font-size: var(--font-size-sub);
+  color: var(--text-secondary);
+  line-height: var(--line-height-base);
+}
+
+.btn-back {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-h, 32px);
+  height: var(--control-h, 32px);
+  margin-top: 2px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius, 6px);
+  background: var(--bg-elevated, #fff);
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  line-height: 1;
+}
+
+.btn-back:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-back[hidden] {
+  display: none !important;
 }
 
 .wire-note {
