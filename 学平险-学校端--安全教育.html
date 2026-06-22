@@ -8,102 +8,108 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Inter','PingFang SC',sans-serif;background:#f3f6fc;color:#1E2F3E;font-size:14px}
+    body{font-family:'Inter','PingFang SC',sans-serif;background:#f0f2f5;color:#1E2F3E;font-size:14px}
     .app-wrapper{display:flex;min-height:100vh}
     .main-content{flex:1;padding:1.5rem 2rem 2rem;overflow-x:auto}
     .top-bar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:1rem;flex-wrap:wrap}
-    .welcome h2{font-size:1.5rem;font-weight:600;display:flex;align-items:center;gap:10px}
+    .welcome h2{font-size:1.25rem;font-weight:600;display:flex;align-items:center;gap:10px}
     .welcome p{color:#5e7f92;font-size:.85rem;margin-top:4px}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{padding:8px 16px;border-radius:10px;font-size:13px;cursor:pointer;border:none;font-weight:500;display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:inherit}
-    .btn-primary{background:#1C6E5C;color:#fff}
-    .btn-primary:hover{background:#155a4a}
-    .btn-outline{background:#fff;border:1px solid #cbdde6;color:#4c6a7e}
-    .btn-outline:hover{border-color:#1C6E5C;color:#1C6E5C}
-    .btn-warn{background:#fffbe6;border:1px solid #ffe7a3;color:#856404}
-    .btn-sm{padding:6px 10px;font-size:12px}
+    .btn{padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid transparent;font-weight:500;display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:inherit}
+    .btn-primary{background:#1C6E5C;color:#fff;border-color:#1C6E5C}
+    .btn-outline{background:#fff;border-color:#d9d9d9;color:#4c6a7e}
+    .btn-sm{padding:5px 12px;font-size:12px}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
 
-    .view{display:none}
-    .view.active{display:block}
-
-    .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1rem}
+    .view{display:none}.view.active{display:block}
+    .kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:12px}
     @media(max-width:760px){.kpi-row{grid-template-columns:1fr}}
-    .kpi{background:#fff;border:1px solid #eef2f8;border-radius:14px;padding:14px 16px}
+    .kpi{background:#fff;border:1px solid #f0f0f0;border-radius:8px;padding:12px 16px}
     .kpi .label{font-size:12px;color:#88a3b5}
-    .kpi .val{font-size:1.6rem;font-weight:700;margin-top:4px}
-    .kpi .val small{font-size:12px;color:#88a3b5;font-weight:400;margin-left:6px}
-    .kpi.success .val{color:#1C6E5C}
-    .kpi.warn .val{color:#d4a514}
-    .kpi.danger .val{color:#c45656}
+    .kpi .val{font-size:1.5rem;font-weight:600;margin-top:4px;color:#1C6E5C}
 
-    .panel{background:#fff;border:1px solid #eef2f8;border-radius:18px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.02)}
-    .panel-head{padding:14px 18px;border-bottom:1px solid #eef2f8;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:14px;gap:10px;flex-wrap:wrap}
-    .panel-head h3{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
-    .panel-head h3 i{color:#1C6E5C}
+    .panel{background:#fff;border:1px solid #f0f0f0;border-radius:8px;overflow:hidden}
+    .toolbar{padding:12px 16px;border-bottom:1px solid #f0f0f0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:#fff}
+    .toolbar select,.toolbar input{padding:6px 11px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;background:#fff}
+    .toolbar input[type=search]{flex:1;min-width:160px;max-width:240px}
+    .toolbar .spacer{flex:1}
 
-    .filter-bar{padding:12px 18px;background:#fafbfc;border-bottom:1px solid #eef2f8;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .filter-bar input,.filter-bar select{padding:7px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;background:#fff}
-    .filter-bar input[type=search]{width:220px}
-    .filter-bar .summary{margin-left:auto;font-size:12px;color:#88a3b5}
+    .batch-bar{display:none;padding:8px 16px;background:#e6f4ff;border-bottom:1px solid #91caff;align-items:center;gap:12px;font-size:13px;flex-wrap:wrap}
+    .batch-bar.show{display:flex}
+    .batch-bar .count{color:#1C6E5C;font-weight:600}
 
     table{width:100%;border-collapse:collapse;font-size:13px}
-    th,td{padding:11px 14px;text-align:left;border-bottom:1px solid #f0f4f9;vertical-align:middle}
-    th{color:#6792a8;font-size:12px;font-weight:600;background:#fafbfc}
-    tbody tr.clickable{cursor:pointer;transition:background .12s}
-    tbody tr.clickable:hover{background:#fafcfd}
+    th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+    th{color:#6792a8;font-size:12px;font-weight:600;background:#fafafa;white-space:nowrap}
+    th.sortable{cursor:pointer;user-select:none}
+    th.sortable:hover{color:#1C6E5C}
+    th.sortable .sort-ic{font-size:10px;margin-left:4px;opacity:.45}
+    th.sortable.active .sort-ic{opacity:1;color:#1C6E5C}
+    tbody tr:hover{background:#fafafa}
     td.num{text-align:right;font-variant-numeric:tabular-nums}
+    .title-link{color:#1C6E5C;font-weight:600;cursor:pointer;background:none;border:none;padding:0;font-size:inherit;text-align:left;line-height:1.4}
+    .title-link:hover{text-decoration:underline}
+    .act-group{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .link-btn{color:#1C6E5C;font-weight:500;cursor:pointer;background:none;border:none;font-size:12px;padding:0;white-space:nowrap}
+    .link-btn.warn{color:#c45656}
 
-    .pill{display:inline-flex;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:600;border:1px solid #e2e8f0}
-    .pill.done{background:#eef6f3;color:#1C6E5C;border-color:#b8d9ce}
-    .pill.doing{background:#fdf6ec;color:#b88230;border-color:#f5dab1}
-    .pill.overdue{background:#fef0f0;color:#c45656;border-color:#fbc4c4}
-    .pill.pending{background:#fafbfc;color:#6792a8}
+    .type-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;display:inline-block}
+    .type-tag.publicity{background:#e6f4ff;color:#1677ff;border:1px solid #91caff}
+    .type-tag.reminder{background:#fff2e8;color:#fa541c;border:1px solid #ffbb96}
+    .pill{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;display:inline-block}
+    .pill.pub{background:#f6ffed;color:#52c41a;border:1px solid #b7eb8f}
+    .pill.off{background:#fff1f0;color:#f5222d;border:1px solid #ffa39e}
+    .pill.draft{background:#fafafa;color:#8c8c8c;border:1px solid #d9d9d9}
 
-    .topic-cell{display:flex;align-items:center;gap:12px}
-    .topic-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#1C6E5C,#2d8f76);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-    .topic-icon.warn{background:linear-gradient(135deg,#b88230,#d4a514)}
-    .topic-icon.info{background:linear-gradient(135deg,#2d6a9f,#3d8acc)}
-    .topic-cell b{display:block;font-weight:600}
-    .topic-cell small{font-size:11px;color:#88a3b5;font-weight:400}
+    /* Switch（Ant Design 风格） */
+    .switch-wrap{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#88a3b5}
+    .switch{position:relative;width:44px;height:22px;border-radius:11px;background:#00000040;cursor:pointer;transition:.2s;border:none;padding:0;flex-shrink:0}
+    .switch::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+    .switch.on{background:#1C6E5C}
+    .switch.on::after{left:24px}
+    .switch:disabled{opacity:.4;cursor:not-allowed}
 
-    .progress-mini{display:flex;align-items:center;gap:8px;min-width:120px}
-    .progress-mini .bar{flex:1;height:6px;background:#eef2f8;border-radius:999px;overflow:hidden}
-    .progress-mini .bar>div{height:100%;background:#1C6E5C;border-radius:999px}
-    .progress-mini .bar.warn>div{background:#e6b422}
-    .progress-mini .pct{font-size:12px;font-weight:600;color:#1C6E5C;min-width:36px;text-align:right}
-    .progress-mini .pct.warn{color:#d4a514}
+    .empty-state{text-align:center;padding:48px 24px;color:#88a3b5}
 
-    .detail-back{padding:0 0 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-    .back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid #cbdde6;background:#fff;color:#4c6a7e;font-size:13px;cursor:pointer;font-weight:500}
-    .back-btn:hover{border-color:#1C6E5C;color:#1C6E5C}
-    .crumb{font-size:13px;color:#88a3b5}
-    .crumb b{color:#1E2F3E}
+    .edit-form-panel{padding:20px 24px 24px}
+    .edit-form-title{font-size:16px;font-weight:600;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}
+    @media(max-width:900px){.form-grid{grid-template-columns:1fr}}
+    .form-grid .span-full{grid-column:1/-1}
+    .form-row label{display:block;font-size:12px;color:#88a3b5;font-weight:500;margin-bottom:6px}
+    .form-row label .req{color:#c45656}
+    .form-row input,.form-row select{width:100%;padding:8px 11px;border:1px solid #d9d9d9;border-radius:6px;font-size:14px;font-family:inherit}
+    .cover-only{display:none}.cover-only.show{display:block}
+    .upload-box{border:1px dashed #d9d9d9;border-radius:6px;padding:20px;text-align:center;color:#88a3b5;font-size:13px;background:#fafafa;cursor:pointer}
+    .rte{border:1px solid #d9d9d9;border-radius:6px;overflow:hidden;background:#fff}
+    .rte-toolbar{padding:6px 10px;background:#fafafa;border-bottom:1px solid #f0f0f0;display:flex;gap:4px;flex-wrap:wrap}
+    .rte-toolbar button{width:28px;height:28px;border:1px solid transparent;background:transparent;border-radius:4px;cursor:pointer;color:#4c6a7e;font-size:13px}
+    .rte-toolbar button:hover{background:#eef6f3;color:#1C6E5C}
+    .rte-toolbar .sep{width:1px;height:18px;background:#e8e8e8;margin:0 2px}
+    .rte-body{min-height:260px;padding:14px 16px;font-size:14px;line-height:1.75;outline:none}
+    .rte-body:empty:before{content:attr(data-placeholder);color:#bfbfbf;pointer-events:none}
+    .edit-ft{margin-top:20px;padding-top:16px;border-top:1px solid #f0f0f0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
 
-    .detail-head{padding:22px 24px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;background:linear-gradient(180deg,#fafbfc 0%,#fff 100%);border-bottom:1px solid #eef2f8}
-    .detail-head .dh-main{display:flex;gap:16px;align-items:flex-start;flex:1;min-width:280px}
-    .detail-head .big-icon{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#1C6E5C,#2d8f76);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
-    .detail-head h2{font-size:1.25rem;font-weight:700}
-    .detail-head .sub-meta{margin-top:6px;color:#5e7f92;font-size:13px;display:flex;flex-wrap:wrap;gap:14px}
-    .detail-head .sub-meta i{margin-right:5px;color:#1C6E5C}
-    .detail-body{padding:22px 24px}
-    .section-title{font-size:13px;font-weight:600;color:#1C6E5C;margin:18px 0 10px;display:flex;align-items:center;gap:6px}
-    .section-title:first-child{margin-top:0}
-    .desc-box{background:#fafbfc;border:1px solid #eef2f8;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.8;color:#4c6a7e}
-    .material-list{display:flex;flex-direction:column;gap:8px}
-    .material-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #eef2f8;border-radius:10px;background:#fff}
-    .material-item .mi-icon{width:36px;height:36px;border-radius:8px;background:#eef6f3;color:#1C6E5C;display:flex;align-items:center;justify-content:center}
-    .material-item .mi-body{flex:1}
-    .material-item .mi-body b{font-size:13px}
-    .material-item .mi-body small{display:block;font-size:11px;color:#88a3b5;margin-top:2px}
-    .material-item a{color:#1C6E5C;font-size:12px;font-weight:500;text-decoration:none}
-    .material-item a:hover{text-decoration:underline}
+    /* Drawer 详情 */
+    .drawer-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:110}
+    .drawer-mask.open{display:block}
+    .drawer{position:fixed;top:0;right:0;width:min(480px,100vw);height:100vh;background:#fff;box-shadow:-4px 0 16px rgba(0,0,0,.08);z-index:111;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column}
+    .drawer-mask.open .drawer{transform:translateX(0)}
+    .drawer-hd{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    .drawer-hd h3{font-size:16px;font-weight:600;line-height:1.4;flex:1}
+    .drawer-close{border:none;background:none;font-size:20px;color:#88a3b5;cursor:pointer;line-height:1}
+    .drawer-bd{padding:16px 20px;overflow-y:auto;flex:1;font-size:14px;line-height:1.7;color:#4c6a7e}
+    .drawer-meta{font-size:12px;color:#88a3b5;line-height:1.8;margin-bottom:16px;padding:12px;background:#fafafa;border-radius:6px}
+    .drawer-ft{padding:12px 20px;border-top:1px solid #f0f0f0;display:flex;gap:8px;justify-content:flex-end}
 
-    .hint-row{font-size:12px;color:#88a3b5;padding:10px 18px;background:#fafbfc;border-top:1px solid #eef2f8}
-    .hint-row i{margin-right:4px;color:#1C6E5C}
-    .link-btn{color:#1C6E5C;font-weight:500;cursor:pointer;background:none;border:none;font-size:13px;padding:0}
-    .link-btn:hover{text-decoration:underline}
+    .modal-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:120;align-items:center;justify-content:center;padding:20px}
+    .modal-mask.open{display:flex}
+    .modal{background:#fff;border-radius:8px;width:100%;max-width:400px;padding:24px;text-align:center}
+    .modal h4{font-size:16px;margin-bottom:8px}
+    .modal p{font-size:13px;color:#88a3b5;margin-bottom:20px;line-height:1.6}
+    .modal-btns{display:flex;gap:8px;justify-content:center}
   </style>
   <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="proto-notes.css">
   <link rel="stylesheet" href="学平险-学校端-sidebar.css">
   <link rel="stylesheet" href="学平险-学校端-b-end.css">
 </head>
@@ -111,342 +117,549 @@
 <div class="app-wrapper">
   <div class="sidebar" id="schoolSidebar"></div>
   <main class="main-content">
-
     <div class="top-bar">
-      <div class="welcome">
-        <h2><i class="fas fa-shield-halved" style="color:#1C6E5C"></i> 安全教育</h2>
-        <p id="topSub">平台下发安全主题 · 按班级组织学习与打卡</p>
+      <div class="page-head">
+        <nav class="breadcrumb" id="pageBreadcrumb" aria-label="面包屑">学校端 / 安全教育</nav>
+        <div class="page-title-row">
+          <button type="button" class="btn-back" id="btnBack" hidden aria-label="返回"><i class="fas fa-arrow-left"></i></button>
+          <div class="page-title-main welcome">
+            <h2><i class="fas fa-shield-halved" style="color:#1C6E5C"></i> 安全教育</h2>
+            <p id="pageDesc" class="page-sub">发布与管理安全宣传、安全提醒</p>
+          </div>
+        </div>
       </div>
-      <div class="actions">
-        <button class="btn btn-outline" id="btnExport"><i class="fas fa-download"></i> 导出进度</button>
-        <div id="userMenuMount"></div>
-      </div>
+      <div id="userMenuMount"></div>
     </div>
 
-    <!-- 列表页 -->
+    <div class="page-with-notes">
+    <div class="page-main-col">
+
     <div class="view active" id="viewList">
       <div class="kpi-row">
-        <div class="kpi"><div class="label">本学期任务</div><div class="val" id="kpiTasks">—</div></div>
-        <div class="kpi success"><div class="label">已完成班级</div><div class="val" id="kpiDone">—</div></div>
-        <div class="kpi warn"><div class="label">待完成 / 逾期</div><div class="val" id="kpiPending">—</div></div>
+        <div class="kpi"><div class="label">安全宣传<span class="proto-mark" title="见右侧批注 ①">①</span></div><div class="val" id="kpiPublicity">—</div></div>
+        <div class="kpi"><div class="label">安全提醒</div><div class="val" id="kpiReminder">—</div></div>
       </div>
-
       <div class="panel">
-        <div class="panel-head">
-          <h3><i class="fas fa-book-open"></i> 安全教育任务</h3>
+        <div class="toolbar">
+          <select id="filterType"><option value="">内容类型</option><option value="PUBLICITY">安全宣传</option><option value="REMINDER">安全提醒</option></select>
+          <select id="filterStatus"><option value="">状态</option><option value="PUBLISHED">已发布</option><option value="OFFLINE">已下架</option></select>
+          <input type="search" id="filterKw" placeholder="搜索标题">
+          <span class="spacer"></span>
+          <span class="proto-mark" title="见右侧批注 ②">②</span>
+          <button class="btn btn-primary btn-sm" id="btnAdd"><i class="fas fa-plus"></i> 新增</button>
         </div>
-        <div class="filter-bar">
-          <input type="search" id="filterKw" placeholder="搜索主题名称">
-          <select id="filterStatus">
-            <option value="">全部状态</option>
-            <option value="doing">进行中</option>
-            <option value="done">已完成</option>
-            <option value="overdue">已逾期</option>
-          </select>
-          <span class="summary" id="listSummary">—</span>
+        <div class="batch-bar" id="batchBar">
+          <span class="proto-mark" title="见右侧批注 ⑨">⑨</span>
+          <span>已选 <span class="count" id="batchCount">0</span> 条</span>
+          <button class="btn btn-outline btn-sm" id="batchOffline">批量下架</button>
+          <button class="btn btn-outline btn-sm" id="batchDelete" style="color:#c45656;border-color:#ffa39e">批量删除</button>
+          <button class="btn btn-outline btn-sm" id="batchClear">取消选择</button>
         </div>
         <div style="overflow-x:auto">
           <table>
             <thead>
               <tr>
-                <th>安全主题</th>
-                <th>适用学段</th>
-                <th>截止日期</th>
-                <th>班级完成进度</th>
+                <th style="width:36px"><input type="checkbox" id="checkAll" title="全选"></th>
+                <th>标题<span class="proto-mark" title="见右侧批注 ③">③</span></th>
+                <th>内容类型</th>
+                <th class="num sortable" data-sort="pv_count">浏览量<span class="proto-mark" title="见右侧批注 ⑧">⑧</span><i class="fas fa-sort sort-ic"></i></th>
+                <th class="sortable" data-sort="publish_time">发布时间<i class="fas fa-sort sort-ic"></i></th>
                 <th>状态</th>
-                <th style="width:88px">操作</th>
+                <th>置顶</th>
+                <th>上架</th>
+                <th style="min-width:120px">操作<span class="proto-mark" title="见右侧批注 ④">④</span></th>
               </tr>
             </thead>
-            <tbody id="taskList"></tbody>
+            <tbody id="contentTable"></tbody>
           </table>
         </div>
-        <div class="pager" id="taskListPager" data-b-end-pager data-page-size="10"></div>
-        <div class="hint-row">
-          <i class="fas fa-circle-info"></i>
-          安全教育内容由平台统一下发，学校按班级组织学习；班主任在班级群分享材料并完成「班级打卡」即视为完成。与「风险事件登记」形成事前预防 + 事后记录闭环。
-        </div>
+        <div class="pager" id="contentPager" data-b-end-pager data-page-size="10"></div>
       </div>
     </div>
 
-    <!-- 详情页 -->
-    <div class="view" id="viewDetail">
-      <div class="detail-back">
-        <button type="button" class="back-btn" id="btnBack"><i class="fas fa-arrow-left"></i> 返回任务列表</button>
-        <span class="crumb">安全教育 / <b id="crumbName">—</b></span>
-      </div>
-
-      <div class="panel">
-        <div class="detail-head">
-          <div class="dh-main">
-            <div class="big-icon" id="detailIcon"><i class="fas fa-person-running"></i></div>
-            <div>
-              <h2 id="detailTitle">—</h2>
-              <div class="sub-meta" id="detailSub">—</div>
+    <div class="view" id="viewEdit">
+      <div class="panel edit-form-panel">
+        <div class="edit-form-title" id="editTitle"><i class="fas fa-plus"></i> 新增内容<span class="proto-mark" title="见右侧批注 ⑤">⑤</span></div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>内容类型 <span class="req">*</span></label>
+            <select id="fmType"><option value="PUBLICITY">安全宣传</option><option value="REMINDER">安全提醒</option></select>
+          </div>
+          <div class="form-row">
+            <label>标题 <span class="req">*</span></label>
+            <input type="text" id="fmTitle" placeholder="请输入标题">
+          </div>
+          <div class="form-row cover-only span-full" id="coverRow">
+            <label>封面图（选填）</label>
+            <div class="upload-box"><i class="fas fa-image"></i> 点击上传封面</div>
+          </div>
+          <div class="form-row span-full">
+            <label>正文内容 <span class="req">*</span><span class="proto-mark" title="见右侧批注 ⑥">⑥</span></label>
+            <div class="rte">
+              <div class="rte-toolbar">
+                <button type="button" data-cmd="bold"><i class="fas fa-bold"></i></button>
+                <button type="button" data-cmd="italic"><i class="fas fa-italic"></i></button>
+                <button type="button" data-cmd="underline"><i class="fas fa-underline"></i></button>
+                <span class="sep"></span>
+                <button type="button" data-cmd="formatBlock" data-val="h3"><i class="fas fa-heading"></i></button>
+                <button type="button" data-cmd="insertUnorderedList"><i class="fas fa-list-ul"></i></button>
+                <button type="button" id="btnInsertImg"><i class="fas fa-image"></i></button>
+              </div>
+              <div class="rte-body" id="rteBody" contenteditable="true" data-placeholder="请输入正文…"></div>
             </div>
           </div>
-          <div class="actions">
-            <button class="btn btn-warn btn-sm" id="btnRemind"><i class="fas fa-bullhorn"></i> 提醒未完成班级</button>
-          </div>
         </div>
-        <div class="detail-body">
-          <div class="section-title"><i class="fas fa-align-left"></i> 任务说明</div>
-          <div class="desc-box" id="detailDesc">—</div>
-
-          <div class="section-title"><i class="fas fa-photo-film"></i> 学习材料</div>
-          <div class="material-list" id="detailMaterials"></div>
-
-          <div class="section-title"><i class="fas fa-school"></i> 班级完成进度 <span id="classProgressHint" style="font-weight:400;color:#88a3b5;font-size:12px"></span></div>
-          <div style="overflow-x:auto">
-            <table>
-              <thead>
-                <tr>
-                  <th>班级</th>
-                  <th>班主任</th>
-                  <th>完成状态</th>
-                  <th>完成时间</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody id="classList"></tbody>
-            </table>
-          </div>
-          <div class="pager" id="classProgressPager" data-b-end-pager data-page-size="10"></div>
-        </div>
-        <div class="hint-row">
-          <i class="fas fa-circle-info"></i>
-          查看任务详情与各班级完成情况；「提醒」将向未完成班级的班主任发送通知。
+        <div class="edit-ft">
+          <button class="btn btn-outline" id="btnCancelEdit">取消</button>
+          <button class="btn btn-outline" id="btnSaveEdit" style="display:none"><i class="fas fa-check"></i> 保存</button>
+          <button class="btn btn-primary" id="btnPublish"><i class="fas fa-paper-plane"></i> 发布<span class="proto-mark" title="见右侧批注 ⑦" style="margin-left:6px;background:rgba(255,255,255,.35)">⑦</span></button>
         </div>
       </div>
     </div>
 
+    </div>
+    <div id="protoNotesMount"></div>
+    </div>
   </main>
+</div>
+
+<div class="drawer-mask" id="drawerMask">
+  <div class="drawer" id="drawerPanel">
+    <div class="drawer-hd">
+      <h3 id="drawerTitle">—</h3>
+      <button type="button" class="drawer-close" id="drawerClose">&times;</button>
+    </div>
+    <div class="drawer-bd" id="drawerBody"></div>
+    <div class="drawer-ft">
+      <button class="btn btn-outline" id="drawerCloseBtn">关闭</button>
+      <button class="btn btn-primary" id="drawerEditBtn">编辑</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask" id="confirmModal">
+  <div class="modal">
+    <h4 id="confirmTitle">确认发布？</h4>
+    <p id="confirmDesc">发布后，本校学生家长将可以查看该内容</p>
+    <div class="modal-btns">
+      <button class="btn btn-outline" id="confirmCancel">取消</button>
+      <button class="btn btn-primary" id="confirmOk">确认</button>
+    </div>
+  </div>
 </div>
 
 <script src="学平险-学校端-sidebar.js"></script>
 <script src="b-end-pager.js"></script>
+<script src="proto-notes.js"></script>
+<script src="proto-datetime.js"></script>
+<script src="学平险-学校端--安全教育.notes.js"></script>
 <script>initSchoolSidebar("safetyEdu");</script>
 <script>
-  /* ====== 数据 ====== */
-  var TASKS = [
-    {
-      id:'SE-2026-01', icon:'person-running', iconCls:'', title:'春季运动会安全须知', grade:'全校', deadline:'2026-05-25',
-      status:'doing', desc:'涵盖热身拉伸、器材检查、突发不适处置与紧急联络流程，请在运动会前 3 日内完成班级学习并组织签字确认。',
-      materials:[
-        {type:'video', name:'运动会安全微课（8 分钟）', meta:'平台提供 · MP4'},
-        {type:'pdf', name:'班级安全 checklist', meta:'可打印张贴'},
-        {type:'link', name:'家长告知书模板', meta:'DOCX · 可编辑'}
-      ],
-      classes:[
-        {id:'g3-1',name:'高三(1)班',teacher:'李建华',done:true,time:'2026-05-18'},
-        {id:'g3-2',name:'高三(2)班',teacher:'陈志强',done:true,time:'2026-05-17'},
-        {id:'g1-3',name:'高一(3)班',teacher:'王芳',done:false,time:'—'},
-        {id:'g1-2',name:'高一(2)班',teacher:'孙宁',done:true,time:'2026-05-19'},
-        {id:'g1-1',name:'高一(1)班',teacher:'郑国华',done:false,time:'—'},
-        {id:'c3-2',name:'初三(2)班',teacher:'吴海',done:false,time:'—'},
-        {id:'c2-4',name:'初二(4)班',teacher:'郭静',done:true,time:'2026-05-16'},
-        {id:'c1-1',name:'初一(1)班',teacher:'许涛',done:true,time:'2026-05-15'}
-      ]
-    },
-    {
-      id:'SE-2026-02', icon:'fire', iconCls:'warn', title:'食堂与实验室消防安全', grade:'初中 / 高中', deadline:'2026-05-31',
-      status:'doing', desc:'结合近期食堂烫伤事件复盘，强化用火用电规范与灭火器使用要点。',
-      materials:[
-        {type:'video', name:'灭火器使用实操演示', meta:'5 分钟'},
-        {type:'pdf', name:'消防疏散路线图（本校版）', meta:'PDF'}
-      ],
-      classes:[
-        {id:'g2-1',name:'高二(1)班',teacher:'王芳',done:true,time:'2026-05-20'},
-        {id:'g2-2',name:'高二(2)班',teacher:'赵敏',done:false,time:'—'},
-        {id:'g1-3',name:'高一(3)班',teacher:'王芳',done:false,time:'—'},
-        {id:'c3-3',name:'初三(3)班',teacher:'马涛',done:true,time:'2026-05-14'}
-      ]
-    },
-    {
-      id:'SE-2026-03', icon:'bus', iconCls:'info', title:'上下学交通安全', grade:'全校', deadline:'2026-04-30',
-      status:'overdue', desc:'强调斑马线、头盔佩戴、校车乘车规范；逾期班级请尽快补学并打卡。',
-      materials:[
-        {type:'video', name:'交通安全动画（中学版）', meta:'6 分钟'},
-        {type:'video', name:'交通安全动画（中学版）', meta:'7 分钟'},
-        {type:'link', name:'班级承诺书电子签', meta:'在线表单'}
-      ],
-      classes:[
-        {id:'g3-3',name:'高三(3)班',teacher:'刘文',done:true,time:'2026-04-28'},
-        {id:'g1-3',name:'高一(3)班',teacher:'王芳',done:false,time:'—'},
-        {id:'c1-1',name:'初一(1)班',teacher:'许涛',done:true,time:'2026-04-25'}
-      ]
-    },
-    {
-      id:'SE-2025-12', icon:'heart-pulse', iconCls:'', title:'冬季呼吸道传染病预防', grade:'全校', deadline:'2025-12-20',
-      status:'done', desc:'已完成本学期全部班级学习打卡。',
-      materials:[
-        {type:'pdf', name:'冬季防病家长一封信', meta:'PDF'}
-      ],
-      classes:[
-        {id:'g3-1',name:'高三(1)班',teacher:'李建华',done:true,time:'2025-12-10'},
-        {id:'g1-3',name:'高一(3)班',teacher:'王芳',done:true,time:'2025-12-08'},
-        {id:'c2-4',name:'初二(4)班',teacher:'郭静',done:true,time:'2025-12-12'}
-      ]
-    }
+  mountProtoNotes('protoNotesMount', buildFullProtoNotesSection(window.SAFETY_PROTO_SCHOOL));
+</script>
+<script>
+  var SCHOOL_ID = 'SCH001';
+  var STORAGE_KEY = 'school_safety_content_v2';
+  var TYPE_LABEL = { PUBLICITY:'安全宣传', REMINDER:'安全提醒' };
+  var STATUS_LABEL = { PUBLISHED:'已发布', OFFLINE:'已下架' };
+
+  var DEFAULT = [
+    { id:'SC001', school_id:SCHOOL_ID, title:'防溺水知识宣传', content_type:'PUBLICITY',
+      content:'<p>溺水是我国青少年意外伤亡的首要原因。请家长做到「四知道」。</p>',
+      cover_url:'pool', is_top:true, pv_count:128, status:'PUBLISHED', publish_time:'2026-06-18 09:00:00', update_time:'2026-06-18 09:00:00' },
+    { id:'SC002', school_id:SCHOOL_ID, title:'交通安全知识宣传', content_type:'PUBLICITY',
+      content:'<p>上下学请走斑马线，遵守交通信号灯。</p>',
+      cover_url:'traffic', is_top:false, pv_count:86, status:'PUBLISHED', publish_time:'2026-06-15 14:30:00', update_time:'2026-06-15 14:30:00' },
+    { id:'SC004', school_id:SCHOOL_ID, title:'暑期防溺水提醒', content_type:'REMINDER',
+      content:'<p><strong>暑期将至，请家长务必履行监护责任。</strong></p>',
+      cover_url:'', is_top:true, pv_count:210, status:'PUBLISHED', publish_time:'2026-06-20 08:00:00', update_time:'2026-06-20 08:00:00' },
+    { id:'SC008', school_id:SCHOOL_ID, title:'消防演练通知（未发布）', content_type:'REMINDER',
+      content:'<p>本周五下午进行全校消防演练，请各班做好准备。</p>',
+      cover_url:'', is_top:false, pv_count:0, status:'OFFLINE', publish_time:'2026-06-21 10:00:00', update_time:'2026-06-21 10:00:00' },
+    { id:'SC007', school_id:SCHOOL_ID, title:'防诈骗宣传（已下架）', content_type:'PUBLICITY',
+      content:'<p>警惕冒充老师、家委的收费诈骗…</p>',
+      cover_url:'', is_top:false, pv_count:32, status:'OFFLINE', publish_time:'2026-03-01 11:00:00', update_time:'2026-04-01 14:00:00' }
   ];
 
-  /* #原型说明：任务与班级进度按 SchoolAccount.role 过滤 */
-  var ROLE_MAP = {
-    admin:{filterClass:()=>true,filterTask:t=>t},
-    grade:{filterClass:c=>c.id.startsWith('g1-'),filterTask:t=>true},
-    class:{filterClass:c=>c.id==='g1-3',filterTask:t=>t.classes.some(c=>c.id==='g1-3')}
-  };
-  function getRole(){ return (window.SchoolAccount && SchoolAccount.role) || 'admin'; }
+  var DT = window.ProtoDateTime;
 
-  var STATUS_LABEL = {doing:'进行中',done:'已完成',overdue:'已逾期'};
-  var MAT_ICON = {video:'fa-circle-play',pdf:'fa-file-pdf',link:'fa-link'};
+  var CONTENTS = loadData();
+  var editingId = null;
+  var drawerId = null;
+  var filters = { kw:'', type:'', status:'' };
+  var sortField = 'update_time';
+  var sortDir = 'desc';
+  var selectedIds = new Set();
+  var confirmCallback = null;
 
-  var currentView = 'list';
-  var currentTask = null;
-  var filters = {kw:'', status:''};
-
-  function visibleClassesForTask(task){
-    return task.classes.filter(ROLE_MAP[getRole()].filterClass);
+  function loadData(){
+    try {
+      var r = localStorage.getItem(STORAGE_KEY);
+      if(r){
+        return JSON.parse(r).map(function(c){
+          if(c.status === 'DRAFT'){
+            c.status = 'OFFLINE';
+            if(!c.publish_time || c.publish_time === '—') c.publish_time = c.update_time || DT.nowDateTimeFull();
+          }
+          return c;
+        });
+      }
+    } catch(e){}
+    return JSON.parse(JSON.stringify(DEFAULT));
   }
-  function taskProgress(task){
-    var cls = visibleClassesForTask(task);
-    if(!cls.length) return {done:0,total:0,pct:0};
-    var done = cls.filter(c=>c.done).length;
-    return {done:done, total:cls.length, pct:Math.round(done/cls.length*100)};
-  }
-  function taskStatus(task){
-    var p = taskProgress(task);
-    if(task.status==='overdue' && p.pct<100) return 'overdue';
-    if(p.pct===100) return 'done';
-    return 'doing';
+  function saveData(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(CONTENTS)); }
+
+  function pillClass(s){ return s==='PUBLISHED'?'pub':'off'; }
+
+  function showList(){
+    document.getElementById('viewList').classList.add('active');
+    document.getElementById('viewEdit').classList.remove('active');
+    document.getElementById('pageDesc').textContent = '发布与管理安全宣传、安全提醒';
+    document.getElementById('pageBreadcrumb').innerHTML = '学校端 / 安全教育';
+    document.getElementById('btnBack').hidden = true;
+    renderList();
   }
 
-  function visibleTasks(){
-    return TASKS.filter(ROLE_MAP[getRole()].filterTask).filter(t=>{
-      if(filters.status && taskStatus(t)!==filters.status) return false;
-      if(filters.kw && !t.title.includes(filters.kw)) return false;
-      return true;
-    });
+  function showEdit(id){
+    editingId = id || null;
+    document.getElementById('viewList').classList.remove('active');
+    document.getElementById('viewEdit').classList.add('active');
+    closeDrawer();
+    document.getElementById('btnBack').hidden = false;
+    var c = id ? CONTENTS.find(function(x){ return x.id === id; }) : null;
+    document.getElementById('pageDesc').textContent = c ? '编辑 · '+c.title : '新增内容';
+    document.getElementById('pageBreadcrumb').innerHTML = '学校端 / 安全教育 / <b>'+(c?'编辑内容':'新增内容')+'</b>';
+    document.getElementById('editTitle').innerHTML = '<i class="fas fa-'+(c?'pen':'plus')+'"></i> '+(c?'编辑内容':'新增内容')+'<span class="proto-mark" title="见右侧批注 ⑤">⑤</span>';
+    document.getElementById('fmType').value = c ? c.content_type : 'PUBLICITY';
+    document.getElementById('fmTitle').value = c ? c.title : '';
+    document.getElementById('rteBody').innerHTML = c ? c.content : '';
+    toggleCover();
+    var st = c ? c.status : null;
+    document.getElementById('btnSaveEdit').style.display = c ? 'inline-flex' : 'none';
+    document.getElementById('btnPublish').innerHTML = '<i class="fas fa-paper-plane"></i> '+(st==='PUBLISHED'||st==='OFFLINE'?'重新发布':'发布')+'<span class="proto-mark" title="见右侧批注 ⑦" style="margin-left:6px;background:rgba(255,255,255,.35)">⑦</span>';
+    window.scrollTo(0,0);
+  }
+
+  function getRteHtml(){
+    var html = document.getElementById('rteBody').innerHTML.trim();
+    return document.getElementById('rteBody').innerText.trim() ? html : '';
   }
 
   function renderKpi(){
-    var tasks = visibleTasks();
-    var doneCls = 0, pendingCls = 0;
-    tasks.forEach(t=>{
-      var p = taskProgress(t);
-      doneCls += p.done;
-      pendingCls += (p.total - p.done);
+    var pub=0, rem=0;
+    CONTENTS.forEach(function(c){
+      if(c.content_type==='PUBLICITY') pub++; else rem++;
     });
-    document.getElementById('kpiTasks').textContent = tasks.length;
-    document.getElementById('kpiDone').innerHTML = doneCls+' <small>班次</small>';
-    document.getElementById('kpiPending').innerHTML = pendingCls+' <small>待跟进</small>';
+    document.getElementById('kpiPublicity').textContent = pub;
+    document.getElementById('kpiReminder').textContent = rem;
   }
 
-  function showList(){
-    currentView = 'list';
-    document.getElementById('viewList').classList.add('active');
-    document.getElementById('viewDetail').classList.remove('active');
-    document.getElementById('topSub').textContent = '平台下发安全主题 · 按班级组织学习与打卡';
-    if(location.search) history.replaceState(null,'',location.pathname);
+  function filtered(){
+    var list = CONTENTS.filter(function(c){
+      if(filters.kw && c.title.indexOf(filters.kw)<0) return false;
+      if(filters.type && c.content_type!==filters.type) return false;
+      if(filters.status && c.status!==filters.status) return false;
+      return true;
+    });
+    list.sort(function(a,b){
+      var va = a[sortField], vb = b[sortField];
+      if(sortField==='pv_count'){ va=va||0; vb=vb||0; return sortDir==='asc'?va-vb:vb-va; }
+      va = va||''; vb = vb||'';
+      return sortDir==='asc'?String(va).localeCompare(String(vb)):String(vb).localeCompare(String(va));
+    });
+    return list;
   }
 
-  function showDetail(id){
-    var t = TASKS.find(x=>x.id===id);
-    if(!t || !ROLE_MAP[getRole()].filterTask(t)){ alert('当前账号无权查看该任务'); return; }
-    currentTask = t;
-    currentView = 'detail';
-    document.getElementById('viewList').classList.remove('active');
-    document.getElementById('viewDetail').classList.add('active');
-    document.getElementById('crumbName').textContent = t.title;
-    renderDetail();
-    history.replaceState(null,'',location.pathname+'?id='+encodeURIComponent(id));
-    window.scrollTo({top:0,behavior:'smooth'});
+  function updateBatchBar(){
+    var n = selectedIds.size;
+    document.getElementById('batchBar').classList.toggle('show', n > 0);
+    document.getElementById('batchCount').textContent = n;
+    document.getElementById('batchOffline').disabled = n === 0;
+    document.getElementById('batchDelete').disabled = n === 0;
   }
 
   function renderList(){
     renderKpi();
-    var list = visibleTasks();
-    document.getElementById('listSummary').textContent = '共 '+list.length+' 项任务';
-    document.getElementById('taskList').innerHTML = list.map(t=>{
-      var p = taskProgress(t);
-      var st = taskStatus(t);
-      var barCls = p.pct>=80?'':(p.pct>=50?' warn':' warn');
-      var pctCls = p.pct>=80?'':(p.pct>=50?' warn':' warn');
-      return '<tr class="clickable" data-id="'+t.id+'">'+
-        '<td><div class="topic-cell"><div class="topic-icon '+t.iconCls+'"><i class="fas fa-'+t.icon+'"></i></div><div><b>'+t.title+'</b><small>'+t.id+'</small></div></div></td>'+
-        '<td>'+t.grade+'</td>'+
-        '<td>'+t.deadline+'</td>'+
-        '<td><div class="progress-mini"><div class="bar'+barCls+'"><div style="width:'+p.pct+'%"></div></div><span class="pct'+pctCls+'">'+p.done+'/'+p.total+'</span></div></td>'+
-        '<td><span class="pill '+st+'">'+STATUS_LABEL[st]+'</span></td>'+
-        '<td><button type="button" class="link-btn" data-id="'+t.id+'">查看 →</button></td>'+
-      '</tr>';
-    }).join('') || '<tr><td colspan="6" style="text-align:center;padding:36px;color:#88a3b5">暂无任务</td></tr>';
-
-    document.querySelectorAll('#taskList tr.clickable').forEach(tr=>{
-      tr.addEventListener('click',()=>showDetail(tr.getAttribute('data-id')));
+    var list = filtered();
+    document.querySelectorAll('th.sortable').forEach(function(th){
+      th.classList.toggle('active', th.getAttribute('data-sort')===sortField);
+      var ic = th.querySelector('.sort-ic');
+      if(ic) ic.className = 'fas sort-ic '+(sortField===th.getAttribute('data-sort')?(sortDir==='asc'?'fa-sort-up':'fa-sort-down'):'fa-sort');
     });
-    document.querySelectorAll('#taskList .link-btn').forEach(btn=>{
-      btn.addEventListener('click',e=>{ e.stopPropagation(); showDetail(btn.getAttribute('data-id')); });
-    });
-    if(window.BEndPager) BEndPager.remount('#taskListPager');
+    var el = document.getElementById('contentTable');
+    if(!list.length){
+      el.innerHTML = '<tr><td colspan="9"><div class="empty-state"><p>暂无内容</p><button class="btn btn-primary btn-sm" id="btnEmptyAdd"><i class="fas fa-plus"></i> 新增</button></div></td></tr>';
+      document.getElementById('btnEmptyAdd').onclick = function(){ showEdit(); };
+      if(window.BEndPager) BEndPager.remount('#contentPager');
+      updateBatchBar();
+      return;
+    }
+    el.innerHTML = list.map(function(c){
+      var tCls = c.content_type==='REMINDER'?'reminder':'publicity';
+      var pubTime = DT.formatDateTimeFull(c.publish_time);
+      var topOn = !!c.is_top;
+      var shelfOn = c.status==='PUBLISHED';
+      var acts = '<button class="link-btn" data-act="edit" data-id="'+c.id+'">编辑</button>';
+      if(c.status==='OFFLINE') acts += '<button class="link-btn" data-act="publish" data-id="'+c.id+'">重新发布</button>';
+      acts += '<button class="link-btn warn" data-act="delete" data-id="'+c.id+'">删除</button>';
+      var topCell = c.status==='PUBLISHED'
+        ? '<button type="button" class="switch'+(topOn?' on':'')+'" data-act="top" data-id="'+c.id+'"></button>'
+        : '—';
+      var shelfCell = '<button type="button" class="switch'+(shelfOn?' on':'')+'" data-act="shelf" data-id="'+c.id+'"></button>';
+      return '<tr data-id="'+c.id+'">'+
+        '<td><input type="checkbox" class="row-check" data-id="'+c.id+'"'+(selectedIds.has(c.id)?' checked':'')+'></td>'+
+        '<td><button type="button" class="title-link" data-act="detail" data-id="'+c.id+'">'+c.title+'</button></td>'+
+        '<td><span class="type-tag '+tCls+'">'+TYPE_LABEL[c.content_type]+'</span></td>'+
+        '<td class="num">'+(c.pv_count||0).toLocaleString()+'</td>'+
+        '<td>'+pubTime+'</td>'+
+        '<td><span class="pill '+pillClass(c.status)+'">'+STATUS_LABEL[c.status]+'</span></td>'+
+        '<td>'+topCell+'</td>'+
+        '<td>'+shelfCell+'</td>'+
+        '<td><div class="act-group">'+acts+'</div></td></tr>';
+    }).join('');
+    if(window.BEndPager) BEndPager.remount('#contentPager');
+    document.getElementById('checkAll').checked = list.length && list.every(function(c){ return selectedIds.has(c.id); });
+    updateBatchBar();
   }
 
-  function renderDetail(){
-    var t = currentTask;
-    var p = taskProgress(t);
-    var st = taskStatus(t);
-    var iconEl = document.getElementById('detailIcon');
-    iconEl.className = 'big-icon'+(t.iconCls?' '+t.iconCls:'');
-    iconEl.innerHTML = '<i class="fas fa-'+t.icon+'"></i>';
-    document.getElementById('detailTitle').textContent = t.title;
-    document.getElementById('detailSub').innerHTML =
-      '<span><i class="fas fa-hashtag"></i>'+t.id+'</span>'+
-      '<span><i class="fas fa-graduation-cap"></i>'+t.grade+'</span>'+
-      '<span><i class="far fa-calendar"></i>截止 '+t.deadline+'</span>'+
-      '<span><i class="fas fa-chart-simple"></i>完成 '+p.done+'/'+p.total+' 班</span>'+
-      '<span class="pill '+st+'">'+STATUS_LABEL[st]+'</span>';
-    document.getElementById('detailDesc').textContent = t.desc;
-    document.getElementById('detailMaterials').innerHTML = t.materials.map(m=>
-      '<div class="material-item"><div class="mi-icon"><i class="fas '+MAT_ICON[m.type]+'"></i></div>'+
-      '<div class="mi-body"><b>'+m.name+'</b><small>'+m.meta+'</small></div>'+
-      '<a href="#">查看 / 下载</a></div>'
-    ).join('');
+  function openDrawer(id){
+    var c = CONTENTS.find(function(x){ return x.id===id; });
+    if(!c) return;
+    drawerId = id;
+    document.getElementById('drawerTitle').textContent = c.title;
+    document.getElementById('drawerBody').innerHTML =
+      '<div class="drawer-meta">类型：'+TYPE_LABEL[c.content_type]+' · 状态：'+STATUS_LABEL[c.status]+
+      '<br>发布时间：'+DT.formatDateTimeFull(c.publish_time)+' · 浏览量：'+(c.pv_count||0)+'</div>'+
+      '<div class="detail-content">'+c.content+'</div>';
+    document.getElementById('drawerMask').classList.add('open');
+  }
+  function closeDrawer(){
+    drawerId = null;
+    document.getElementById('drawerMask').classList.remove('open');
+  }
 
-    var cls = visibleClassesForTask(t);
-    document.getElementById('classProgressHint').textContent = '（共 '+cls.length+' 个班）';
-    document.getElementById('classList').innerHTML = cls.map(c=>{
-      var pill = c.done ? '<span class="pill done">已完成</span>' : '<span class="pill pending">未完成</span>';
-      var act = c.done ? '<span style="color:#88a3b5;font-size:12px">—</span>' : '<button type="button" class="link-btn remind-cls" data-cls="'+c.name+'">提醒班主任</button>';
-      return '<tr><td><b>'+c.name+'</b></td><td>'+c.teacher+'</td><td>'+pill+'</td><td>'+c.time+'</td><td>'+act+'</td></tr>';
-    }).join('') || '<tr><td colspan="5" style="text-align:center;padding:24px;color:#88a3b5">暂无班级数据</td></tr>';
+  function openConfirm(title, desc, onOk){
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmDesc').textContent = desc;
+    confirmCallback = onOk;
+    document.getElementById('confirmModal').classList.add('open');
+  }
 
-    document.querySelectorAll('.remind-cls').forEach(btn=>btn.addEventListener('click',()=>{
-      alert('已向 '+btn.getAttribute('data-cls')+' 班主任发送学习提醒');
-    }));
+  function collectForm(requireContent){
+    var title = document.getElementById('fmTitle').value.trim();
+    var content = getRteHtml();
+    if(!title){ alert('请填写标题'); return null; }
+    if(requireContent && !content){ alert('请填写正文'); return null; }
+    return { title:title, content:content||'<p></p>', content_type:document.getElementById('fmType').value, is_top:false };
+  }
 
-    var pending = cls.filter(c=>!c.done).length;
-    document.getElementById('btnRemind').onclick = ()=>{
-      if(!pending) { alert('相关班级均已完成'); return; }
-      alert('已向 '+pending+' 个未完成班级发送提醒');
+  function mergeFormData(item, data){
+    item.title = data.title;
+    item.content = data.content;
+    item.content_type = data.content_type;
+    item.cover_url = data.content_type === 'PUBLICITY' ? (item.cover_url || '') : '';
+    item.update_time = DT.nowDateTimeFull();
+  }
+
+  function createPublishedItem(data){
+    var item = {
+      id:'SC'+Date.now().toString().slice(-6),
+      school_id:SCHOOL_ID,
+      title:data.title,
+      content_type:data.content_type,
+      content:data.content,
+      cover_url:data.content_type==='PUBLICITY'?'':'',
+      is_top:false,
+      pv_count:0,
+      status:'PUBLISHED',
+      publish_time:DT.nowDateTimeFull(),
+      update_time:DT.nowDateTimeFull()
     };
-    if(window.BEndPager) BEndPager.remount('#classProgressPager');
+    return item;
   }
 
-  initSchoolUserMenu('#userMenuMount', function(){
+  /** 统一发布：新增发布 / 编辑重新发布 / 列表重新发布 / 上架 Switch 开 */
+  function publishItem(item){
+    var now = DT.nowDateTimeFull();
+    item.status = 'PUBLISHED';
+    item.publish_time = now;
+    item.update_time = now;
+  }
+
+  /** 统一下架：列表上架 Switch 关 / 批量下架 */
+  function offlineItem(item){
+    item.status = 'OFFLINE';
+    item.update_time = DT.nowDateTimeFull();
+  }
+
+  function confirmPublish(items, onOk){
+    var republish = items.length === 1 && items[0] && items[0].id;
+    openConfirm(
+      republish ? '确认重新发布？' : '确认发布？',
+      republish
+        ? '重新发布后将更新发布时间，家长端可查看最新内容（浏览量保留）'
+        : '发布后，本校学生家长将可以查看该内容；若暂不想展示，请使用下架或删除',
+      onOk
+    );
+  }
+
+  function publishWithForm(data){
+    var item;
+    if(editingId){
+      item = CONTENTS.find(function(c){ return c.id===editingId; });
+      mergeFormData(item, data);
+    } else {
+      item = createPublishedItem(data);
+      CONTENTS.unshift(item);
+      saveData();
+      return item;
+    }
+    publishItem(item);
+    saveData();
+    return item;
+  }
+
+  function doPublish(ids){
+    ids.forEach(function(id){
+      var item = CONTENTS.find(function(c){ return c.id===id; });
+      if(item && item.status !== 'PUBLISHED') publishItem(item);
+    });
+    saveData();
+    selectedIds.clear();
     renderList();
-    if(currentView==='detail'){
-      if(!currentTask || !ROLE_MAP[getRole()].filterTask(currentTask)) showList();
-      else renderDetail();
+  }
+
+  document.getElementById('contentTable').addEventListener('click', function(e){
+    var sw = e.target.closest('button.switch[data-act]');
+    if(sw && !sw.disabled){
+      var id = sw.getAttribute('data-id'), act = sw.getAttribute('data-act');
+      var item = CONTENTS.find(function(c){ return c.id===id; });
+      if(!item) return;
+      if(act==='top' && item.status==='PUBLISHED'){ item.is_top = !item.is_top; item.update_time = DT.nowDateTimeFull(); saveData(); renderList(); }
+      if(act==='shelf'){
+        if(item.status === 'PUBLISHED') offlineItem(item);
+        else publishItem(item);
+        saveData();
+        renderList();
+      }
+      return;
+    }
+    var btn = e.target.closest('[data-act]');
+    if(!btn) return;
+    var id = btn.getAttribute('data-id'), act = btn.getAttribute('data-act');
+    if(act==='detail') openDrawer(id);
+    else if(act==='edit') showEdit(id);
+    else if(act==='publish'){
+      var pubItem = CONTENTS.find(function(c){ return c.id===id; });
+      if(!pubItem || pubItem.status === 'PUBLISHED') return;
+      confirmPublish([pubItem], function(){ doPublish([id]); alert('已重新发布'); });
+    }
+    else if(act==='delete') deleteItem(id);
+  });
+
+  document.getElementById('contentTable').addEventListener('change', function(e){
+    if(e.target.classList.contains('row-check')){
+      var id = e.target.getAttribute('data-id');
+      if(e.target.checked) selectedIds.add(id); else selectedIds.delete(id);
+      updateBatchBar();
     }
   });
-  document.getElementById('filterKw').addEventListener('input',e=>{ filters.kw=e.target.value.trim(); renderList(); });
-  document.getElementById('filterStatus').addEventListener('change',e=>{ filters.status=e.target.value; renderList(); });
-  document.getElementById('btnBack').addEventListener('click',showList);
-  document.getElementById('btnExport').addEventListener('click',()=>alert('已导出安全教育进度表'));
 
-  renderList();
-  var initId = new URLSearchParams(location.search).get('id');
-  if(initId && TASKS.find(t=>t.id===initId)) showDetail(initId);
-  else showList();
+  document.getElementById('checkAll').onchange = function(){
+    filtered().forEach(function(c){
+      if(this.checked) selectedIds.add(c.id); else selectedIds.delete(c.id);
+    }, this);
+    renderList();
+  };
+
+  document.querySelector('thead').addEventListener('click', function(e){
+    var th = e.target.closest('th.sortable');
+    if(!th) return;
+    var f = th.getAttribute('data-sort');
+    if(sortField===f) sortDir = sortDir==='asc'?'desc':'asc';
+    else { sortField = f; sortDir = 'desc'; }
+    renderList();
+  });
+
+  function deleteItem(id){
+    var item = CONTENTS.find(function(c){ return c.id===id; });
+    if(!item||!confirm('确认删除「'+item.title+'」？删除后不可恢复。')) return;
+    CONTENTS = CONTENTS.filter(function(c){ return c.id!==id; });
+    selectedIds.delete(id); saveData(); renderList();
+  }
+
+  document.getElementById('batchOffline').onclick = function(){
+    var ids = Array.from(selectedIds).filter(function(id){ var c=CONTENTS.find(function(x){return x.id===id;}); return c&&c.status==='PUBLISHED'; });
+    if(!ids.length){ alert('所选内容中没有已发布项'); return; }
+    if(!confirm('确认批量下架 '+ids.length+' 条？')) return;
+    ids.forEach(function(id){ offlineItem(CONTENTS.find(function(x){return x.id===id;})); });
+    saveData(); selectedIds.clear(); renderList();
+  };
+  document.getElementById('batchDelete').onclick = function(){
+    var ids = Array.from(selectedIds);
+    if(!ids.length||!confirm('确认批量删除 '+ids.length+' 条？不可恢复。')) return;
+    CONTENTS = CONTENTS.filter(function(c){ return ids.indexOf(c.id)<0; });
+    selectedIds.clear(); saveData(); renderList();
+  };
+  document.getElementById('batchClear').onclick = function(){ selectedIds.clear(); renderList(); };
+
+  document.querySelector('.rte-toolbar').addEventListener('click', function(e){
+    var btn = e.target.closest('button[data-cmd]');
+    if(!btn) return;
+    e.preventDefault();
+    document.getElementById('rteBody').focus();
+    var cmd = btn.getAttribute('data-cmd'), val = btn.getAttribute('data-val');
+    if(cmd==='formatBlock') document.execCommand(cmd,false,val);
+    else document.execCommand(cmd,false,null);
+  });
+  document.getElementById('btnInsertImg').onclick = function(){
+    document.getElementById('rteBody').focus();
+    document.execCommand('insertHTML',false,'<div style="background:#f5f5f5;padding:16px;text-align:center;color:#999;margin:8px 0"><i class="fas fa-image"></i> 配图</div>');
+  };
+  function toggleCover(){ document.getElementById('coverRow').classList.toggle('show', document.getElementById('fmType').value==='PUBLICITY'); }
+  document.getElementById('fmType').onchange = toggleCover;
+
+  document.getElementById('btnSaveEdit').onclick = function(){
+    var data = collectForm(true);
+    if(!data) return;
+    var item = CONTENTS.find(function(c){ return c.id===editingId; });
+    mergeFormData(item, data);
+    saveData();
+    alert('已保存（未更新发布时间；若要推送至家长端请点重新发布）');
+    showList();
+  };
+  document.getElementById('btnPublish').onclick = function(){
+    var data = collectForm(true);
+    if(!data) return;
+    var existing = editingId ? CONTENTS.find(function(c){ return c.id===editingId; }) : null;
+    var isNew = !existing;
+    confirmPublish(existing ? [existing] : [], function(){
+      publishWithForm(data);
+      alert(isNew ? '发布成功' : '已重新发布');
+      showList();
+    });
+  };
+  document.getElementById('confirmCancel').onclick = function(){ document.getElementById('confirmModal').classList.remove('open'); confirmCallback=null; };
+  document.getElementById('confirmOk').onclick = function(){
+    document.getElementById('confirmModal').classList.remove('open');
+    if(confirmCallback) confirmCallback();
+    confirmCallback = null;
+  };
+
+  document.getElementById('drawerClose').onclick = closeDrawer;
+  document.getElementById('drawerCloseBtn').onclick = closeDrawer;
+  document.getElementById('drawerMask').onclick = function(e){ if(e.target===this) closeDrawer(); };
+  document.getElementById('drawerEditBtn').onclick = function(){ if(drawerId){ closeDrawer(); showEdit(drawerId); } };
+
+  document.getElementById('btnAdd').onclick = function(){ showEdit(); };
+  document.getElementById('btnBack').onclick = showList;
+  document.getElementById('btnCancelEdit').onclick = showList;
+  document.getElementById('filterKw').oninput = function(e){ filters.kw=e.target.value.trim(); renderList(); };
+  document.getElementById('filterType').onchange = function(e){ filters.type=e.target.value; renderList(); };
+  document.getElementById('filterStatus').onchange = function(e){ filters.status=e.target.value; renderList(); };
+
+  initSchoolUserMenu('#userMenuMount', showList);
+  showList();
 </script>
 </body>
 </html>
