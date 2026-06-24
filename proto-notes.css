@@ -85,8 +85,10 @@ h3 .proto-mark, h2 .proto-mark { margin-left: 6px; }
 .proto-notes-toggle i { font-size: 10px; }
 .proto-notes-body { display: block; }
 
-/* 收起：隐藏批注正文 + 页面主体圆形编号（含弹窗，通过 html 级联） */
-html.proto-notes-collapsed .proto-mark {
+/* 收起：隐藏批注正文 + 同页主体圆形编号（仅作用域内，避免多 Tab 互相影响） */
+.page-with-notes.proto-notes-collapsed .proto-mark,
+.layout.proto-notes-collapsed .proto-mark,
+.proto-page-shell.proto-notes-collapsed .proto-mark {
   display: none !important;
 }
 .page-with-notes.proto-notes-collapsed {
@@ -328,4 +330,21 @@ html.proto-notes-collapsed .proto-mark {
 @media print {
   .proto-mark,
   .proto-notes-section { display: none !important; }
+}
+
+/* 登录页 · 双栏批注（不影响原有品牌+表单 flex） */
+.login-with-notes { min-height: 100vh; width: 100%; background: #f3f6fc; }
+.login-with-notes .page-with-notes {
+  min-height: 100vh;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  align-items: stretch;
+}
+.login-flex-main {
+  display: flex;
+  min-height: 100vh;
+  min-width: 0;
+}
+@media (max-width: 1100px) {
+  .login-with-notes .page-with-notes { grid-template-columns: 1fr; }
+  .login-flex-main { flex-direction: column; min-height: auto; }
 }

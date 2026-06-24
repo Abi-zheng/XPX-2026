@@ -191,7 +191,6 @@ function getProtoNotesScope(section) {
 function setProtoNotesCollapsed(scope, collapsed) {
   if (!scope) return;
   scope.classList.toggle('proto-notes-collapsed', collapsed);
-  document.documentElement.classList.toggle('proto-notes-collapsed', collapsed);
   var btn = scope.querySelector('.proto-notes-toggle');
   if (btn) {
     btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');

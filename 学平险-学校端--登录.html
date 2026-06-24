@@ -11,11 +11,11 @@
     body {
       font-family: 'Inter', 'PingFang SC', sans-serif;
       min-height: 100vh;
-      display: flex;
       background: #f3f6fc;
       color: #1E2F3E;
       font-size: 14px;
     }
+    .login-flex-main { display: flex; flex: 1; min-width: 0; min-height: 100vh; }
     .wire-note {
       position: fixed; top: 12px; left: 12px; right: 12px; max-width: 520px; z-index: 10;
       background: #fffbe6; border: 1px dashed #d9b559; padding: 10px 14px; border-radius: 8px;
@@ -77,6 +77,18 @@
       position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
       border: none; background: none; color: #88a3b5; cursor: pointer; font-size: 14px;
     }
+    .captcha-row { display: flex; gap: 10px; align-items: stretch; }
+    .captcha-row input { flex: 1; min-width: 0; }
+    .captcha-box { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .captcha-canvas {
+      display: block; border: 1px solid #e2e8f0; border-radius: 8px;
+      cursor: pointer; background: #f8fafc;
+    }
+    .captcha-refresh {
+      width: 38px; height: 38px; border: 1px solid #e2e8f0; border-radius: 8px;
+      background: #fff; color: #6792a8; cursor: pointer; font-size: 14px;
+    }
+    .captcha-refresh:hover { border-color: #1C6E5C; color: #1C6E5C; }
   .form-extra {
       display: flex; justify-content: space-between; align-items: center;
       margin: -4px 0 12px; font-size: 13px;
@@ -119,8 +131,9 @@
       font-size: 12px; color: #88a3b5; line-height: 1.6;
     }
     .demo-hint code { background: #eef2f8; padding: 1px 4px; border-radius: 4px; }
+    body { min-height: 100vh; margin: 0; }
     @media (max-width: 800px) {
-      body { flex-direction: column; }
+      .login-flex-main { flex-direction: column; min-height: auto; }
       .brand-panel { padding: 2rem; min-height: auto; }
       .wire-note { position: static; margin: 12px; max-width: none; }
       .login-panel { max-width: none; }
@@ -128,8 +141,12 @@
   </style>
   <link rel="stylesheet" href="b-end-tokens.css">
   <link rel="stylesheet" href="学平险-学校端-login-b-end.css">
+  <link rel="stylesheet" href="proto-notes.css">
 </head>
 <body>
+<div class="proto-page-shell login-with-notes">
+<div class="page-with-notes">
+<div class="page-main-col login-flex-main">
 <div class="brand-panel">
     <div class="brand-logo">
       <div class="icon"><i class="fas fa-shield-heart"></i></div>
@@ -145,7 +162,7 @@
 
   <div class="login-panel">
     <div class="step active" id="step-login">
-      <h2>欢迎登录</h2>
+      <h2>欢迎登录<span class="proto-mark" title="见右侧批注 ①">①</span></h2>
       <p class="sub">请使用账号与密码登录学校端</p>
       <div class="error-msg" id="loginError"></div>
       <div class="form-row">
@@ -159,6 +176,16 @@
           <button type="button" class="pwd-toggle" id="btnTogglePwd" aria-label="显示密码"><i class="fas fa-eye"></i></button>
         </div>
       </div>
+      <div class="form-row">
+        <label>图形验证码<span class="proto-mark" title="见右侧批注 ②">②</span></label>
+        <div class="captcha-row">
+          <input type="text" id="captchaInput" placeholder="请输入右侧字符" autocomplete="off" maxlength="4">
+          <div class="captcha-box">
+            <canvas id="captchaCanvas" class="captcha-canvas" width="108" height="38" title="点击刷新验证码" aria-label="图形验证码"></canvas>
+            <button type="button" class="captcha-refresh" id="btnCaptchaRefresh" title="换一张" aria-label="刷新验证码"><i class="fas fa-rotate-right"></i></button>
+          </div>
+        </div>
+      </div>
       <div class="form-extra">
         <label><input type="checkbox" id="remember" checked> 记住账号</label>
         <a href="#" id="linkForgot" onclick="alert('请联系校级管理员重置密码');return false;">忘记密码？</a>
@@ -167,6 +194,7 @@
       <div class="demo-hint">
         <b>#原型说明：以下信息仅供联调，不写入正式登录页</b><br>
         测试账号（密码 <code>123456</code>）：<br>
+        登录须填写图形验证码（不区分大小写；错误后自动刷新）。<br>
         <code>13800138000</code> 张敏 · 校级管理员<br>
         <code>13900139000</code> 李建华 · 年级组长（高三）<br>
         <code>13600136000</code> 王芳 · 年级组长+班主任（多身份）<br>
@@ -177,21 +205,30 @@
     </div>
 
     <div class="step" id="step-school">
-      <h2>选择学校</h2>
+      <h2>选择学校<span class="proto-mark" title="见右侧批注 ③">③</span></h2>
       <p class="sub">您的账号关联了多个学校，请选择本次要进入的租户</p>
       <div class="identity-list" id="schoolList"></div>
       <button type="button" class="back-link" data-back="login">← 返回重新登录</button>
     </div>
 
     <div class="step" id="step-identity">
-      <h2>选择登录身份</h2>
+      <h2>选择登录身份<span class="proto-mark" title="见右侧批注 ④">④</span></h2>
       <p class="sub" id="identitySub">立德中学 · 请选择本次操作使用的角色与岗位范围</p>
       <div class="identity-list" id="identityList"></div>
       <button type="button" class="btn-primary" id="btnEnter" style="margin-top:16px;">进入工作台</button>
       <button type="button" class="back-link" data-back="school" id="backFromIdentity" style="display:none;">← 更换学校</button>
     </div>
   </div>
+</div>
+<div id="protoNotesMount"></div>
+</div>
+</div>
 
+<script src="proto-notes.js"></script>
+<script src="学平险-学校端--登录.notes.js"></script>
+<script>
+  mountProtoNotes('protoNotesMount', buildFullProtoNotesSection(window.SCHOOL_LOGIN_PROTO));
+</script>
 <script>
   const DEMO_PASSWORD = '123456';
 
@@ -237,6 +274,47 @@
   };
 
   let session = { account: '', user: null, school: null, identity: null };
+  let captchaText = '';
+
+  function drawCaptcha() {
+    const canvas = document.getElementById('captchaCanvas');
+    const ctx = canvas.getContext('2d');
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    captchaText = '';
+    for (let i = 0; i < 4; i++) {
+      captchaText += chars[Math.floor(Math.random() * chars.length)];
+    }
+    ctx.fillStyle = '#f8fafc';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < 5; i++) {
+      ctx.strokeStyle = 'rgba(103,146,168,' + (0.15 + Math.random() * 0.25) + ')';
+      ctx.beginPath();
+      ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+      ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+      ctx.stroke();
+    }
+    for (let i = 0; i < 30; i++) {
+      ctx.fillStyle = 'rgba(30,47,62,' + (0.05 + Math.random() * 0.12) + ')';
+      ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
+    }
+    ctx.textBaseline = 'middle';
+    for (let i = 0; i < captchaText.length; i++) {
+      ctx.save();
+      ctx.font = 'bold ' + (20 + Math.floor(Math.random() * 4)) + 'px Inter, sans-serif';
+      ctx.fillStyle = ['#1C6E5C', '#3d5a80', '#b88230', '#c45656'][i % 4];
+      const x = 14 + i * 22;
+      const y = 19 + (Math.random() * 6 - 3);
+      ctx.translate(x, y);
+      ctx.rotate((Math.random() - 0.5) * 0.35);
+      ctx.fillText(captchaText[i], 0, 0);
+      ctx.restore();
+    }
+    document.getElementById('captchaInput').value = '';
+  }
+
+  function validateCaptcha(val) {
+    return String(val || '').trim().toUpperCase() === captchaText;
+  }
 
   function showStep(id) {
     document.querySelectorAll('.step').forEach(s => s.classList.toggle('active', s.id === 'step-' + id));
@@ -258,11 +336,18 @@
     hideError();
     const account = document.getElementById('account').value.trim();
     const password = document.getElementById('password').value;
+    const captcha = document.getElementById('captchaInput').value;
     if (!account) { showError('请输入账号'); return; }
     if (!password) { showError('请输入密码'); return; }
-    if (password !== DEMO_PASSWORD) { showError('账号或密码错误'); return; }
+    if (!captcha.trim()) { showError('请输入图形验证码'); return; }
+    if (!validateCaptcha(captcha)) {
+      showError('图形验证码错误，请重新输入');
+      drawCaptcha();
+      return;
+    }
+    if (password !== DEMO_PASSWORD) { showError('账号或密码错误'); drawCaptcha(); return; }
     const user = resolveUser(account);
-    if (!user) { showError('账号不存在或已停用，请联系校级管理员'); return; }
+    if (!user) { showError('账号不存在或已停用，请联系校级管理员'); drawCaptcha(); return; }
     session.account = account;
     session.user = user;
     session.school = null;
@@ -348,6 +433,10 @@
   document.getElementById('btnLogin').addEventListener('click', doLogin);
   document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   document.getElementById('account').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('captchaInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('captchaCanvas').addEventListener('click', drawCaptcha);
+  document.getElementById('btnCaptchaRefresh').addEventListener('click', drawCaptcha);
+  drawCaptcha();
 
   document.getElementById('btnEnter').addEventListener('click', enterApp);
 
