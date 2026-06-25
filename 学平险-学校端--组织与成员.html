@@ -182,12 +182,9 @@
     .import-detect-hint.show { display: flex; }
     .import-detect-hint i { font-size: 16px; }
     #importResultModal .modal { max-width: 560px; }
-    .import-result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
-    .import-result-stats .stat { text-align: center; padding: 12px 8px; border-radius: 10px; background: #fafbfc; border: 1px solid #eef2f8; }
-    .import-result-stats .stat b { display: block; font-size: 1.25rem; margin-bottom: 4px; }
-    .import-result-stats .stat.ok b { color: #1C6E5C; }
-    .import-result-stats .stat.fail b { color: #c45656; }
-    .import-result-stats .stat.skip b { color: #b88230; }
+    .import-result-text { margin: 0; font-size: 16px; font-weight: 600; color: #1E2F3E; text-align: center; padding: 20px 8px; line-height: 1.6; }
+    .import-result-text .n-ok { color: #1C6E5C; }
+    .import-result-text .n-fail { color: #c45656; }
     .import-err-table { max-height: 200px; overflow: auto; border: 1px solid #eef2f8; border-radius: 8px; font-size: 12px; }
     .import-err-table table { margin: 0; }
     .btn:disabled { opacity: .45; cursor: not-allowed; }
@@ -337,12 +334,7 @@
   <div class="modal" id="importResultModalInner">
     <div class="modal-hd"><span id="importResultTitle">导入结果</span> <button type="button" class="modal-close" data-close="importResultModal" style="border:none;background:none;cursor:pointer;font-size:18px;">×</button></div>
     <div class="modal-bd">
-      <div class="import-result-stats">
-        <div class="stat ok"><b id="importStatOk">0</b>成功</div>
-        <div class="stat fail"><b id="importStatFail">0</b>失败</div>
-        <div class="stat skip"><b id="importStatSkip">0</b>跳过</div>
-      </div>
-      <p class="hint" id="importResultSummary" style="margin-top:0;">—</p>
+      <p class="import-result-text" id="importResultSummary">—</p>
       <div class="import-err-table" id="importErrWrap" style="display:none;margin-top:12px;">
         <table>
           <thead><tr><th>行号</th><th>原因</th></tr></thead>
@@ -1606,12 +1598,9 @@
   function showImportResult(result) {
     var kind = result.kind || detectedImportKind || 'org';
     $('importResultTitle').textContent = importKindLabel(kind) + ' · 导入结果';
-    $('importStatOk').textContent = result.ok;
-    $('importStatFail').textContent = result.fail;
-    $('importStatSkip').textContent = result.skip;
-    var total = result.ok + result.fail + result.skip;
-    $('importResultSummary').textContent =
-      '共处理 ' + total + ' 条，成功 ' + result.ok + ' 条，失败 ' + result.fail + ' 条，跳过 ' + result.skip + ' 条。可在「操作日志」查看本次导入记录。';
+    var summary = '导入 <span class="n-ok">' + result.ok + '</span> 条成功，<span class="n-fail">' + result.fail + '</span> 条失败';
+    if (result.skip > 0) summary += '，' + result.skip + ' 条跳过';
+    $('importResultSummary').innerHTML = summary;
     var wrap = $('importErrWrap');
     var tbody = $('importErrTbody');
     if (result.errors && result.errors.length) {
