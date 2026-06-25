@@ -148,6 +148,49 @@
     .preview-line { font-size: 13px; color: #5e7f92; background: #f8fafc; border: 1px solid #eef2f8; padding: 10px 12px; border-radius: 8px; margin-top: 4px; line-height: 1.5; }
     .inline-num { width: 56px; padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px; margin: 0 6px; vertical-align: middle; }
     .stat-pill { font-size: 11px; color: #88a3b5; margin-bottom: 8px; }
+
+    /* 批量导入 Tab */
+    .step-bar { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; padding: 12px 14px; background: #fafbfc; border: 1px solid #eef2f8; border-radius: 12px; flex-wrap: wrap; }
+    .step-bar .step { display: flex; align-items: center; gap: 6px; color: #88a3b5; font-size: 13px; white-space: nowrap; }
+    .step-bar .step b { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 1px solid #cbdde6; color: #88a3b5; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+    .step-bar .step.active { color: #1C6E5C; font-weight: 600; }
+    .step-bar .step.active b { background: #1C6E5C; border-color: #1C6E5C; color: #fff; }
+    .step-bar .sep { width: 20px; height: 1px; background: #cbdde6; flex-shrink: 0; }
+    .tpl-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: #eef6f3; border: 1px solid #b8d9ce; border-radius: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tpl-card .info { flex: 1; min-width: 200px; }
+    .tpl-card .info b { font-size: 14px; color: #1C6E5C; display: flex; align-items: center; gap: 8px; }
+    .tpl-card .info p { font-size: 12px; color: #4c6a7e; margin-top: 4px; line-height: 1.6; }
+    .import-block { margin-bottom: 16px; }
+    .import-block-hd { font-size: 13px; font-weight: 600; color: #1C6E5C; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    #pane-import .drop-zone {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border: 2px dashed #cbdde6; border-radius: 12px; padding: 28px 20px; text-align: center;
+      background: #fafbfc; transition: border-color .15s, background .15s; cursor: pointer; user-select: none;
+    }
+    #pane-import .drop-zone:hover, #pane-import .drop-zone.dragover { border-color: #1C6E5C; background: #f0f7f3; }
+    #pane-import .drop-zone .ic { width: 48px; height: 48px; margin-bottom: 12px; border-radius: 50%; background: #eef6f3; font-size: 22px; color: #1C6E5C; display: flex; align-items: center; justify-content: center; }
+    #pane-import .drop-zone .drop-title { font-size: 14px; font-weight: 600; color: #1E2F3E; }
+    #pane-import .drop-zone .sub { display: block; margin-top: 6px; font-size: 12px; color: #88a3b5; line-height: 1.6; }
+    #pane-import .file-info { display: none; align-items: center; gap: 10px; padding: 10px 14px; background: #eef6f3; border: 1px solid #b8d9ce; border-radius: 10px; font-size: 13px; margin-top: 10px; }
+    #pane-import .file-info.show { display: flex; }
+    #pane-import .file-info .fname { flex: 1; min-width: 0; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #pane-import .file-info .fsize { color: #88a3b5; font-size: 12px; white-space: nowrap; }
+    #pane-import .file-info .fclear { background: none; border: none; color: #c45656; cursor: pointer; font-size: 13px; padding: 4px 8px; }
+    .import-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
+    .import-actions .field-hint { margin: 0; flex: 1; min-width: 200px; }
+    .import-detect-hint { display: none; align-items: center; gap: 8px; margin-top: 10px; padding: 10px 14px; background: #eef6f3; border: 1px solid #b8d9ce; border-radius: 10px; font-size: 13px; color: #1C6E5C; }
+    .import-detect-hint.show { display: flex; }
+    .import-detect-hint i { font-size: 16px; }
+    #importResultModal .modal { max-width: 560px; }
+    .import-result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .import-result-stats .stat { text-align: center; padding: 12px 8px; border-radius: 10px; background: #fafbfc; border: 1px solid #eef2f8; }
+    .import-result-stats .stat b { display: block; font-size: 1.25rem; margin-bottom: 4px; }
+    .import-result-stats .stat.ok b { color: #1C6E5C; }
+    .import-result-stats .stat.fail b { color: #c45656; }
+    .import-result-stats .stat.skip b { color: #b88230; }
+    .import-err-table { max-height: 200px; overflow: auto; border: 1px solid #eef2f8; border-radius: 8px; font-size: 12px; }
+    .import-err-table table { margin: 0; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
     .radio-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
     .radio-option {
       display: inline-flex; align-items: center; gap: 6px;
@@ -175,6 +218,7 @@
     .chip.multi { background: #e6f0ec; border-color: #b8d9ce; color: #1C6E5C; margin-right: 4px; }
   </style>
   <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="proto-notes.css">
   <link rel="stylesheet" href="学平险-学校端-sidebar.css">
   <link rel="stylesheet" href="学平险-学校端-b-end.css">
 </head>
@@ -186,11 +230,13 @@
       <div class="welcome"><h2>组织与成员</h2><p>立德中学 · school_id SCH_00128</p></div>
       <div id="userMenuMount"></div>
     </div>
-    <div class="denied-banner"><p style="font-weight:600;">无权限访问组织与成员</p><p style="font-size:13px;margin-top:8px;">仅校级管理员可维护</p></div>
-    <div class="admin-only card-panel">
+    <div class="denied-banner"><p style="font-weight:600;">无权限访问组织与成员</p><p style="font-size:13px;margin-top:8px;">仅校级管理员可维护<span class="proto-mark" title="见右侧批注 ①">①</span></p></div>
+    <div class="page-with-notes admin-only">
+    <div class="page-main-col">
+    <div class="card-panel">
       <div class="split">
         <div class="pane-left">
-          <p style="font-size:12px;color:#6792a8;font-weight:600;margin-bottom:6px;">年级班级</p>
+          <p style="font-size:12px;color:#6792a8;font-weight:600;margin-bottom:6px;">年级班级<span class="proto-mark" title="见右侧批注 ②">②</span></p>
           <p class="stat-pill" id="treeStat">—</p>
           <input type="search" class="tree-search" id="treeSearch" placeholder="搜索年级 / 班级…">
           <div class="tree-toolbar">
@@ -209,20 +255,20 @@
               <ul id="gradeList"></ul>
             </div>
           </div>
-          <p class="hint">左侧选范围筛选右侧成员。添加成员时：<strong>年级组长</strong>可多选任职年级，<strong>班主任</strong>可多选任职班级（可同时负责多个年级/多个班）。</p>
+          <p class="hint">左侧选范围筛选右侧成员。添加成员时：<strong>年级组长</strong>可多选任职年级，<strong>班主任</strong>可多选任职班级（可同时负责多个年级/多个班）。组织数据为档案、投保等下游模块基线。<span class="proto-mark" title="见右侧批注 ⑥">⑥</span></p>
         </div>
         <div class="pane-right">
           <div class="node-meta" id="nodeMeta">当前范围：<strong>立德中学 · 全校</strong></div>
           <div class="tabs" id="rightTabs">
             <button type="button" data-tab="list" class="active">成员列表</button>
-            <button type="button" data-tab="import">批量导入</button>
+            <button type="button" data-tab="import">批量导入<span class="proto-mark" title="见右侧批注 ⑤">⑤</span></button>
           </div>
           <div class="tab-body">
             <div class="tab-pane active" id="pane-list">
               <div class="toolbar">
-                <input type="search" placeholder="姓名/手机" style="width:150px;">
+                <input type="search" placeholder="姓名/手机" style="width:150px;"><span class="proto-mark" title="见右侧批注 ④">④</span>
                 <select><option>全部角色</option><option>校级管理员</option><option>年级组长</option><option>班主任</option></select>
-                <button type="button" class="btn btn-primary" id="btnAddMember"><i class="fas fa-user-plus"></i> 添加成员</button>
+                <button type="button" class="btn btn-primary" id="btnAddMember"><i class="fas fa-user-plus"></i> 添加成员<span class="proto-mark" title="见右侧批注 ③">③</span></button>
               </div>
               <table>
                 <thead><tr><th>姓名</th><th>手机号</th><th>角色</th><th>岗位范围</th><th>账号状态</th><th>操作</th></tr></thead>
@@ -236,15 +282,79 @@
               <div class="pager" data-b-end-pager data-page-size="10"></div>
             </div>
             <div class="tab-pane" id="pane-import">
-              <p class="hint">可批量导入<strong>年级班级结构</strong>或<strong>成员与岗位</strong>（模板分 sheet）；无校务对接时建议先用左侧「新建年级」建结构。</p>
-              <button type="button" class="btn btn-outline">下载模板</button>
-              <button type="button" class="btn btn-primary" style="margin-left:8px;">上传 Excel</button>
+              <div class="step-bar">
+                <div class="step active"><b>1</b> 下载模板</div>
+                <div class="sep"></div>
+                <div class="step" id="importStepUpload"><b>2</b> 上传文件</div>
+                <div class="sep"></div>
+                <div class="step" id="importStepRun"><b>3</b> 开始导入</div>
+              </div>
+
+              <div class="tpl-card">
+                <div class="info">
+                  <b id="importTplName"><i class="fas fa-file-excel"></i> 组织与成员-导入模板.xlsx</b>
+                  <p id="importTplDesc">模板内含「年级班级（组织结构）」「成员岗位」两张表，按表填写后上传即可，系统会自动识别并导入。</p>
+                </div>
+                <button type="button" class="btn btn-outline" id="btnDownloadImportTpl"><i class="fas fa-download"></i> 下载模板</button>
+              </div>
+
+              <div class="import-block">
+                <div class="import-block-hd"><i class="fas fa-cloud-upload-alt"></i> 上传填好的文件</div>
+                <div class="drop-zone" id="orgImportDrop" role="button" tabindex="0" aria-label="选择或拖拽上传文件">
+                  <div class="ic"><i class="fas fa-file-arrow-up"></i></div>
+                  <span class="drop-title">点击选择文件，或将文件拖拽到此处</span>
+                  <span class="sub">支持 Excel 或 CSV 文件，单次最多 500 行</span>
+                </div>
+                <input type="file" id="orgImportFile" accept=".csv,.xlsx,.xls" hidden>
+                <div class="file-info" id="orgImportFileInfo">
+                  <i class="fas fa-file-excel" style="color:#1C6E5C"></i>
+                  <span class="fname" id="orgImportFileName">—</span>
+                  <span class="fsize" id="orgImportFileSize">—</span>
+                  <button type="button" class="fclear" id="btnClearImportFile"><i class="fas fa-times"></i> 移除</button>
+                </div>
+                <div class="import-detect-hint" id="importDetectHint"><i class="fas fa-magic"></i> <span id="importDetectText">—</span></div>
+              </div>
+
+              <div class="import-actions">
+                <button type="button" class="btn btn-primary" id="btnStartOrgImport" disabled><i class="fas fa-cloud-arrow-up"></i> 开始导入</button>
+                <span class="field-hint">导入完成后可在结果弹窗查看明细；如有失败行请修正后重新上传。</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    </div><!-- /.page-main-col -->
+
+    <div id="protoNotesMount"></div>
+
+    </div><!-- /.page-with-notes -->
   </main>
+</div>
+
+
+<div class="modal-mask" id="importResultModal">
+  <div class="modal" id="importResultModalInner">
+    <div class="modal-hd"><span id="importResultTitle">导入结果</span> <button type="button" class="modal-close" data-close="importResultModal" style="border:none;background:none;cursor:pointer;font-size:18px;">×</button></div>
+    <div class="modal-bd">
+      <div class="import-result-stats">
+        <div class="stat ok"><b id="importStatOk">0</b>成功</div>
+        <div class="stat fail"><b id="importStatFail">0</b>失败</div>
+        <div class="stat skip"><b id="importStatSkip">0</b>跳过</div>
+      </div>
+      <p class="hint" id="importResultSummary" style="margin-top:0;">—</p>
+      <div class="import-err-table" id="importErrWrap" style="display:none;margin-top:12px;">
+        <table>
+          <thead><tr><th>行号</th><th>原因</th></tr></thead>
+          <tbody id="importErrTbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn btn-outline modal-close" data-close="importResultModal">关闭</button>
+      <button type="button" class="btn btn-primary" id="btnImportGoList">查看成员列表</button>
+    </div>
+  </div>
 </div>
 
 
@@ -1243,6 +1353,370 @@
     alert('已保存\n岗位范围：' + r.text + '\n账号状态：' + getStatusLabel(getCheckedStatus('assignStatus')));
     closeModal('modalAssign');
   };
+
+  /* ============ 批量导入（自动识别年级班级 / 成员信息） ============ */
+  var detectedImportKind = null;
+  var ORG_IMPORT = {
+    headers: ['年级名称', '班级序号', '班级名称', '排序', '备注'],
+    samples: [
+      ['高一年级', '1', '高一(1)班', '10', ''],
+      ['高一年级', '2', '高一(2)班', '20', ''],
+      ['高二年级', '1', '高二(1)班', '30', '']
+    ],
+    tplFile: '组织与成员-年级班级.csv',
+    label: '年级班级'
+  };
+  var MEMBER_IMPORT = {
+    headers: ['姓名', '手机号', '角色', '任职年级', '任职班级', '账号状态'],
+    samples: [
+      ['赵静', '15212341122', '年级组长', '高一年级', '', '启用'],
+      ['刘洋', '18800001111', '班主任', '', '高一(3)班', '启用'],
+      ['周敏', '13900002222', '校级管理员', '', '', '启用']
+    ],
+    tplFile: '组织与成员-成员信息.csv',
+    label: '成员信息'
+  };
+  var ROLE_TO_CODE = {
+    admin: 'admin', grade: 'grade', class: 'class',
+    '校级管理员': 'admin', '年级组长': 'grade', '班主任': 'class'
+  };
+
+  function getImportConfig(kind) {
+    return (kind || detectedImportKind) === 'member' ? MEMBER_IMPORT : ORG_IMPORT;
+  }
+
+  function importKindLabel(kind) {
+    return getImportConfig(kind).label;
+  }
+
+  function escapeCsvCell(v) {
+    v = v == null ? '' : String(v);
+    if (/[",\n\r]/.test(v)) return '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  }
+
+  function downloadCsvTemplate(cfg) {
+    var rows = [cfg.headers.map(escapeCsvCell).join(',')];
+    cfg.samples.forEach(function(r) { rows.push(r.map(escapeCsvCell).join(',')); });
+    for (var i = 0; i < 2; i++) rows.push(cfg.headers.map(function() { return ''; }).join(','));
+    var csv = '\ufeff' + rows.join('\r\n');
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = cfg.tplFile;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() { URL.revokeObjectURL(url); }, 800);
+  }
+
+  function downloadImportTemplate() {
+    downloadCsvTemplate(ORG_IMPORT);
+    setTimeout(function() { downloadCsvTemplate(MEMBER_IMPORT); }, 450);
+  }
+
+  function setImportStepState(hasFile) {
+    if ($('importStepUpload')) $('importStepUpload').classList.toggle('active', !!hasFile);
+    if ($('importStepRun')) $('importStepRun').classList.toggle('active', !!hasFile);
+    var btn = $('btnStartOrgImport');
+    if (btn) btn.disabled = !hasFile;
+  }
+
+  function setImportDetectHint(kind) {
+    detectedImportKind = kind;
+    var box = $('importDetectHint');
+    var text = $('importDetectText');
+    if (!box || !text) return;
+    if (!kind) {
+      box.classList.remove('show');
+      text.textContent = '—';
+      return;
+    }
+    text.textContent = '已识别为：' + importKindLabel(kind);
+    box.classList.add('show');
+  }
+
+  function formatImportSize(n) {
+    if (n < 1024) return n + ' B';
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+    return (n / 1024 / 1024).toFixed(2) + ' MB';
+  }
+
+  function clearOrgImportFile() {
+    var input = $('orgImportFile');
+    if (input) input.value = '';
+    var info = $('orgImportFileInfo');
+    if (info) info.classList.remove('show');
+    setImportDetectHint(null);
+    setImportStepState(false);
+  }
+
+  function showOrgImportFile(file) {
+    if (!file) return;
+    if ($('orgImportFileName')) $('orgImportFileName').textContent = file.name;
+    if ($('orgImportFileSize')) $('orgImportFileSize').textContent = formatImportSize(file.size);
+    if ($('orgImportFileInfo')) $('orgImportFileInfo').classList.add('show');
+    setImportStepState(true);
+    if (/\.csv$/i.test(file.name)) {
+      var reader = new FileReader();
+      reader.onload = function() {
+        try {
+          var rows = parseCsvText(String(reader.result || ''));
+          if (!rows.length) { setImportDetectHint(null); return; }
+          setImportDetectHint(detectImportKind(rows[0]));
+        } catch (e) { setImportDetectHint(null); }
+      };
+      reader.readAsText(file, 'UTF-8');
+    } else {
+      setImportDetectHint(null);
+      if ($('importDetectText')) $('importDetectText').textContent = '导入时将自动识别为年级班级或成员信息';
+      if ($('importDetectHint')) $('importDetectHint').classList.add('show');
+    }
+  }
+
+  function parseCsvText(text) {
+    var lines = text.replace(/^\ufeff/, '').split(/\r?\n/).filter(function(l) { return l.trim(); });
+    return lines.map(function(line) {
+      var out = [];
+      var cur = '';
+      var inQ = false;
+      for (var i = 0; i < line.length; i++) {
+        var ch = line[i];
+        if (inQ) {
+          if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+          else if (ch === '"') inQ = false;
+          else cur += ch;
+        } else if (ch === '"') inQ = true;
+        else if (ch === ',') { out.push(cur.trim()); cur = ''; }
+        else cur += ch;
+      }
+      out.push(cur.trim());
+      return out;
+    });
+  }
+
+  function normalizeHeader(h) {
+    return (h || '').replace(/\*/g, '').trim();
+  }
+
+  function detectImportKind(headers) {
+    var h = headers.map(normalizeHeader);
+    var has = function(name) { return h.indexOf(name) >= 0; };
+    if (has('姓名') && has('手机号')) return 'member';
+    if (has('年级名称') && has('班级序号')) return 'org';
+    return null;
+  }
+
+  function validateImportRows(rows, kind) {
+    var cfg = getImportConfig(kind);
+    var expected = cfg.headers.map(normalizeHeader);
+    if (!rows.length) return { ok: false, msg: '文件为空，请检查后重新上传' };
+    var head = rows[0].map(normalizeHeader);
+    var kindDetected = detectImportKind(head);
+    if (!kindDetected) {
+      return { ok: false, msg: '无法识别表格类型，请使用模板中的「年级班级」或「成员信息」表填写后上传' };
+    }
+    if (kindDetected !== kind) kind = kindDetected;
+    expected = getImportConfig(kind).headers.map(normalizeHeader);
+    var miss = expected.filter(function(h) { return head.indexOf(h) < 0; });
+    if (miss.length) {
+      return { ok: false, msg: '表格列与模板不一致，请下载最新模板。缺少：' + miss.join('、') };
+    }
+    var dataRows = rows.slice(1).filter(function(r) { return r.some(function(c) { return (c || '').trim(); }); });
+    if (!dataRows.length) return { ok: false, msg: '未找到有效数据，请确认已填写内容' };
+    if (dataRows.length > 500) return { ok: false, msg: '单次最多导入 500 行，当前 ' + dataRows.length + ' 行，请分批上传' };
+    return { ok: true, dataRows: dataRows, head: head, kind: kind };
+  }
+
+  function normalizeRoleToken(raw) {
+    var s = (raw || '').trim();
+    var lower = s.toLowerCase();
+    return ROLE_TO_CODE[s] || ROLE_TO_CODE[lower] || lower;
+  }
+
+  function mockImportOrg(dataRows) {
+    var ok = 0, fail = 0, skip = 0, errors = [];
+    dataRows.forEach(function(row, idx) {
+      var lineNo = idx + 2;
+      var grade = (row[0] || '').trim();
+      var cno = (row[1] || '').trim();
+      if (!grade || !cno) {
+        fail++;
+        errors.push({ line: lineNo, reason: '请填写年级名称和班级序号' });
+        return;
+      }
+      if (!/^\d+$/.test(cno) || parseInt(cno, 10) < 1 || parseInt(cno, 10) > 40) {
+        fail++;
+        errors.push({ line: lineNo, reason: '班级序号须为 1–40 之间的整数' });
+        return;
+      }
+      var exists = false;
+      document.querySelectorAll('.tree-node[data-type="class"]').forEach(function(n) {
+        var gLi = n.closest('li.grade-block');
+        var gn = gLi && gLi.querySelector('.tree-node[data-type="grade"]');
+        if (gn && getLabel(gn) === grade && String(n.getAttribute('data-class-no') || '') === cno) exists = true;
+      });
+      if (exists) { skip++; return; }
+      ok++;
+    });
+    return { ok: ok, fail: fail, skip: skip, errors: errors, kind: 'org' };
+  }
+
+  function mockImportMember(dataRows) {
+    var ok = 0, fail = 0, skip = 0, errors = [];
+    var rolesOk = { admin: 1, grade: 1, class: 1 };
+    dataRows.forEach(function(row, idx) {
+      var lineNo = idx + 2;
+      var name = (row[0] || '').trim();
+      var phone = (row[1] || '').trim();
+      var roleRaw = (row[2] || '').trim();
+      if (!name || !phone || !roleRaw) {
+        fail++;
+        errors.push({ line: lineNo, reason: '请填写姓名、手机号和角色' });
+        return;
+      }
+      if (!/^1\d{10}$/.test(phone)) {
+        fail++;
+        errors.push({ line: lineNo, reason: '手机号格式不正确' });
+        return;
+      }
+      var roles = roleRaw.split(/[;；]/).map(normalizeRoleToken).filter(Boolean);
+      if (!roles.length || roles.some(function(r) { return !rolesOk[r]; })) {
+        fail++;
+        errors.push({ line: lineNo, reason: '角色请填写：校级管理员、年级组长或班主任' });
+        return;
+      }
+      if (roles.indexOf('admin') >= 0 && roles.length > 1) {
+        fail++;
+        errors.push({ line: lineNo, reason: '校级管理员不能与其他角色填在同一行' });
+        return;
+      }
+      var dup = false;
+      $('memberTbody').querySelectorAll('tr').forEach(function(tr) {
+        var cellPhone = (tr.cells[1].textContent || '').replace(/\D/g, '');
+        if (cellPhone.length >= 4 && phone.slice(-4) === cellPhone.slice(-4)) dup = true;
+      });
+      if (dup) { skip++; return; }
+      ok++;
+    });
+    return { ok: ok, fail: fail, skip: skip, errors: errors, kind: 'member' };
+  }
+
+  function showImportResult(result) {
+    var kind = result.kind || detectedImportKind || 'org';
+    $('importResultTitle').textContent = importKindLabel(kind) + ' · 导入结果';
+    $('importStatOk').textContent = result.ok;
+    $('importStatFail').textContent = result.fail;
+    $('importStatSkip').textContent = result.skip;
+    var total = result.ok + result.fail + result.skip;
+    $('importResultSummary').textContent =
+      '共处理 ' + total + ' 条，成功 ' + result.ok + ' 条，失败 ' + result.fail + ' 条，跳过 ' + result.skip + ' 条。可在「操作日志」查看本次导入记录。';
+    var wrap = $('importErrWrap');
+    var tbody = $('importErrTbody');
+    if (result.errors && result.errors.length) {
+      wrap.style.display = 'block';
+      tbody.innerHTML = result.errors.map(function(e) {
+        return '<tr><td>第 ' + e.line + ' 行</td><td>' + e.reason + '</td></tr>';
+      }).join('');
+    } else {
+      wrap.style.display = 'none';
+      tbody.innerHTML = '';
+    }
+    openModal('importResultModal');
+    clearOrgImportFile();
+  }
+
+  function submitOrgImport() {
+    var file = $('orgImportFile') && $('orgImportFile').files[0];
+    if (!file) { alert('请先选择要导入的文件'); return; }
+    if (!/\.(csv|xlsx|xls)$/i.test(file.name)) {
+      alert('请上传 Excel 或 CSV 格式的文件');
+      return;
+    }
+    var btn = $('btnStartOrgImport');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在处理…'; }
+
+    function finish(result) {
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> 开始导入'; }
+      showImportResult(result);
+    }
+
+    if (/\.xlsx$|\.xls$/i.test(file.name)) {
+      setTimeout(function() {
+        finish({ ok: 3, fail: 0, skip: 1, errors: [], kind: 'org' });
+      }, 600);
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function() {
+      try {
+        var rows = parseCsvText(String(reader.result || ''));
+        var kind = detectImportKind(rows[0] || []);
+        var v = validateImportRows(rows, kind);
+        if (!v.ok) {
+          alert(v.msg);
+          if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> 开始导入'; }
+          return;
+        }
+        setImportDetectHint(v.kind);
+        var result = v.kind === 'member' ? mockImportMember(v.dataRows) : mockImportOrg(v.dataRows);
+        result.kind = v.kind;
+        finish(result);
+      } catch (err) {
+        alert('文件读取失败，请检查格式后重试');
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> 开始导入'; }
+      }
+    };
+    reader.onerror = function() {
+      alert('文件读取失败，请重试');
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> 开始导入'; }
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  function bindOrgImport() {
+    if ($('btnDownloadImportTpl')) $('btnDownloadImportTpl').onclick = downloadImportTemplate;
+    if ($('btnClearImportFile')) $('btnClearImportFile').onclick = clearOrgImportFile;
+    if ($('btnStartOrgImport')) $('btnStartOrgImport').onclick = submitOrgImport;
+    if ($('btnImportGoList')) {
+      $('btnImportGoList').onclick = function() {
+        closeModal('importResultModal');
+        document.querySelectorAll('#rightTabs button').forEach(function(x) {
+          x.classList.toggle('active', x.dataset.tab === 'list');
+        });
+        document.querySelectorAll('.tab-pane').forEach(function(p) {
+          p.classList.toggle('active', p.id === 'pane-list');
+        });
+      };
+    }
+    var dz = $('orgImportDrop');
+    var input = $('orgImportFile');
+    if (dz && input) {
+      dz.addEventListener('click', function() { input.click(); });
+      dz.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
+      });
+      input.addEventListener('change', function() { if (input.files[0]) showOrgImportFile(input.files[0]); });
+      ['dragenter', 'dragover'].forEach(function(ev) {
+        dz.addEventListener(ev, function(e) { e.preventDefault(); e.stopPropagation(); dz.classList.add('dragover'); });
+      });
+      ['dragleave', 'drop'].forEach(function(ev) {
+        dz.addEventListener(ev, function(e) { e.preventDefault(); e.stopPropagation(); dz.classList.remove('dragover'); });
+      });
+      dz.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dz.classList.remove('dragover');
+        var files = e.dataTransfer && e.dataTransfer.files;
+        if (files && files[0]) showOrgImportFile(files[0]);
+      });
+    }
+  }
+
+  bindOrgImport();
+
   renderGradeSummary();
   initDemoTree();
 
@@ -1263,5 +1737,10 @@
 
 <script src="b-end-pager.js"></script>
 <script>BEndPager.initAll();</script>
+<script src="proto-notes.js"></script>
+<script src="学平险-学校端--组织与成员.notes.js"></script>
+<script>
+  mountProtoNotes('protoNotesMount', buildFullProtoNotesSection(window.ORG_MEMBER_PROTO));
+</script>
 </body>
 </html>
