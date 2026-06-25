@@ -1596,8 +1596,7 @@
   }
 
   function showImportResult(result) {
-    var kind = result.kind || detectedImportKind || 'org';
-    $('importResultTitle').textContent = importKindLabel(kind) + ' · 导入结果';
+    $('importResultTitle').textContent = '导入结果';
     var summary = '导入 <span class="n-ok">' + result.ok + '</span> 条成功，<span class="n-fail">' + result.fail + '</span> 条失败';
     if (result.skip > 0) summary += '，' + result.skip + ' 条跳过';
     $('importResultSummary').innerHTML = summary;
