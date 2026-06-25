@@ -2,7 +2,7 @@
 window.SCHOOL_AUDIT_PROTO = {
   name: '操作日志 · 学校端',
   goal: '校级管理员查看本校关键写操作审计，只读检索，满足合规与问题追溯。',
-  structure: '顶栏 + 筛选工具栏 + 日志表格 + 分页；右侧产品批注（可展开/收起）。',
+  structure: '顶栏 + 筛选工具栏 + 日志表格（操作菜单 + 操作内容）+ 分页 + 操作内容 Drawer；右侧产品批注（可展开/收起）。',
   modules: [
     {
       num: '①',
@@ -28,25 +28,25 @@ window.SCHOOL_AUDIT_PROTO = {
       num: '②',
       name: '筛选条件字段',
       purpose: '缩小日志检索范围，快速定位某操作人或业务对象相关记录。',
-      logic: '关键字 + 模块 + 时间范围 AND 组合；默认近 7 天、按时间倒序。',
+      logic: '关键字 + 操作菜单 + 时间范围 AND 组合；默认近 7 天、按时间倒序。',
       interaction: '输入/选择后即时过滤（原型前端过滤；正式建议服务端分页查询）。',
       fields:
         '<strong>操作人 / 操作内容（filterKw）</strong>模糊匹配操作人姓名、操作内容全文（含动作与主体关键字）。<br>' +
         '示例：输入「王芳」→ 匹配操作人为王芳的记录；输入「李明远」→ 匹配操作内容含该学生的记录；输入「编辑安全教育」→ 匹配安全教育编辑类日志。<br><br>' +
-        '<strong>业务模块（filterModule）</strong>下拉枚举，与侧栏模块名一致；空=全部。<br>' +
-        '示例：选「安全教育」→ 仅展示 module=安全教育 的日志（编辑/发布/上下架等，见批注 ⑦）；选「统计看板」→ 切换学期、导出报表等；选「班级投保名单」→ 订单导出、通知家长等（见批注 ④⑤）。<br><br>' +
+        '<strong>业务菜单（filterModule）</strong>下拉枚举，与侧栏一级菜单名一致；空=全部。<br>' +
+        '示例：选「安全教育」→ 仅展示 module=安全教育 的日志（编辑/发布/上下架等，见批注 ⑦）；选「个人中心」→ 登录/登出；选「统计看板」→ 切换学期、导出报表等；选「班级投保名单」→ 订单导出、通知家长等（见批注 ④⑤）。<br><br>' +
         '<strong>时间范围（filterRange）</strong>相对区间：近 7 天 / 近 30 天 / 本学期（按学期配置起止日）。<br>' +
         '示例：选「近 7 天」→ operated_at ≥ 今日 0 点 − 7 天；「本学期」按学校当前统计学期口径过滤。',
       data: {
         source: 'audit_log API；学期起止来自 school_term 配置',
         update: '筛选变更触发重新查询',
         timing: '用户改条件时',
-        sync: '模块枚举与侧栏、写日志时的 module 字段一致',
+        sync: '操作菜单枚举与侧栏、写日志时的 module 字段一致',
         calc: '时间范围由服务端按 operated_at 计算'
       },
       stateFlow: '默认条件 → 用户筛选 → 分页浏览结果。',
       impact: '仅影响列表展示，不改日志数据。',
-      exception: '无匹配记录时表格空态；导出 CSV 为 P2 占位。',
+      exception: '无匹配记录时表格空态。',
       scope: '1.0 · 含 IP 脱敏展示规则（见字段 ③）。'
     },
     {
@@ -54,7 +54,7 @@ window.SCHOOL_AUDIT_PROTO = {
       name: '日志表格字段',
       purpose: '每条审计记录的标准字段，支撑「谁在何时对什么做了什么」的追溯。',
       logic: '关键写操作须落库（A-07 P1）：档案删除、组织变更、成员变更、二维码下载、导入/导出、内容发布等；只读不可删改。',
-      interaction: '表格只读；行 hover 高亮；不支持行内编辑或删除。',
+      interaction: '表格只读；行 hover 高亮；点击「详情」右侧 Drawer 展示 operation_summary；不支持行内编辑或删除。',
       fields:
         '<strong>时间（operated_at）</strong>操作<strong>完成</strong>时的服务器时间，格式 YYYY-MM-DD HH:mm:ss，列表默认倒序。<br>' +
         '示例：<code>2026-05-21 09:20:00</code>（张校长发布安全教育内容）<br><br>' +
@@ -62,10 +62,10 @@ window.SCHOOL_AUDIT_PROTO = {
         '示例：<code>张敏</code>、<code>王芳</code>；系统任务可记为「系统自动」。<br><br>' +
         '<strong>角色（operator_role）</strong>操作发生时使用的岗位身份，与登录选岗一致。<br>' +
         '示例：<code>校级管理员</code>、<code>年级组长</code>、<code>班主任</code>；用于区分同人多岗下的操作范围。<br><br>' +
-        '<strong>模块（module）</strong>业务域枚举，与侧栏一级菜单对应。<br>' +
-        '示例：<code>统计看板</code>、<code>班级投保名单</code>（订单）、<code>安全教育</code>、<code>学生档案</code>、<code>组织与成员</code>（详见批注 ④⑤⑦ 全量操作）。<br><br>' +
-        '<strong>操作内容（operation_summary）</strong>将原「动作 + 对象」合并为单列可读摘要；核心公式 <code>{动作}{主体标识}{变更内容}</code>，三段<strong>直接拼接</strong>（段间不加空格/标点），细则见批注 <strong>⑥</strong>。<br>' +
-        '示例：<code>编辑档案李明远补充健康标签「过敏」</code> · <code>查看订单详情ORD20260518003李明远保障中</code> · <code>编辑安全教育内容防溺水知识宣传变更：正文</code> · <code>切换统计学期2026 春季 → 2026 秋季</code> · <code>发布内容防溺水知识宣传</code> · <code>登录学校端</code><br><br>' +
+        '<strong>操作菜单（module）</strong>业务域枚举，与侧栏一级菜单对应；列表列名展示为「操作菜单」。<br>' +
+        '示例：<code>统计看板</code>、<code>班级投保名单</code>、<code>安全教育</code>、<code>学生档案</code>、<code>组织与成员</code>、<code>个人中心</code>（登录/登出，见批注 ⑥）。<br><br>' +
+        '<strong>操作内容（operation_summary）</strong>列表列名为「操作内容」，单元格为「详情」链接；点击后 Drawer <strong>仅展示</strong>本条摘要全文（组装规则见批注 ⑥）。<br>' +
+        '示例：Drawer 内操作内容 <code>编辑档案李明远补充健康标签「过敏」</code> · <code>切换统计学期2026 春季 → 2026 秋季</code> · 个人中心 <code>登录</code>、<code>登出</code><br><br>' +
         '<strong>IP（ip_address）</strong>发起请求的客户端 IP；<strong>前端脱敏展示</strong>，完整 IP 仅后端留存。<br>' +
         '示例：公网 <code>58.1.*.*</code>；校内/运维 <code>10.2.*.*</code>。',
       data: {
@@ -84,7 +84,7 @@ window.SCHOOL_AUDIT_PROTO = {
       num: '④',
       name: '订单模块 · 操作枚举（班级投保名单）',
       purpose: '学校端订单流水均在「班级投保名单」维护；以下写操作与关键读操作均须落审计日志。',
-      logic: '模块字段 module=<code>班级投保名单</code>；operation_summary=<code>{动作}{主体标识}{变更内容}</code>。',
+      logic: '操作菜单 module=<code>班级投保名单</code>；operation_summary=<code>{动作}{主体标识}{变更内容}</code>，经「详情」Drawer 展示。',
       interaction: '列表页与班级详情页操作均可能产生日志；纯 Tab 切换/排序可不记（P2 可配置）。',
       fields:
         '<strong>切换统计学期</strong> — 列表/详情顶栏切换学期，刷新全班汇总与 KPI 口径。<br>' +
@@ -131,7 +131,7 @@ window.SCHOOL_AUDIT_PROTO = {
       num: '⑤',
       name: '数据统计模块 · 操作枚举（统计看板）',
       purpose: '统计看板为登录默认页；学期口径与 KPI 变更、导出等须可追溯。',
-      logic: '模块字段 module=<code>统计看板</code>；与班级投保名单共用统计学期配置。',
+      logic: '操作菜单 module=<code>统计看板</code>；与班级投保名单共用统计学期配置。',
       interaction: '切换学期即时刷新 KPI；导出/刷新为显式按钮操作。',
       fields:
         '<strong>切换统计学期</strong> — 顶栏下拉变更统计口径，联动 KPI 与副文案。<br>' +
@@ -165,22 +165,23 @@ window.SCHOOL_AUDIT_PROTO = {
     {
       num: '⑥',
       name: '操作内容获取规则（operation_summary）',
-      purpose: '统一「操作内容」列文案的组装口径：将动作、主体、变更合并为单列，保证可读、可追溯，且与后端 entity 关联一致。',
+      purpose: '统一 operation_summary 的组装口径：将动作、主体、变更合并为可读摘要；列表通过「详情」Drawer 展示，保证可追溯且与后端 entity 关联一致。',
       logic:
         '① <strong>服务端组装</strong>：operation_summary = <code>{动作}{主体标识}{变更内容}</code>，由 AuditLogger 在操作成功时生成，禁止前端传入。<br>' +
         '② <strong>三段直接拼接</strong>：动作（action 枚举文案）+ 主体标识 + 变更内容，<strong>段与段之间不加空格、不加中点</strong>；变更内容内部可保留 <code>→</code>、<code>：</code>、<code>+</code> 等语义符号。<br>' +
         '③ <strong>操作时刻快照</strong>：主体标识取操作完成当下字段；实体后续改名/删档<strong>不回写</strong>历史 operation_summary。<br>' +
-        '④ <strong>结构化存储</strong>：列表展示 operation_summary；库表仍存 action、entity_type、entity_id、audit_payload 供研发检索与精确关联。',
-      interaction: '管理员仅见 operation_summary 单列；研发可通过 action + entity_id + audit_payload 反查详情。',
+        '④ <strong>结构化存储</strong>：列表不展示 operation_summary 列；点击「详情」Drawer 展示；库表仍存 action、entity_type、entity_id、audit_payload 供研发检索与精确关联。',
+      interaction: '列表仅见「详情」入口；Drawer 展示 operation_summary 全文；研发可通过 action + entity_id + audit_payload 反查明细。',
       fields:
         '<strong>核心公式：{动作}{主体标识}{变更内容}</strong><br>' +
-        '列表「操作内容」列的默认结构。公式中三段语义独立，<strong>字面直接相连</strong>（非加号拼接）。无变更时省略变更段；无独立主体时主体段可为空（如纯状态切换）。<br><br>' +
+        'Drawer「操作内容」区的默认结构。公式中三段语义独立，<strong>字面直接相连</strong>（非加号拼接）。无变更时省略变更段；无独立主体时主体段可为空（如纯状态切换）。<br><br>' +
         '<strong>① 动作 — 做了什么</strong><br>' +
         '取自 action 枚举中文文案，如 <code>编辑档案</code>、<code>发布内容</code>、<code>切换统计学期</code>；作为 operation_summary 的<strong>前缀</strong>。<br><br>' +
         '<strong>② 主体标识 — 对谁/对什么</strong><br>' +
         '回答操作锚定的<strong>那一个</strong>实体：订单号、姓名、标题、班级路径等。<br>' +
         '· 优先级：业务唯一编号 → 稳定展示名 → 组织路径 → entity_id<br>' +
-        '· 仅主体、无变更时：summary = 动作 + 主体，如 <code>发布内容防溺水知识宣传</code>、<code>登录学校端</code><br><br>' +
+        '· 仅主体、无变更时：summary = 动作 + 主体，如 <code>发布内容防溺水知识宣传</code><br>' +
+        '· 个人中心（登录/登出）：summary = 动作本身，如 <code>登录</code>、<code>登出</code>；module=<code>个人中心</code><br><br>' +
         '<strong>③ 变更内容 — 产生什么结果</strong><br>' +
         '补充本次操作的可辨识结果/上下文；<strong>不重复</strong>动作文案。<br>' +
         '· 常见：变更摘要（<code>变更：正文</code>）、状态（<code>保障中</code>）、范围规模（<code>46 条</code>）、箭头变更（<code>2026 春季 → 2026 秋季</code>）<br>' +
@@ -208,7 +209,7 @@ window.SCHOOL_AUDIT_PROTO = {
         '<tr><td>enrollment_export</td><td><code>{scope}</code></td><td><code>{term_label}{count} 条</code></td></tr>' +
         '<tr><td>org_member</td><td><code>{display_name}</code></td><td><code>{phone_mask}{role_label}</code></td></tr>' +
         '<tr><td>school_term</td><td>空</td><td><code>{旧学期} → {新学期}</code></td></tr>' +
-        '<tr><td>system_login</td><td><code>学校端</code></td><td>空</td></tr>' +
+        '<tr><td>user_session（个人中心）</td><td>空</td><td>空；operation_summary=<code>登录</code> 或 <code>登出</code></td></tr>' +
         '</table><br>' +
         '<strong>获取失败兜底</strong><br>' +
         '· 已知 entity_id：<code>{动作}{entity_type}{entity_id}</code><br>' +
@@ -221,7 +222,7 @@ window.SCHOOL_AUDIT_PROTO = {
         sync: 'action、entity_type 仍独立落库；与 module+action 模板矩阵维护',
         calc: '批量类变更段的 N 由服务端 COUNT，不信任前端传参'
       },
-      stateFlow: '业务层提交 context → 模板渲染 operation_summary → 落库 → 列表只读展示。',
+      stateFlow: '业务层提交 context → 模板渲染 operation_summary → 落库 → 列表点「详情」Drawer 只读展示。',
       impact: '全模块审计可读性；筛选 filterKw 依赖 operation_summary 质量。',
       exception: '模板渲染异常走兜底规则并告警；不阻断主业务但须补偿写日志。',
       scope: '1.0 · 规则定稿；各模块接入 AuditLogger 为 P1。'
@@ -231,7 +232,7 @@ window.SCHOOL_AUDIT_PROTO = {
       name: '安全教育模块 · 操作枚举',
       purpose: '学校端安全教育（安全宣传 / 安全提醒）的发布、编辑、上下架、置顶、删除等写操作均须落审计日志；编辑页「保存」「重新发布」与列表 Switch 分 action 枚举。',
       logic:
-        'module=<code>安全教育</code>；entity_type=<code>safety_content</code>。编辑类 operation_summary 遵循批注 ⑥ 公式 <code>{动作}{主体标识}{变更内容}</code>；禁止写入富文本正文全文。',
+        'module=<code>安全教育</code>；entity_type=<code>safety_content</code>。编辑类 operation_summary 遵循批注 ⑥ 公式，经「详情」Drawer 展示；禁止写入富文本正文全文。',
       interaction: '编辑页「保存」「重新发布」、列表 Switch（置顶/上架）、批量下架/删除均可能产生日志；Drawer 只读查看可选记 P2。',
       fields:
         '<strong>发布内容（新增 · SAFETY_PUBLISH）</strong> — 新建编辑页确认发布，同步上架；无草稿态。<br>' +

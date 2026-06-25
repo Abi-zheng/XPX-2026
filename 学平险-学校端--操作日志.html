@@ -49,6 +49,17 @@
     .info-card .label { font-size: 12px; color: #88a3b5; }
     .info-card .val { font-size: 1.25rem; font-weight: 700; margin-top: 4px; color: #1C6E5C; }
     code { font-size: 12px; background: #f0f4f9; padding: 2px 6px; border-radius: 4px; }
+    /* 操作详情 Drawer */
+    .drawer-mask { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 110; }
+    .drawer-mask.open { display: block; }
+    .drawer { position: fixed; top: 0; right: 0; width: min(440px, 100vw); height: 100vh; background: #fff; box-shadow: -4px 0 16px rgba(0,0,0,.08); z-index: 111; transform: translateX(100%); transition: transform .25s; display: flex; flex-direction: column; }
+    .drawer-mask.open .drawer { transform: translateX(0); }
+    .drawer-hd { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .drawer-hd h3 { font-size: 16px; font-weight: 600; line-height: 1.4; flex: 1; }
+    .drawer-close { border: none; background: none; font-size: 20px; color: #88a3b5; cursor: pointer; line-height: 1; }
+    .drawer-bd { padding: 20px; overflow-y: auto; flex: 1; font-size: 14px; line-height: 1.75; color: #1E2F3E; }
+    .drawer-content-body { font-size: 14px; color: #1E2F3E; line-height: 1.75; word-break: break-word; }
+    .drawer-ft { padding: 12px 20px; border-top: 1px solid #f0f0f0; display: flex; gap: 8px; justify-content: flex-end; }
 </style>
   <link rel="stylesheet" href="shared-ui.css">
   <link rel="stylesheet" href="proto-notes.css">
@@ -62,7 +73,6 @@
 <div class="top-bar">
       <div class="welcome"><h2>操作日志</h2><p>立德中学 · 只读</p></div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-outline admin-only"><i class="fas fa-download"></i> 导出 CSV</button>
         <div id="userMenuMount"></div>
       </div>
     </div>
@@ -72,40 +82,41 @@
     <div class="card-panel" style="padding:0;">
       <div class="toolbar" style="padding:12px 16px 0;">
         <input type="search" placeholder="操作人 / 操作内容" style="width:200px;"><span class="proto-mark" title="见右侧批注 ②">②</span>
-        <select><option>全部模块</option><option>统计看板</option><option>学生档案</option><option>班级投保名单</option><option>投保二维码</option><option>风险事件登记</option><option>安全教育</option><option>组织与成员</option></select>
+        <select><option>全部菜单</option><option>统计看板</option><option>学生档案</option><option>班级投保名单</option><option>投保二维码</option><option>风险事件登记</option><option>安全教育</option><option>组织与成员</option><option>个人中心</option></select>
         <select><option>近 7 天</option><option>近 30 天</option><option>本学期</option></select>
       </div>
       <table>
-        <thead><tr><th>时间<span class="proto-mark" title="见右侧批注 ③">③</span></th><th>操作人</th><th>角色</th><th>模块</th><th>操作内容<span class="proto-mark" title="见右侧批注 ⑥">⑥</span></th><th>IP</th></tr></thead>
+        <thead><tr><th>时间<span class="proto-mark" title="见右侧批注 ③">③</span></th><th>操作人</th><th>角色</th><th>操作菜单</th><th>IP</th><th>操作内容<span class="proto-mark" title="见右侧批注 ⑥">⑥</span></th></tr></thead>
         <tbody>
-          <tr><td>2026-05-22 08:30:00</td><td>张敏</td><td>校级管理员</td><td>统计看板</td><td>切换统计学期2026 春季 → 2026 秋季</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-21 17:00:00</td><td>张敏</td><td>校级管理员</td><td>统计看板</td><td>导出统计报表全校2026 春季KPI+班级汇总</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-21 14:10:00</td><td>李建华</td><td>年级组长</td><td>统计看板</td><td>查看看板高三年级2026 春季口径</td><td>58.1.*.*</td></tr>
-          <tr><td>2026-05-21 09:20:00</td><td>张校长</td><td>校级管理员</td><td>安全教育</td><td>发布内容防溺水知识宣传</td><td>58.1.*.*</td></tr>
-          <tr><td>2026-05-21 10:05:00</td><td>张校长</td><td>校级管理员</td><td>安全教育</td><td>编辑安全教育内容防溺水知识宣传变更：正文</td><td>58.1.*.*</td></tr>
-          <tr><td>2026-05-21 10:18:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>重新发布安全教育防溺水知识宣传刷新发布时间</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-20 15:40:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>编辑安全教育内容暴雨预警 → 暴雨橙色预警提醒</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-20 14:22:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>编辑安全教育内容校园欺凌预防变更：正文状态=已下架</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-20 11:08:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>重新发布安全教育校园欺凌预防已下架 → 已发布</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-19 09:35:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>编辑安全教育内容交通安全须知变更：封面图+正文</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-19 08:50:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>编辑安全教育内容暴雨橙色预警提醒变更：安全提醒 → 安全宣传</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-18 16:12:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>置顶内容防溺水知识宣传置顶：关 → 开</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-18 15:30:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>下架内容暑期安全提示</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-21 11:45:00</td><td>王芳</td><td>班主任</td><td>学生档案</td><td>编辑档案李明远补充健康标签「过敏」</td><td>58.1.*.*</td></tr>
-          <tr><td>2026-05-21 11:30:00</td><td>王芳</td><td>班主任</td><td>风险事件登记</td><td>登记新事件高一(3)班 李明远体育课摔伤</td><td>58.1.*.*</td></tr>
-          <tr><td>2026-05-20 16:08:00</td><td>张敏</td><td>校级管理员</td><td>投保二维码</td><td>下载二维码2026 春季PNG</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-20 09:15:00</td><td>王芳</td><td>班主任</td><td>班级投保名单</td><td>查看订单详情ORD20260518003李明远保障中</td><td>58.1.*.*</td></tr>
-          <tr><td>2026-05-20 10:24:00</td><td>李建华</td><td>年级组长</td><td>班级投保名单</td><td>通知未投保家长高三年级18 人短信通知</td><td>58.1.*.*</td></tr>
-          <tr><td>2026-05-19 16:20:00</td><td>张敏</td><td>校级管理员</td><td>班级投保名单</td><td>导出全部订单2026 春季全校1248 条</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-19 14:22:00</td><td>王芳</td><td>班主任</td><td>风险事件登记</td><td>登记新事件高一(3)班较严重已启动理赔</td><td>58.1.*.*</td></tr>
-          <tr><td>2026-05-19 11:08:00</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>停用账号赵静152****1122</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-18 16:45:00</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>添加成员新用户188****0099班主任</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-18 10:08:00</td><td>郭静</td><td>班主任</td><td>风险事件登记</td><td>登记新事件初二(4)班课间打闹</td><td>58.1.*.*</td></tr>
-          <tr><td>2026-05-17 15:02:00</td><td>王芳</td><td>班主任</td><td>班级投保名单</td><td>导出本班订单高一(3)班46 条</td><td>58.1.*.*</td></tr>
-          <tr><td>2026-05-16 11:20:00</td><td>王芳</td><td>班主任</td><td>班级投保名单</td><td>手动关联档案ORD20260512007关联 S20240115</td><td>58.1.*.*</td></tr>
-          <tr><td>2026-05-15 14:22:00</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>调整岗位李建华年级组长</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-15 11:30:00</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>新建班级高一年级高一(4)班</td><td>10.2.*.*</td></tr>
-          <tr><td>2026-05-14 08:55:00</td><td>张敏</td><td>校级管理员</td><td>系统</td><td>登录学校端</td><td>10.2.*.*</td></tr>
+          <tr><td>2026-05-22 08:30:00</td><td>张敏</td><td>校级管理员</td><td>统计看板</td><td>10.2.*.*</td><td>切换统计学期2026 春季 → 2026 秋季</td></tr>
+          <tr><td>2026-05-21 17:00:00</td><td>张敏</td><td>校级管理员</td><td>统计看板</td><td>10.2.*.*</td><td>导出统计报表全校2026 春季KPI+班级汇总</td></tr>
+          <tr><td>2026-05-21 14:10:00</td><td>李建华</td><td>年级组长</td><td>统计看板</td><td>58.1.*.*</td><td>查看看板高三年级2026 春季口径</td></tr>
+          <tr><td>2026-05-21 09:20:00</td><td>张校长</td><td>校级管理员</td><td>安全教育</td><td>58.1.*.*</td><td>发布内容防溺水知识宣传</td></tr>
+          <tr><td>2026-05-21 10:05:00</td><td>张校长</td><td>校级管理员</td><td>安全教育</td><td>58.1.*.*</td><td>编辑安全教育内容防溺水知识宣传变更：正文</td></tr>
+          <tr><td>2026-05-21 10:18:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>重新发布安全教育防溺水知识宣传刷新发布时间</td></tr>
+          <tr><td>2026-05-20 15:40:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>编辑安全教育内容暴雨预警 → 暴雨橙色预警提醒</td></tr>
+          <tr><td>2026-05-20 14:22:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>编辑安全教育内容校园欺凌预防变更：正文状态=已下架</td></tr>
+          <tr><td>2026-05-20 11:08:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>重新发布安全教育校园欺凌预防已下架 → 已发布</td></tr>
+          <tr><td>2026-05-19 09:35:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>编辑安全教育内容交通安全须知变更：封面图+正文</td></tr>
+          <tr><td>2026-05-19 08:50:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>编辑安全教育内容暴雨橙色预警提醒变更：安全提醒 → 安全宣传</td></tr>
+          <tr><td>2026-05-18 16:12:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>置顶内容防溺水知识宣传置顶：关 → 开</td></tr>
+          <tr><td>2026-05-18 15:30:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>下架内容暑期安全提示</td></tr>
+          <tr><td>2026-05-21 11:45:00</td><td>王芳</td><td>班主任</td><td>学生档案</td><td>58.1.*.*</td><td>编辑档案李明远补充健康标签「过敏」</td></tr>
+          <tr><td>2026-05-21 11:30:00</td><td>王芳</td><td>班主任</td><td>风险事件登记</td><td>58.1.*.*</td><td>登记新事件高一(3)班 李明远体育课摔伤</td></tr>
+          <tr><td>2026-05-20 16:08:00</td><td>张敏</td><td>校级管理员</td><td>投保二维码</td><td>10.2.*.*</td><td>下载二维码2026 春季PNG</td></tr>
+          <tr><td>2026-05-20 09:15:00</td><td>王芳</td><td>班主任</td><td>班级投保名单</td><td>58.1.*.*</td><td>查看订单详情ORD20260518003李明远保障中</td></tr>
+          <tr><td>2026-05-20 10:24:00</td><td>李建华</td><td>年级组长</td><td>班级投保名单</td><td>58.1.*.*</td><td>通知未投保家长高三年级18 人短信通知</td></tr>
+          <tr><td>2026-05-19 16:20:00</td><td>张敏</td><td>校级管理员</td><td>班级投保名单</td><td>10.2.*.*</td><td>导出全部订单2026 春季全校1248 条</td></tr>
+          <tr><td>2026-05-19 14:22:00</td><td>王芳</td><td>班主任</td><td>风险事件登记</td><td>58.1.*.*</td><td>登记新事件高一(3)班较严重已启动理赔</td></tr>
+          <tr><td>2026-05-19 11:08:00</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>10.2.*.*</td><td>停用账号赵静152****1122</td></tr>
+          <tr><td>2026-05-18 16:45:00</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>10.2.*.*</td><td>添加成员新用户188****0099班主任</td></tr>
+          <tr><td>2026-05-18 10:08:00</td><td>郭静</td><td>班主任</td><td>风险事件登记</td><td>58.1.*.*</td><td>登记新事件初二(4)班课间打闹</td></tr>
+          <tr><td>2026-05-17 15:02:00</td><td>王芳</td><td>班主任</td><td>班级投保名单</td><td>58.1.*.*</td><td>导出本班订单高一(3)班46 条</td></tr>
+          <tr><td>2026-05-16 11:20:00</td><td>王芳</td><td>班主任</td><td>班级投保名单</td><td>58.1.*.*</td><td>手动关联档案ORD20260512007关联 S20240115</td></tr>
+          <tr><td>2026-05-15 14:22:00</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>10.2.*.*</td><td>调整岗位李建华年级组长</td></tr>
+          <tr><td>2026-05-15 11:30:00</td><td>张敏</td><td>校级管理员</td><td>组织与成员</td><td>10.2.*.*</td><td>新建班级高一年级高一(4)班</td></tr>
+          <tr><td>2026-05-14 08:55:00</td><td>张敏</td><td>校级管理员</td><td>个人中心</td><td>10.2.*.*</td><td>登录</td></tr>
+          <tr><td>2026-05-14 18:20:00</td><td>张敏</td><td>校级管理员</td><td>个人中心</td><td>10.2.*.*</td><td>登出</td></tr>
         </tbody>
       </table>
       <div class="pager" data-b-end-pager data-page-size="5"></div>
@@ -118,6 +129,22 @@
 
   </main>
 </div>
+
+<div class="drawer-mask" id="auditDrawerMask">
+  <div class="drawer" id="auditDrawerPanel">
+    <div class="drawer-hd">
+      <h3>操作内容</h3>
+      <button type="button" class="drawer-close" id="auditDrawerClose" aria-label="关闭">&times;</button>
+    </div>
+    <div class="drawer-bd">
+      <div class="drawer-content-body" id="auditDrawerContent">—</div>
+    </div>
+    <div class="drawer-ft">
+      <button type="button" class="btn btn-outline" id="auditDrawerCloseBtn">关闭</button>
+    </div>
+  </div>
+</div>
+
 <script src="学平险-学校端-sidebar.js"></script>
 <script>
   function syncBodyRole(){ document.body.setAttribute('data-role', (window.SchoolAccount&&SchoolAccount.role)||'admin'); }
@@ -127,7 +154,44 @@
 </script>
 
 <script src="b-end-pager.js"></script>
-<script>BEndPager.initAll();</script>
+<script>
+(function() {
+  function initAuditTable() {
+    document.querySelectorAll('.card-panel tbody tr').forEach(function(tr) {
+      var cells = tr.querySelectorAll('td');
+      if (cells.length !== 6) return;
+      var content = cells[5].textContent.trim();
+      tr.setAttribute('data-op-content', content);
+      cells[5].innerHTML = '<span class="link audit-detail">详情</span>';
+    });
+  }
+
+  function openAuditDrawer(tr) {
+    var body = document.getElementById('auditDrawerContent');
+    if (body) body.textContent = tr.getAttribute('data-op-content') || '—';
+    document.getElementById('auditDrawerMask').classList.add('open');
+  }
+
+  function closeAuditDrawer() {
+    document.getElementById('auditDrawerMask').classList.remove('open');
+  }
+
+  initAuditTable();
+  BEndPager.initAll();
+
+  document.querySelector('.card-panel tbody').addEventListener('click', function(e) {
+    var link = e.target.closest('.audit-detail');
+    if (!link) return;
+    openAuditDrawer(link.closest('tr'));
+  });
+
+  document.getElementById('auditDrawerClose').onclick = closeAuditDrawer;
+  document.getElementById('auditDrawerCloseBtn').onclick = closeAuditDrawer;
+  document.getElementById('auditDrawerMask').addEventListener('click', function(e) {
+    if (e.target === this) closeAuditDrawer();
+  });
+})();
+</script>
 <script src="proto-notes.js"></script>
 <script src="学平险-学校端--操作日志.notes.js"></script>
 <script>
