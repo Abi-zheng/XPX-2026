@@ -69,10 +69,11 @@
     .btn-danger:hover{background:#a03838}
 
     .detail-back{padding:12px 0 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-    .detail-back .back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid #cbdde6;background:#fff;color:#4c6a7e;font-size:13px;cursor:pointer;font-weight:500}
-    .detail-back .back-btn:hover{border-color:#1C6E5C;color:#1C6E5C}
     .detail-back .crumb{font-size:13px;color:#88a3b5}
     .detail-back .crumb b{color:#1E2F3E}
+    .page-back-ft{margin-top:16px;padding-top:4px}
+    .page-back-ft .back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid #cbdde6;background:#fff;color:#4c6a7e;font-size:13px;cursor:pointer;font-weight:500}
+    .page-back-ft .back-btn:hover{border-color:#1C6E5C;color:#1C6E5C}
 
     /* 右侧：详情 */
     .profile-head{padding:22px 24px;display:flex;align-items:flex-start;gap:18px;background:linear-gradient(135deg,#fff 0%,#fafbfc 100%);border-bottom:1px solid #eef2f8;flex-wrap:wrap}
@@ -305,6 +306,7 @@
 
   </style>
   <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="proto-notes.css">
   <link rel="stylesheet" href="学平险-学校端-sidebar.css">
   <link rel="stylesheet" href="学平险-学校端-b-end.css">
 </head>
@@ -314,18 +316,27 @@
   <main class="main-content">
 
     <div class="top-bar">
-      <div class="welcome">
-        <h2><i class="fas fa-address-card" style="color:#1C6E5C"></i> 学生档案</h2>
-        <p>列表浏览学生 · 点击进入详情查看完整档案</p>
+      <div class="page-head">
+        <nav class="breadcrumb" id="pageBreadcrumb" aria-label="面包屑">学校端 / 学生档案</nav>
+        <div class="page-title-row">
+          <button type="button" class="btn-back" id="btnBack" hidden aria-label="返回"><i class="fas fa-arrow-left"></i></button>
+          <div class="page-title-main welcome">
+            <h2><i class="fas fa-address-card" style="color:#1C6E5C"></i> 学生档案</h2>
+            <p id="pageSub" class="page-sub">列表浏览学生 · 点击进入详情查看完整档案</p>
+          </div>
+        </div>
       </div>
       <div class="actions">
         <div id="userMenuMount"></div>
       </div>
     </div>
 
+    <div class="page-with-notes">
+    <div class="page-main-col">
+
     <!-- KPI（仅列表页） -->
     <div class="kpi-row" id="kpiRow">
-      <div class="kpi t1"><div class="info"><div class="label">在校学生总数</div><div class="val" id="kTotal">—</div><div class="delta" id="kClassesMeta">—</div></div><div class="ic"><i class="fas fa-graduation-cap"></i></div></div>
+      <div class="kpi t1"><div class="info"><div class="label">在校学生总数<span class="proto-mark" title="见右侧批注 ①">①</span></div><div class="val" id="kTotal">—</div><div class="delta" id="kClassesMeta">—</div></div><div class="ic"><i class="fas fa-graduation-cap"></i></div></div>
       <div class="kpi t3"><div class="info"><div class="label">特殊群体</div><div class="val" id="kSpecial">—</div><div class="delta">低保 / 留守</div></div><div class="ic"><i class="fas fa-heart"></i></div></div>
       <div class="kpi t4"><div class="info"><div class="label">健康关注</div><div class="val" id="kHealth">—</div><div class="delta">慢性病 / 过敏 / 运动限制</div></div><div class="ic"><i class="fas fa-stethoscope"></i></div></div>
     </div>
@@ -336,12 +347,12 @@
         <div class="panel-head">
           <h3><i class="fas fa-users"></i> 学生列表</h3>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="btn btn-outline btn-sm" id="btnImport"><i class="fas fa-upload"></i> 批量导入</button>
+            <button class="btn btn-outline btn-sm" id="btnImport"><i class="fas fa-upload"></i> 批量导入<span class="proto-mark" title="见右侧批注 ③">③</span></button>
             <button class="btn btn-primary btn-sm" id="btnAdd"><i class="fas fa-plus"></i> 新增</button>
           </div>
         </div>
         <div class="list-filter">
-          <input type="search" id="kw" placeholder="姓名 / 学籍号 / 身份证后 4 位">
+          <input type="search" id="kw" placeholder="姓名 / 学籍号 / 身份证后 4 位"><span class="proto-mark" title="见右侧批注 ②">②</span>
           <select id="gradeSel"><option value="">全部年级</option><option>高三年级</option><option>高二年级</option><option>高一年级</option><option>初三年级</option><option>初二年级</option><option>初一年级</option></select>
           <select id="classSel"><option value="">全部班级</option></select>
           <div class="tag-row" id="tagFilters">
@@ -373,14 +384,97 @@
 
     <!-- 详情页 -->
     <div class="view" id="viewDetail">
-      <div class="detail-back">
-        <button type="button" class="back-btn" id="btnBack"><i class="fas fa-arrow-left"></i> 返回列表</button>
-        <span class="crumb">学生档案 / <b id="crumbName">—</b></span>
-      </div>
       <div class="panel">
         <div id="profileWrap"></div>
       </div>
     </div>
+
+    </div><!-- /.page-main-col -->
+
+    <section class="proto-notes-section" aria-label="产品批注与开发注意点">
+      <div class="proto-notes-header">
+        <h3><i class="fas fa-clipboard-list"></i> 产品批注 / 开发注意点</h3>
+        <span class="proto-notes-badge">仅原型说明 · 非用户可见正式内容</span>
+      </div>
+      <div class="proto-notes-grid">
+        <article class="proto-note-card"><div class="proto-note-num">①</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>列表 KPI 卡片</div>
+          <div class="proto-note-row type"><b>类型</b><span>数据范围</span></div>
+          <div class="proto-note-row"><b>说明</b>admin 展示在校学生总数、特殊群体、健康关注；年级组长/班主任仅展示所辖范围总数。</div>
+          <div class="proto-note-row"><b>体验要求</b>数字与下方列表筛选结果一致。</div>
+          <div class="proto-note-row"><b>规则要求</b>按 grade_id/class_id 过滤，非展示名匹配。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">②</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>搜索与筛选区</div>
+          <div class="proto-note-row type"><b>类型</b><span>检索能力</span></div>
+          <div class="proto-note-row"><b>说明</b>支持姓名/学籍号/身份证后4位搜索；年级、班级、关爱标签筛选。</div>
+          <div class="proto-note-row"><b>体验要求</b>班级下拉随年级联动；默认分页 10 条。</div>
+          <div class="proto-note-row"><b>规则要求</b>班级须在组织与成员已建；archived 班级不可选。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">③</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>「批量导入」</div>
+          <div class="proto-note-row type"><b>类型</b><span>数据导入</span></div>
+          <div class="proto-note-row"><b>说明</b>下载 CSV 模板，上传 csv/xlsx/xls；单次 ≤1000 行；学籍号全校唯一，重复按更新。表头 26 列与详情「导出」一致（见批注 ⑨）。</div>
+          <div class="proto-note-row"><b>体验要求</b>必填 6 项：姓名、性别、出生日期、学籍号、年级、班级；多项用英文分号分隔。</div>
+          <div class="proto-note-row"><b>规则要求</b>写操作日志；正式环境建议异步任务与错误行报告。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">④</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>列表/详情「删除」与确认弹窗</div>
+          <div class="proto-note-row type"><b>类型</b><span>业务规则</span></div>
+          <div class="proto-note-row"><b>说明</b>删档不删流水：投保订单与风险事件台账保留，解除 student_id 关联；档案内批注随档删除。</div>
+          <div class="proto-note-row"><b>体验要求</b>二次确认须汇总关联订单数、风险事件数（含未结案）；删后不可恢复。</div>
+          <div class="proto-note-row"><b>规则要求</b>写 PROFILE_DELETE 审计；禁止 CASCADE 删订单/事件；学籍号释放可复用（1.0 允许）。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">⑤</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>详情「基础信息」Tab</div>
+          <div class="proto-note-row type"><b>类型</b><span>信息展示</span></div>
+          <div class="proto-note-row"><b>说明</b>展示姓名、证件、班级、住址、校内紧急联系人等；编辑弹窗不含风险与批注字段。</div>
+          <div class="proto-note-row"><b>体验要求</b>支持 ?id=学籍号 从名单页跳入；班级随组织重命名自动更新。</div>
+          <div class="proto-note-row"><b>规则要求</b>班级关联 class_id；重命名只改 display_name。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">⑥</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>详情「监护人」Tab · 手机号</div>
+          <div class="proto-note-row type"><b>类型</b><span>隐私合规</span></div>
+          <div class="proto-note-row"><b>说明</b>多位监护人，标识主要联系人；手机号默认脱敏，可切换明文（正式需鉴权+审计）。</div>
+          <div class="proto-note-row"><b>体验要求</b>眼睛图标切换；身份证同样脱敏展示。</div>
+          <div class="proto-note-row"><b>规则要求</b>明文查看留痕；后端接口须二次校验权限。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">⑦</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>详情「健康档案」Tab</div>
+          <div class="proto-note-row type"><b>类型</b><span>业务数据</span></div>
+          <div class="proto-note-row"><b>说明</b>过敏、慢性病、活动限制、特殊群体/健康关注标签；列表页标签筛选与此一致。</div>
+          <div class="proto-note-row"><b>体验要求</b>编辑表单用 chip 多选；有限制项高亮 warn/danger 卡片。</div>
+          <div class="proto-note-row"><b>规则要求</b>标签枚举与导入模板列对齐。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">⑧</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>详情「风险」Tab · 登记事件</div>
+          <div class="proto-note-row type"><b>类型</b><span>模块联动</span></div>
+          <div class="proto-note-row"><b>说明</b>展示已结案事件时间线（由风险登记 R-11 同步）；可跳转登记新事件。</div>
+          <div class="proto-note-row"><b>体验要求</b>删档后 Tab 不可访问，台账仍保留快照。</div>
+          <div class="proto-note-row"><b>规则要求</b>结案时若档案存在则同步；删档后新结案仅更新台账。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">⑨</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>详情页头部「导出」</div>
+          <div class="proto-note-row type"><b>类型</b><span>数据导出</span></div>
+          <div class="proto-note-row"><b>说明</b>导出当前学生档案为 CSV / XLSX，<strong>单行一条</strong>；列顺序与「批量导入」模板一致（共 26 列），便于线下留存或改后回导。不含风险事件、备注批注、投保订单、列表 KPI 等关联数据。</div>
+          <div class="proto-note-row"><b>导出列（26）</b>
+            <span style="display:block;margin-top:4px;line-height:1.65;font-size:12px;color:#4c6a7e">
+              <strong>基础（6）</strong>：姓名、性别、出生日期、学籍号、年级、班级<br>
+              <strong>扩展基础（6）</strong>：身份证号、血型、入学日期、户籍类型、家庭住址、校内紧急联系人<br>
+              <strong>监护人 1（5）</strong>：关系、姓名、电话、工作单位、是否主要<br>
+              <strong>监护人 2（4）</strong>：关系、姓名、电话、工作单位<br>
+              <strong>健康（3）</strong>：过敏史、慢性病、体育活动限制<br>
+              <strong>标签（2）</strong>：特殊群体标签、健康关注标签
+            </span>
+          </div>
+          <div class="proto-note-row"><b>格式约定</b>多项同格用英文分号 <code>;</code> 分隔（过敏史、标签、活动限制）；日期 YYYY-MM-DD；性别「男/女」；是否主要填「是/否」；监护人按主要联系人优先占「监护人 1」列，最多 2 位。</div>
+          <div class="proto-note-row"><b>体验要求</b>文件名建议 <code>学生档案_{学籍号}_{姓名}.xlsx</code>；无权限时按钮禁用或提示。</div>
+          <div class="proto-note-row"><b>规则要求</b>写 PROFILE_EXPORT 操作日志；身份证/监护人电话按权限输出明文或脱敏；与编辑表单可维护字段对齐，不含页面计算的「年龄」。</div>
+        </div></article>
+      </div>
+    </section>
+
+    </div><!-- /.page-with-notes -->
 
   </main>
 </div>
@@ -488,7 +582,7 @@
 <div class="modal-mask" id="deleteModal">
   <div class="modal" style="max-width:480px">
     <div class="modal-hd">
-      <h3><i class="fas fa-trash" style="color:#c45656"></i> 删除学生档案</h3>
+      <h3><i class="fas fa-trash" style="color:#c45656"></i> 删除学生档案<span class="proto-mark" title="见右侧批注 ④">④</span></h3>
       <button class="close-x" onclick="closeDelete()">×</button>
     </div>
     <div class="modal-bd">
@@ -768,6 +862,9 @@
     document.getElementById('viewList').classList.add('active');
     document.getElementById('viewDetail').classList.remove('active');
     document.getElementById('kpiRow').style.display = '';
+    document.getElementById('pageBreadcrumb').innerHTML = '学校端 / 学生档案';
+    document.getElementById('pageSub').textContent = '列表浏览学生 · 点击进入详情查看完整档案';
+    document.getElementById('btnBack').hidden = true;
     if(location.search) history.replaceState(null,'',location.pathname);
   }
   function showDetail(id){
@@ -778,7 +875,9 @@
     document.getElementById('viewList').classList.remove('active');
     document.getElementById('viewDetail').classList.add('active');
     document.getElementById('kpiRow').style.display = 'none';
-    document.getElementById('crumbName').textContent = s.name;
+    document.getElementById('pageBreadcrumb').innerHTML = '学校端 / 学生档案 / <b>'+s.name+'</b>';
+    document.getElementById('pageSub').textContent = s.grade + ' · ' + s.cls;
+    document.getElementById('btnBack').hidden = false;
     renderProfile();
     history.replaceState(null,'',location.pathname+'?id='+encodeURIComponent(id));
   }
@@ -902,15 +1001,15 @@
           '<a class="btn btn-outline btn-sm" href="学平险-学校端--风险事件登记.html"><i class="fas fa-triangle-exclamation"></i> 登记事件</a>'+
           '<button class="btn btn-outline btn-sm" onclick="openEdit(currentSel)"><i class="fas fa-pen"></i> 编辑</button>'+
           '<button class="btn btn-outline btn-sm btn-danger-outline" onclick="openDeleteConfirm(currentSel.id)"><i class="fas fa-trash"></i> 删除</button>'+
-          '<button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> 导出</button>'+
+          '<button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> 导出<span class="proto-mark" title="见右侧批注 ⑨">⑨</span></button>'+
         '</div>'+
       '</div>'+
 
       '<div class="tabs" id="profileTabs">'+
-        '<button class="active" data-tab="basic">基础信息</button>'+
-        '<button data-tab="guardian">监护人</button>'+
-        '<button data-tab="health">健康档案</button>'+
-        '<button data-tab="event">风险 ('+s.events.length+')</button>'+
+        '<button class="active" data-tab="basic">基础信息<span class="proto-mark" title="见右侧批注 ⑤">⑤</span></button>'+
+        '<button data-tab="guardian">监护人<span class="proto-mark" title="见右侧批注 ⑥">⑥</span></button>'+
+        '<button data-tab="health">健康档案<span class="proto-mark" title="见右侧批注 ⑦">⑦</span></button>'+
+        '<button data-tab="event">风险 ('+s.events.length+')<span class="proto-mark" title="见右侧批注 ⑧">⑧</span></button>'+
         '<button data-tab="note">备注与批注 ('+s.notes.length+')</button>'+
       '</div>'+
 
@@ -1309,5 +1408,6 @@
     showList();
   }
 </script>
+<script src="proto-notes.js"></script>
 </body>
 </html>

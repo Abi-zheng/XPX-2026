@@ -52,14 +52,34 @@
     /* 操作详情 Drawer */
     .drawer-mask { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 110; }
     .drawer-mask.open { display: block; }
-    .drawer { position: fixed; top: 0; right: 0; width: min(440px, 100vw); height: 100vh; background: #fff; box-shadow: -4px 0 16px rgba(0,0,0,.08); z-index: 111; transform: translateX(100%); transition: transform .25s; display: flex; flex-direction: column; }
+    .drawer { position: fixed; top: 0; right: 0; width: min(520px, 100vw); height: 100vh; background: #fff; box-shadow: -4px 0 16px rgba(0,0,0,.08); z-index: 111; transform: translateX(100%); transition: transform .25s; display: flex; flex-direction: column; }
     .drawer-mask.open .drawer { transform: translateX(0); }
     .drawer-hd { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
     .drawer-hd h3 { font-size: 16px; font-weight: 600; line-height: 1.4; flex: 1; }
     .drawer-close { border: none; background: none; font-size: 20px; color: #88a3b5; cursor: pointer; line-height: 1; }
-    .drawer-bd { padding: 20px; overflow-y: auto; flex: 1; font-size: 14px; line-height: 1.75; color: #1E2F3E; }
-    .drawer-content-body { font-size: 14px; color: #1E2F3E; line-height: 1.75; word-break: break-word; }
+    .drawer-bd { padding: 16px 20px 24px; overflow-y: auto; flex: 1; font-size: 13px; line-height: 1.6; color: #1E2F3E; }
+    .audit-section { margin-bottom: 18px; }
+    .audit-section-hd { font-size: 12px; font-weight: 600; color: #6792a8; margin-bottom: 10px; letter-spacing: .02em; }
+    .audit-kv { display: grid; grid-template-columns: 88px 1fr; gap: 8px 12px; padding: 14px; background: #fafbfc; border: 1px solid #eef2f8; border-radius: 10px; }
+    .audit-kv dt { color: #88a3b5; }
+    .audit-kv dd { color: #1E2F3E; margin: 0; word-break: break-word; }
+    .audit-kv dd.summary { line-height: 1.75; }
+    .change-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+    .change-col { padding: 12px 14px; border-radius: 10px; border: 1px solid #eef2f8; min-height: 80px; }
+    .change-col.before { background: #fef8f8; border-color: #fbc4c4; }
+    .change-col.after { background: #eef6f3; border-color: #b8d9ce; }
+    .change-col-hd { font-size: 12px; font-weight: 600; color: #6792a8; margin-bottom: 10px; }
+    .change-col.before .change-col-hd { color: #c45656; }
+    .change-col.after .change-col-hd { color: #1C6E5C; }
+    .change-line { font-size: 13px; line-height: 1.85; color: #1E2F3E; word-break: break-word; }
+    .change-line + .change-line { margin-top: 6px; }
+    .change-line .fn { color: #6792a8; }
+    .change-line.changed { padding: 4px 6px; margin: 0 -6px; border-radius: 6px; background: rgba(255,255,255,.7); }
+    .change-col.before .change-line.changed .val { color: #c45656; }
+    .change-col.after .change-line.changed .val { color: #1C6E5C; font-weight: 600; }
     .drawer-ft { padding: 12px 20px; border-top: 1px solid #f0f0f0; display: flex; gap: 8px; justify-content: flex-end; }
+    .audit-detail-hint { margin-top: 12px; padding: 10px 12px; background: #f8fafc; border-radius: 8px; font-size: 12px; color: #88a3b5; line-height: 1.6; }
+    .audit-loading { text-align: center; padding: 32px 16px; color: #88a3b5; font-size: 13px; }
 </style>
   <link rel="stylesheet" href="shared-ui.css">
   <link rel="stylesheet" href="proto-notes.css">
@@ -88,6 +108,7 @@
       <table>
         <thead><tr><th>时间<span class="proto-mark" title="见右侧批注 ③">③</span></th><th>操作人</th><th>角色</th><th>操作菜单</th><th>IP</th><th>操作内容<span class="proto-mark" title="见右侧批注 ⑥">⑥</span></th></tr></thead>
         <tbody>
+          <tr data-audit-id="AUD_202605221015001"><td>2026-05-22 10:15:00</td><td>王芳</td><td>班主任</td><td>学生档案</td><td>58.1.*.*</td><td>编辑学生档案李明远变更：健康标签、紧急联系人</td></tr>
           <tr><td>2026-05-22 08:30:00</td><td>张敏</td><td>校级管理员</td><td>统计看板</td><td>10.2.*.*</td><td>切换统计学期2026 春季 → 2026 秋季</td></tr>
           <tr><td>2026-05-21 17:00:00</td><td>张敏</td><td>校级管理员</td><td>统计看板</td><td>10.2.*.*</td><td>导出统计报表全校2026 春季KPI+班级汇总</td></tr>
           <tr><td>2026-05-21 14:10:00</td><td>李建华</td><td>年级组长</td><td>统计看板</td><td>58.1.*.*</td><td>查看看板高三年级2026 春季口径</td></tr>
@@ -101,7 +122,7 @@
           <tr><td>2026-05-19 08:50:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>编辑安全教育内容暴雨橙色预警提醒变更：安全提醒 → 安全宣传</td></tr>
           <tr><td>2026-05-18 16:12:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>置顶内容防溺水知识宣传置顶：关 → 开</td></tr>
           <tr><td>2026-05-18 15:30:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>下架内容暑期安全提示</td></tr>
-          <tr><td>2026-05-21 11:45:00</td><td>王芳</td><td>班主任</td><td>学生档案</td><td>58.1.*.*</td><td>编辑档案李明远补充健康标签「过敏」</td></tr>
+          <tr><td>2026-05-18 14:00:00</td><td>张敏</td><td>校级管理员</td><td>安全教育</td><td>10.2.*.*</td><td>删除内容过期安全提示</td></tr>
           <tr><td>2026-05-21 11:30:00</td><td>王芳</td><td>班主任</td><td>风险事件登记</td><td>58.1.*.*</td><td>登记新事件高一(3)班 李明远体育课摔伤</td></tr>
           <tr><td>2026-05-20 16:08:00</td><td>张敏</td><td>校级管理员</td><td>投保二维码</td><td>10.2.*.*</td><td>下载二维码2026 春季PNG</td></tr>
           <tr><td>2026-05-20 09:15:00</td><td>王芳</td><td>班主任</td><td>班级投保名单</td><td>58.1.*.*</td><td>查看订单详情ORD20260518003李明远保障中</td></tr>
@@ -133,12 +154,10 @@
 <div class="drawer-mask" id="auditDrawerMask">
   <div class="drawer" id="auditDrawerPanel">
     <div class="drawer-hd">
-      <h3>操作内容</h3>
+      <h3>操作详情</h3>
       <button type="button" class="drawer-close" id="auditDrawerClose" aria-label="关闭">&times;</button>
     </div>
-    <div class="drawer-bd">
-      <div class="drawer-content-body" id="auditDrawerContent">—</div>
-    </div>
+    <div class="drawer-bd" id="auditDrawerBody"></div>
     <div class="drawer-ft">
       <button type="button" class="btn btn-outline" id="auditDrawerCloseBtn">关闭</button>
     </div>
@@ -156,6 +175,82 @@
 <script src="b-end-pager.js"></script>
 <script>
 (function() {
+  /* 列表分页仅含摘要；完整 audit_payload 按 id 按需加载（原型模拟） */
+  var AUDIT_DETAILS = {
+    'AUD_202605221015001': {
+      subject: '李明远',
+      action: '编辑学生档案',
+      /* 全量字段快照：变更前 / 变更后完整比对（与编辑表单字段一致） */
+      fields: [
+        { field: '姓名', before: '李明远', after: '李明远' },
+        { field: '性别', before: '男', after: '男' },
+        { field: '出生日期', before: '2010-08-15', after: '2010-08-15' },
+        { field: '学籍号', before: 'S20240001', after: 'S20240001' },
+        { field: '身份证号', before: '3301**********1234', after: '3301**********1234' },
+        { field: '血型', before: 'O+', after: 'O+' },
+        { field: '年级', before: '高一年级', after: '高一年级' },
+        { field: '班级', before: '高一(3)班', after: '高一(3)班' },
+        { field: '入学日期', before: '2024-09-01', after: '2024-09-01' },
+        { field: '户籍类型', before: '城镇', after: '城镇' },
+        { field: '家庭住址', before: '浙江省杭州市西湖区文三路 88 号', after: '浙江省杭州市西湖区文三路 88 号' },
+        { field: '校内紧急联系人', before: '李父 138****5566', after: '李父 139****7788' },
+        { field: '过敏史', before: '无', after: '花粉' },
+        { field: '慢性病', before: '无', after: '无' },
+        { field: '健康标签', before: '无', after: '过敏' }
+      ]
+    }
+  };
+
+  function renderKv(record, detail) {
+    var html = '<dl class="audit-kv">' +
+      '<dt>时间</dt><dd>' + record.time + '</dd>' +
+      '<dt>操作人</dt><dd>' + record.operator + '</dd>' +
+      '<dt>角色</dt><dd>' + record.role + '</dd>' +
+      '<dt>操作菜单</dt><dd>' + record.menu + '</dd>' +
+      '<dt>IP</dt><dd>' + record.ip + '</dd>';
+    if (detail && detail.subject) {
+      html += '<dt>操作对象</dt><dd>' + detail.subject + '</dd>';
+    }
+    html += '</dl>';
+    return html;
+  }
+
+  function renderChangeLine(field, value, changed) {
+    var cls = 'change-line' + (changed ? ' changed' : '');
+    return '<div class="' + cls + '"><span class="fn">' + field + '：</span><span class="val">' + value + '</span></div>';
+  }
+
+  function renderChangeCols(fields) {
+    if (!fields || !fields.length) return '';
+    var beforeLines = fields.map(function(f) {
+      return renderChangeLine(f.field, f.before, f.before !== f.after);
+    }).join('');
+    var afterLines = fields.map(function(f) {
+      return renderChangeLine(f.field, f.after, f.before !== f.after);
+    }).join('');
+    return '<div class="audit-section" style="margin-top:14px;margin-bottom:0">' +
+      '<div class="audit-section-hd">操作内容（全量字段比对）</div>' +
+      '<div class="change-cols">' +
+        '<div class="change-col before"><div class="change-col-hd">变更前</div>' + beforeLines + '</div>' +
+        '<div class="change-col after"><div class="change-col-hd">变更后</div>' + afterLines + '</div>' +
+      '</div></div>';
+  }
+
+  function renderAuditDrawer(record, detail) {
+    var html = '<div class="audit-section">' + renderKv(record, detail);
+    if (detail && detail.fields && detail.fields.length) {
+      html += renderChangeCols(detail.fields);
+    } else if (detail && detail.changes && detail.changes.length) {
+      html += renderChangeCols(detail.changes);
+    } else {
+      html += '<div class="audit-section" style="margin-top:14px;margin-bottom:0">' +
+        '<div class="audit-section-hd">操作内容</div>' +
+        '<div class="audit-detail-hint" style="margin-top:0">' + record.summary + '</div></div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
   function initAuditTable() {
     document.querySelectorAll('.card-panel tbody tr').forEach(function(tr) {
       var cells = tr.querySelectorAll('td');
@@ -166,10 +261,29 @@
     });
   }
 
+  function readRowRecord(tr) {
+    var cells = tr.querySelectorAll('td');
+    return {
+      auditId: tr.getAttribute('data-audit-id') || '',
+      time: cells[0].textContent.trim(),
+      operator: cells[1].textContent.trim(),
+      role: cells[2].textContent.trim(),
+      menu: cells[3].textContent.trim(),
+      ip: cells[4].textContent.trim(),
+      summary: tr.getAttribute('data-op-content') || ''
+    };
+  }
+
   function openAuditDrawer(tr) {
-    var body = document.getElementById('auditDrawerContent');
-    if (body) body.textContent = tr.getAttribute('data-op-content') || '—';
-    document.getElementById('auditDrawerMask').classList.add('open');
+    var record = readRowRecord(tr);
+    var body = document.getElementById('auditDrawerBody');
+    var mask = document.getElementById('auditDrawerMask');
+    if (body) body.innerHTML = '<div class="audit-loading"><i class="fas fa-spinner fa-spin"></i> 加载详情…</div>';
+    mask.classList.add('open');
+    setTimeout(function() {
+      var detail = record.auditId ? AUDIT_DETAILS[record.auditId] : null;
+      if (body) body.innerHTML = renderAuditDrawer(record, detail);
+    }, record.auditId ? 280 : 120);
   }
 
   function closeAuditDrawer() {

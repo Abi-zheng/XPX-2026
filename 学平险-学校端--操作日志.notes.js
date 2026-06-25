@@ -2,7 +2,7 @@
 window.SCHOOL_AUDIT_PROTO = {
   name: '操作日志 · 学校端',
   goal: '校级管理员查看本校关键写操作审计，只读检索，满足合规与问题追溯。',
-  structure: '顶栏 + 筛选工具栏 + 日志表格（操作菜单 + 操作内容）+ 分页 + 操作内容 Drawer；右侧产品批注（可展开/收起）。',
+  structure: '顶栏 + 筛选工具栏 + 日志表格（操作菜单 + 操作内容）+ 分页 + 操作日志详情 Drawer；右侧产品批注（可展开/收起）。',
   modules: [
     {
       num: '①',
@@ -28,8 +28,8 @@ window.SCHOOL_AUDIT_PROTO = {
       num: '②',
       name: '筛选条件字段',
       purpose: '缩小日志检索范围，快速定位某操作人或业务对象相关记录。',
-      logic: '关键字 + 操作菜单 + 时间范围 AND 组合；默认近 7 天、按时间倒序。',
-      interaction: '输入/选择后即时过滤（原型前端过滤；正式建议服务端分页查询）。',
+      logic: '关键字 + 操作菜单 + 时间范围 AND 组合；默认近 7 天、按时间倒序。<strong>分页列表接口仅返回摘要字段</strong>（不含 audit_payload / changed_fields）。',
+      interaction: '输入/选择后即时过滤（原型前端过滤；正式服务端分页查询摘要列表）。点击「详情」再按需请求完整审计明细。',
       fields:
         '<strong>操作人 / 操作内容（filterKw）</strong>模糊匹配操作人姓名、操作内容全文（含动作与主体关键字）。<br>' +
         '示例：输入「王芳」→ 匹配操作人为王芳的记录；输入「李明远」→ 匹配操作内容含该学生的记录；输入「编辑安全教育」→ 匹配安全教育编辑类日志。<br><br>' +
@@ -38,9 +38,9 @@ window.SCHOOL_AUDIT_PROTO = {
         '<strong>时间范围（filterRange）</strong>相对区间：近 7 天 / 近 30 天 / 本学期（按学期配置起止日）。<br>' +
         '示例：选「近 7 天」→ operated_at ≥ 今日 0 点 − 7 天；「本学期」按学校当前统计学期口径过滤。',
       data: {
-        source: 'audit_log API；学期起止来自 school_term 配置',
-        update: '筛选变更触发重新查询',
-        timing: '用户改条件时',
+        source: 'audit_log 列表 API（摘要）/ 详情 API（完整 payload）',
+        update: '列表分页只读摘要；详情按需加载',
+        timing: '列表进入页 / 筛选项变更；详情点击「详情」时',
         sync: '操作菜单枚举与侧栏、写日志时的 module 字段一致',
         calc: '时间范围由服务端按 operated_at 计算'
       },
@@ -54,7 +54,7 @@ window.SCHOOL_AUDIT_PROTO = {
       name: '日志表格字段',
       purpose: '每条审计记录的标准字段，支撑「谁在何时对什么做了什么」的追溯。',
       logic: '关键写操作须落库（A-07 P1）：档案删除、组织变更、成员变更、二维码下载、导入/导出、内容发布等；只读不可删改。',
-      interaction: '表格只读；行 hover 高亮；点击「详情」右侧 Drawer 展示 operation_summary；不支持行内编辑或删除。',
+      interaction: '表格只读；列表仅摘要；点击「详情」按需加载 Drawer（六字段 + 可选变更明细）。',
       fields:
         '<strong>时间（operated_at）</strong>操作<strong>完成</strong>时的服务器时间，格式 YYYY-MM-DD HH:mm:ss，列表默认倒序。<br>' +
         '示例：<code>2026-05-21 09:20:00</code>（张校长发布安全教育内容）<br><br>' +
@@ -64,8 +64,8 @@ window.SCHOOL_AUDIT_PROTO = {
         '示例：<code>校级管理员</code>、<code>年级组长</code>、<code>班主任</code>；用于区分同人多岗下的操作范围。<br><br>' +
         '<strong>操作菜单（module）</strong>业务域枚举，与侧栏一级菜单对应；列表列名展示为「操作菜单」。<br>' +
         '示例：<code>统计看板</code>、<code>班级投保名单</code>、<code>安全教育</code>、<code>学生档案</code>、<code>组织与成员</code>、<code>个人中心</code>（登录/登出，见批注 ⑥）。<br><br>' +
-        '<strong>操作内容（operation_summary）</strong>列表列名为「操作内容」，单元格为「详情」链接；点击后 Drawer <strong>仅展示</strong>本条摘要全文（组装规则见批注 ⑥）。<br>' +
-        '示例：Drawer 内操作内容 <code>编辑档案李明远补充健康标签「过敏」</code> · <code>切换统计学期2026 春季 → 2026 秋季</code> · 个人中心 <code>登录</code>、<code>登出</code><br><br>' +
+        '<strong>操作对象（subject）</strong>详情 Drawer 内仅展示<strong>主体标识</strong>，如学生姓名 <code>李明远</code>、订单号 <code>ORD…</code>，不含班级/学籍号等扩展信息。<br><br>' +
+        '<strong>操作内容</strong>有变更明细时，左右两列展示<strong>全量可维护字段</strong>的变更前 / 变更后快照，格式「字段名称：值」；值有差异的行高亮。无明细时展示 operation_summary 摘要。<br><br>' +
         '<strong>IP（ip_address）</strong>发起请求的客户端 IP；<strong>前端脱敏展示</strong>，完整 IP 仅后端留存。<br>' +
         '示例：公网 <code>58.1.*.*</code>；校内/运维 <code>10.2.*.*</code>。',
       data: {
@@ -165,16 +165,18 @@ window.SCHOOL_AUDIT_PROTO = {
     {
       num: '⑥',
       name: '操作内容获取规则（operation_summary）',
-      purpose: '统一 operation_summary 的组装口径：将动作、主体、变更合并为可读摘要；列表通过「详情」Drawer 展示，保证可追溯且与后端 entity 关联一致。',
+      purpose: '统一 operation_summary 组装口径；编辑类操作 Drawer 展示更改前/更改后变更明细。',
       logic:
-        '① <strong>服务端组装</strong>：operation_summary = <code>{动作}{主体标识}{变更内容}</code>，由 AuditLogger 在操作成功时生成，禁止前端传入。<br>' +
-        '② <strong>三段直接拼接</strong>：动作（action 枚举文案）+ 主体标识 + 变更内容，<strong>段与段之间不加空格、不加中点</strong>；变更内容内部可保留 <code>→</code>、<code>：</code>、<code>+</code> 等语义符号。<br>' +
-        '③ <strong>操作时刻快照</strong>：主体标识取操作完成当下字段；实体后续改名/删档<strong>不回写</strong>历史 operation_summary。<br>' +
-        '④ <strong>结构化存储</strong>：列表不展示 operation_summary 列；点击「详情」Drawer 展示；库表仍存 action、entity_type、entity_id、audit_payload 供研发检索与精确关联。',
-      interaction: '列表仅见「详情」入口；Drawer 展示 operation_summary 全文；研发可通过 action + entity_id + audit_payload 反查明细。',
+        '① <strong>服务端组装</strong>：operation_summary = <code>{动作}{主体标识}{变更内容}</code>，由 AuditLogger 在操作成功时生成。<br>' +
+        '② <strong>Drawer 按需加载</strong>：详情接口返回变更前/后<strong>全量字段快照</strong>（与编辑表单字段一致），左右两列逐字段比对；有差异项高亮。<br>' +
+        '③ <strong>操作时刻快照</strong>：主体标识取操作完成当下字段；实体后续改名/删档不回写历史摘要。<br>' +
+        '④ <strong>结构化存储</strong>：列表仅「详情」入口；库表存 action、entity_type、entity_id、audit_payload.changed_fields。',
+      interaction: '列表点「详情」→ Drawer 展示六字段 + 可选变更明细。',
       fields:
+        '<strong>编辑学生档案 · 详情 Drawer</strong><br>' +
+        '操作对象 <code>李明远</code><br>' +
+        '操作内容：展示姓名、性别、学籍号、班级、健康标签等<strong>全部字段</strong>变更前/后快照；仅 <code>校内紧急联系人</code>、<code>过敏史</code>、<code>健康标签</code> 等实际变更项高亮<br><br>' +
         '<strong>核心公式：{动作}{主体标识}{变更内容}</strong><br>' +
-        'Drawer「操作内容」区的默认结构。公式中三段语义独立，<strong>字面直接相连</strong>（非加号拼接）。无变更时省略变更段；无独立主体时主体段可为空（如纯状态切换）。<br><br>' +
         '<strong>① 动作 — 做了什么</strong><br>' +
         '取自 action 枚举中文文案，如 <code>编辑档案</code>、<code>发布内容</code>、<code>切换统计学期</code>；作为 operation_summary 的<strong>前缀</strong>。<br><br>' +
         '<strong>② 主体标识 — 对谁/对什么</strong><br>' +
@@ -187,8 +189,8 @@ window.SCHOOL_AUDIT_PROTO = {
         '· 常见：变更摘要（<code>变更：正文</code>）、状态（<code>保障中</code>）、范围规模（<code>46 条</code>）、箭头变更（<code>2026 春季 → 2026 秋季</code>）<br>' +
         '· 无变更段时省略，如 <code>下架内容暑期安全提示</code><br><br>' +
         '<strong>④ 拼装示例（拆解）</strong><br>' +
-        '<code>编辑档案李明远补充健康标签「过敏」</code><br>' +
-        '→ 动作：<code>编辑档案</code> · 主体：<code>李明远</code> · 变更：<code>补充健康标签「过敏」</code><br><br>' +
+        '<code>编辑学生档案李明远变更：健康标签、紧急联系人</code><br>' +
+        '→ 动作：<code>编辑学生档案</code> · 主体：<code>李明远</code> · 变更：<code>健康标签、紧急联系人</code><br><br>' +
         '<code>查看订单详情ORD20260518003李明远保障中</code><br>' +
         '→ 动作：<code>查看订单详情</code> · 主体：<code>ORD20260518003</code> · 变更：<code>李明远保障中</code>（读操作附上下文）<br><br>' +
         '<code>切换统计学期2026 春季 → 2026 秋季</code><br>' +
