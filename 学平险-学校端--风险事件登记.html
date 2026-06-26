@@ -57,6 +57,9 @@
 
     /* 详情页 */
     .detail-back{padding:0 0 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .detail-back .crumb{font-size:13px;color:#88a3b5}
+    .detail-back .crumb b{color:#1E2F3E}
+    .page-back-ft{margin-top:16px;padding-top:4px}
     .back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid #cbdde6;background:#fff;color:#4c6a7e;font-size:13px;cursor:pointer;font-weight:500}
     .back-btn:hover{border-color:#1C6E5C;color:#1C6E5C}
     .crumb{font-size:13px;color:#88a3b5}
@@ -135,6 +138,7 @@
     .stu-pick .hint{font-size:11px;color:#88a3b5;margin-top:6px;line-height:1.5}
   </style>
   <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="proto-notes.css">
   <link rel="stylesheet" href="学平险-学校端-sidebar.css">
   <link rel="stylesheet" href="学平险-学校端-b-end.css">
 </head>
@@ -144,22 +148,31 @@
   <main class="main-content">
 
     <div class="top-bar">
-      <div class="welcome">
-        <h2><i class="fas fa-triangle-exclamation" style="color:#1C6E5C"></i> 风险事件登记</h2>
-        <p id="topSub">磕碰、运动伤、意外等事件登记台账</p>
+      <div class="page-head">
+        <nav class="breadcrumb" id="pageBreadcrumb" aria-label="面包屑">学校端 / 风险事件登记</nav>
+        <div class="page-title-row">
+          <button type="button" class="btn-back" id="btnBack" hidden aria-label="返回"><i class="fas fa-arrow-left"></i></button>
+          <div class="page-title-main welcome">
+            <h2><i class="fas fa-triangle-exclamation" style="color:#1C6E5C"></i> 风险事件登记</h2>
+            <p id="topSub" class="page-sub">磕碰、运动伤、意外等事件登记台账</p>
+          </div>
+        </div>
       </div>
       <div class="actions">
-        <button class="btn btn-primary" id="btnAdd"><i class="fas fa-plus"></i> 登记新事件</button>
+        <button class="btn btn-primary" id="btnAdd"><i class="fas fa-plus"></i> 登记新事件<span class="proto-mark" title="见右侧批注 ②">②</span></button>
         <div id="userMenuMount"></div>
       </div>
     </div>
+
+    <div class="page-with-notes">
+    <div class="page-main-col">
 
     <!-- ============ 列表页 ============ -->
     <div class="view active" id="viewList">
 
       <div class="panel">
         <div class="panel-head">
-          <h3><i class="fas fa-list"></i> 事件台账</h3>
+          <h3><i class="fas fa-list"></i> 事件台账<span class="proto-mark" title="见右侧批注 ①">①</span></h3>
         </div>
         <div class="filter-bar">
           <input type="search" id="filterKw" placeholder="学生 / 班级 / 编号 / 关键字">
@@ -205,18 +218,13 @@
         <div class="pager" id="eventListPager" data-b-end-pager data-page-size="10"></div>
         <div class="hint-row">
           <i class="fas fa-circle-info"></i>
-          点击事件行查看详情；事件结案后将自动同步到学生档案的「风险」记录。
+          点击事件行查看详情；事件结案后将自动同步到学生档案的「风险」记录。<span class="proto-mark" title="见右侧批注 ④">④</span>
         </div>
       </div>
     </div>
 
     <!-- ============ 详情页 ============ -->
     <div class="view" id="viewDetail">
-      <div class="detail-back">
-        <button type="button" class="back-btn" id="btnBack"><i class="fas fa-arrow-left"></i> 返回台账</button>
-        <span class="crumb">风险事件登记 / <b id="crumbName">—</b></span>
-      </div>
-
       <div class="panel">
         <div class="detail-head">
           <div>
@@ -228,6 +236,54 @@
         <div class="detail-body" id="detailBody"></div>
       </div>
     </div>
+
+    </div><!-- /.page-main-col -->
+
+    <section class="proto-notes-section" aria-label="产品批注与开发注意点">
+      <div class="proto-notes-header">
+        <h3><i class="fas fa-clipboard-list"></i> 产品批注 / 开发注意点</h3>
+        <span class="proto-notes-badge">仅原型说明 · 非用户可见正式内容</span>
+      </div>
+      <div class="proto-notes-grid">
+        <article class="proto-note-card"><div class="proto-note-num">①</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>「事件台账」列表</div>
+          <div class="proto-note-row type"><b>类型</b><span>台账管理</span></div>
+          <div class="proto-note-row"><b>说明</b>展示编号、时间、类型、严重程度、学生、状态；支持关键字/类型/严重程度/状态筛选。</div>
+          <div class="proto-note-row"><b>体验要求</b>行点击进入详情 ?id=事件编号；档案已删时展示快照姓名+「档案已删除」标签。</div>
+          <div class="proto-note-row"><b>规则要求</b>列表不受删档影响；R-15 按角色过滤为 P1。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">②</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>「登记新事件」弹窗</div>
+          <div class="proto-note-row type"><b>类型</b><span>表单校验</span></div>
+          <div class="proto-note-row"><b>说明</b>必填：严重程度、类型、发生时间、地点、经过、涉事学生；选填：处置与家长通知、现场照片（P2）。</div>
+          <div class="proto-note-row"><b>体验要求</b>创建时写入 student_id + 姓名/班级快照（R-17）。</div>
+          <div class="proto-note-row"><b>规则要求</b>已删档学生不可再被选为涉事学生。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">③</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>表单「涉事学生」检索</div>
+          <div class="proto-note-row type"><b>类型</b><span>数据关联</span></div>
+          <div class="proto-note-row"><b>说明</b>仅从当前学生档案池检索（学籍号/姓名）；选定后关联 student_id。</div>
+          <div class="proto-note-row"><b>体验要求</b>支持跳转档案；编辑时涉事学生只读（删档后展示快照）。</div>
+          <div class="proto-note-row"><b>规则要求</b>删档后不可改绑其他学生（1.0）。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">④</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>详情「标记结案」弹窗与底部说明</div>
+          <div class="proto-note-row type"><b>类型</b><span>模块联动</span></div>
+          <div class="proto-note-row"><b>说明</b>点击「标记结案」弹出弹窗，必填「结案说明」；提交后 status=closed、写入 close_note 与 closed_at；若档案仍存在则同步至学生档案「风险」Tab（R-11），档案已删则仅更新台账。</div>
+          <div class="proto-note-row"><b>体验要求</b>仅「处理中」显示结案按钮；已结案详情展示结案说明区块；详情「学生档案」链接在关联断开时禁用。</div>
+          <div class="proto-note-row"><b>规则要求</b>结案说明不可为空；删档时将 student_id 置 NULL，保留快照字段；禁止 CASCADE DELETE。</div>
+        </div></article>
+        <article class="proto-note-card"><div class="proto-note-num">⑤</div><div class="proto-note-body">
+          <div class="proto-note-row"><b>位置</b>详情 · 档案已删除场景</div>
+          <div class="proto-note-row type"><b>类型</b><span>异常展示</span></div>
+          <div class="proto-note-row"><b>说明</b>展示「涉事学生：张三 · 高三(1)班 · 档案状态：已删除 · 仅保留登记时信息」。</div>
+          <div class="proto-note-row"><b>体验要求</b>不可跳转档案；编辑表单涉事字段只读。</div>
+          <div class="proto-note-row"><b>规则要求</b>见 PRD 4.3.4 SD-05～SD-12。</div>
+        </div></article>
+      </div>
+    </section>
+
+    </div><!-- /.page-with-notes -->
 
   </main>
 </div>
@@ -263,7 +319,7 @@
         </div>
 
         <div class="form-row full">
-          <label>涉事学生 <span class="req">*</span></label>
+          <label>涉事学生 <span class="req">*</span><span class="proto-mark" title="见右侧批注 ③">③</span></label>
           <div class="stu-pick" id="addStuPick">
             <div class="search-wrap">
               <i class="fas fa-magnifying-glass"></i>
@@ -340,7 +396,7 @@
           <input type="datetime-local" id="editTime">
         </div>
         <div class="form-row full">
-          <label>涉事学生 <span class="req">*</span></label>
+          <label>涉事学生 <span class="req">*</span><span class="proto-mark" title="见右侧批注 ③">③</span></label>
           <div class="stu-pick" id="editStuPick">
             <div class="search-wrap">
               <i class="fas fa-magnifying-glass"></i>
@@ -380,38 +436,64 @@
   </div>
 </div>
 
+<!-- 标记结案弹窗 -->
+<div class="modal-mask" id="closeCaseModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hd">
+      <h3><i class="fas fa-check-circle"></i> 标记结案<span class="proto-mark" title="见右侧批注 ④">④</span></h3>
+      <button class="close-x" type="button" onclick="closeCloseCase()" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-bd">
+      <p style="font-size:13px;color:#5e7f92;line-height:1.65;margin-bottom:14px">
+        事件 <code id="closeCaseEventId" style="font-size:12px;background:#f0f4f9;padding:2px 6px;border-radius:4px">—</code>
+        结案后将同步至学生档案「风险」记录（档案仍存在时）。
+      </p>
+      <div class="form-row">
+        <label>结案说明 <span class="req">*</span></label>
+        <textarea id="closeCaseNote" placeholder="请填写最终处置结果、就医情况、家长反馈、是否启动理赔等结案摘要" style="min-height:120px"></textarea>
+        <p class="hint" style="margin-top:6px;font-size:11px;color:#88a3b5;line-height:1.5">客观记录事件收尾情况，便于后续追溯与平台监管查阅。</p>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" type="button" onclick="closeCloseCase()">取消</button>
+      <button class="btn btn-primary" type="button" id="btnSubmitCloseCase"><i class="fas fa-check"></i> 确认结案</button>
+    </div>
+  </div>
+</div>
+
 <script src="学平险-学校端-school-stats.js"></script>
 <script src="学平险-学校端-sidebar.js"></script>
 <script src="b-end-pager.js"></script>
+<script src="proto-datetime.js"></script>
 <script>initSchoolSidebar("riskEvent");</script>
 <script>initSchoolUserMenu('#userMenuMount');</script>
 <script>
   /* #原型说明：示例事件数据，正式接入时由后端按学校维度返回 */
   var EVENTS = [
-    {id:'EV-2026-0019',lv:'high',type:'运动/体育课',time:'2026-05-19 14:22',place:'操场南侧',student:'李明远',studentId:'S20240001',cls:'高三(1)班',reporter:'李建华（班主任）',
+    {id:'EV-2026-0019',lv:'high',type:'运动/体育课',time:'2026-05-19 14:22:00',place:'操场南侧',student:'李明远',studentId:'S20240001',cls:'高三(1)班',reporter:'李建华（班主任）',
      desc:'体育课进行 800m 测试时不慎摔倒，右脚踝肿胀，主诉疼痛难以负重。',
      handle:'校医室初步包扎、冰敷；联系家长后送至中心医院就诊；已电话通知家长，家长在医院陪同。',
      status:'handling'},
-    {id:'EV-2026-0018',lv:'warn',type:'课间打闹',time:'2026-05-18 10:08',place:'教学楼3F走廊',student:'陈雨桐',studentId:'S20240004',cls:'高二(1)班',reporter:'王芳（班主任）',
+    {id:'EV-2026-0018',lv:'warn',type:'课间打闹',time:'2026-05-18 10:08:00',place:'教学楼3F走廊',student:'陈雨桐',studentId:'S20240004',cls:'高二(1)班',reporter:'王芳（班主任）',
      desc:'课间与同学追逐，撞到墙角，额头擦伤出血约 1cm。',
      handle:'校医室碘伏消毒、贴创可贴；观察 2 小时无异常；已微信通知家长，家长确认知悉。',
-     status:'closed'},
-    {id:'EV-2026-0017',lv:'warn',type:'食堂烫伤',time:'2026-05-15 12:30',place:'食堂二楼打饭区',student:'郑子涵',studentId:'S20240007',cls:'初三(2)班',reporter:'马涛（班主任）',
+     status:'closed', closeNote:'观察 2 小时无异常，家长微信确认知悉，无需进一步就医，事件结案。', closedAt:'2026-05-18 16:30:00'},
+    {id:'EV-2026-0017',lv:'warn',type:'食堂烫伤',time:'2026-05-15 12:30:00',place:'食堂二楼打饭区',student:'郑子涵',studentId:'S20240007',cls:'初三(2)班',reporter:'马涛（班主任）',
      desc:'打饭时端盘子手部接触汤汁，左手背一级烫伤约 2cm²。',
      handle:'冷水冲洗 + 烫伤膏；建议家长带去医院进一步处理；已电话通知家长，家长自行带去医院。',
      status:'handling'},
-    {id:'EV-2026-0016',lv:'warn',type:'校外/交通',time:'2026-05-12 07:30',place:'校门外人行道',student:'王思琪',studentId:'S20240002',cls:'高三(2)班',reporter:'陈志强（班主任）',
+    {id:'EV-2026-0016',lv:'warn',type:'校外/交通',time:'2026-05-12 07:30:00',place:'校门外人行道',student:'王思琪',studentId:'S20240002',cls:'高三(2)班',reporter:'陈志强（班主任）',
      desc:'上学路上自行车打滑摔倒，膝盖擦伤。',
      handle:'家长自行处理；家长当时已知悉。',
      status:'handling'},
-    {id:'EV-2026-0015',lv:'light',type:'课间打闹',time:'2026-05-08 11:18',place:'操场西侧',student:'刘子轩',studentId:'S20240005',cls:'高一(3)班',reporter:'王芳（班主任）',
+    {id:'EV-2026-0015',lv:'light',type:'课间打闹',time:'2026-05-08 11:18:00',place:'操场西侧',student:'刘子轩',studentId:'S20240005',cls:'高一(3)班',reporter:'王芳（班主任）',
      desc:'课间游戏摔倒，膝盖擦伤。',
      handle:'校医碘伏消毒；已通知家长。',
-     status:'closed'},
-    {id:'EV-2026-0014',lv:'light',type:'运动/体育课',time:'2026-05-06 15:10',place:'篮球场',student:'赵一航',studentId:'S20240003',cls:'高二(1)班',reporter:'王芳（班主任）',
+     status:'closed', closeNote:'校医处理后恢复良好，家长已知悉，无需理赔。', closedAt:'2026-05-08 17:00:00'},
+    {id:'EV-2026-0014',lv:'light',type:'运动/体育课',time:'2026-05-06 15:10:00',place:'篮球场',student:'赵一航',studentId:'S20240003',cls:'高二(1)班',reporter:'王芳（班主任）',
      desc:'打篮球时手指被撞，疼痛但能活动。',
      handle:'冰敷 + 观察；已通知家长。',
-     status:'closed'}
+     status:'closed', closeNote:'冰敷观察后疼痛缓解，家长确认无大碍，事件结案。', closedAt:'2026-05-06 18:20:00'}
   ];
   var LV_LABEL = {light:'轻微',warn:'一般',high:'较严重'};
   var STATUS_LABEL = {handling:'处理中',closed:'已结案'};
@@ -431,8 +513,10 @@
   }
   function localInputToTime(v){
     if(!v) return '';
-    return v.replace('T',' ').slice(0,16);
+    return ProtoDateTime.normalizeDateTime(v.replace('T',' ').slice(0,16));
   }
+
+  function fmtTime(t){ return ProtoDateTime.formatDateTimeFull(t); }
 
   function filterStudents(q){
     q = (q||'').trim().toLowerCase();
@@ -558,6 +642,35 @@
 
   function closeEdit(){ document.getElementById('editModal').classList.remove('open'); }
 
+  function openCloseCase(){
+    if(!currentSel || currentSel.status!=='handling') return;
+    document.getElementById('closeCaseEventId').textContent = currentSel.id;
+    document.getElementById('closeCaseNote').value = '';
+    document.getElementById('closeCaseModal').classList.add('open');
+    setTimeout(function(){ document.getElementById('closeCaseNote').focus(); }, 80);
+  }
+
+  function closeCloseCase(){
+    document.getElementById('closeCaseModal').classList.remove('open');
+  }
+
+  function submitCloseCase(){
+    if(!currentSel) return;
+    var note = document.getElementById('closeCaseNote').value.trim();
+    if(!note){
+      alert('请填写结案说明');
+      document.getElementById('closeCaseNote').focus();
+      return;
+    }
+    currentSel.status = 'closed';
+    currentSel.closeNote = note;
+    currentSel.closedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    closeCloseCase();
+    renderDetail();
+    renderList();
+    alert('已标记结案');
+  }
+
   function saveEdit(){
     if(!currentSel) return;
     if(!editSelectedStudent){
@@ -587,7 +700,7 @@
       studentId: s.id,
       cls: s.cls
     });
-    document.getElementById('crumbName').textContent = currentSel.id+' · '+currentSel.student;
+    document.getElementById('pageBreadcrumb').innerHTML = '学校端 / 风险事件登记 / <b>'+currentSel.id+' · '+currentSel.student+'</b>';
     document.getElementById('topSub').textContent = '事件 '+currentSel.id+' · '+currentSel.cls+' · '+currentSel.student;
     renderDetail();
     renderList();
@@ -608,6 +721,8 @@
     document.getElementById('viewList').classList.add('active');
     document.getElementById('viewDetail').classList.remove('active');
     document.getElementById('topSub').textContent = '磕碰、运动伤、意外等事件登记台账';
+    document.getElementById('pageBreadcrumb').innerHTML = '学校端 / 风险事件登记';
+    document.getElementById('btnBack').hidden = true;
     if(location.search) history.replaceState(null,'',location.pathname);
   }
   function showDetail(id){
@@ -617,8 +732,9 @@
     currentView = 'detail';
     document.getElementById('viewList').classList.remove('active');
     document.getElementById('viewDetail').classList.add('active');
-    document.getElementById('crumbName').textContent = e.id+' · '+e.student;
+    document.getElementById('pageBreadcrumb').innerHTML = '学校端 / 风险事件登记 / <b>'+e.id+' · '+e.student+'</b>';
     document.getElementById('topSub').textContent = '事件 '+e.id+' · '+e.cls+' · '+e.student;
+    document.getElementById('btnBack').hidden = false;
     renderDetail();
     history.replaceState(null,'',location.pathname+'?id='+encodeURIComponent(id));
     window.scrollTo({top:0,behavior:'smooth'});
@@ -640,7 +756,7 @@
     document.getElementById('eventList').innerHTML = list.map(e=>{
       return '<tr data-id="'+e.id+'">'+
         '<td><code style="font-size:12px;background:#f0f4f9;padding:2px 6px;border-radius:4px">'+e.id+'</code>'+
-          '<div style="font-size:11px;color:#88a3b5;margin-top:3px"><i class="far fa-clock"></i> '+e.time+'</div></td>'+
+          '<div style="font-size:11px;color:#88a3b5;margin-top:3px"><i class="far fa-clock"></i> '+fmtTime(e.time)+'</div></td>'+
         '<td><b>'+e.cls+'</b><div style="font-size:11px;color:#88a3b5;margin-top:2px"><a class="link-cell" href="'+profileUrl(e)+'" onclick="event.stopPropagation()">'+e.student+'</a></div></td>'+
         '<td>'+e.type+'</td>'+
         '<td>'+e.place+'</td>'+
@@ -663,29 +779,23 @@
     document.getElementById('dTitle').innerHTML = e.cls+' · <a class="link-cell" href="'+profileUrl(e)+'">'+e.student+'</a> · '+e.type;
     document.getElementById('dSub').innerHTML =
       '<span><i class="fas fa-hashtag"></i>'+e.id+'</span>'+
-      '<span><i class="far fa-clock"></i>'+e.time+'</span>'+
+      '<span><i class="far fa-clock"></i>'+fmtTime(e.time)+'</span>'+
       '<span><i class="fas fa-location-dot"></i>'+e.place+'</span>'+
       '<span><i class="fas fa-user"></i>登记人 '+e.reporter+'</span>';
     document.getElementById('dActions').innerHTML =
       '<a class="btn btn-outline btn-sm" href="'+profileUrl(e)+'"><i class="fas fa-address-card"></i> 学生档案</a>'+
       '<button type="button" class="btn btn-outline btn-sm" id="btnEditDetail"><i class="fas fa-pen-to-square"></i> 编辑</button>'+
-      (e.status==='handling'?'<button type="button" class="btn btn-primary btn-sm" id="btnCloseCase"><i class="fas fa-check"></i> 标记结案</button>':'');
+      (e.status==='handling'?'<button type="button" class="btn btn-primary btn-sm" id="btnCloseCase"><i class="fas fa-check"></i> 标记结案<span class="proto-mark" title="见右侧批注 ④">④</span></button>':'');
     document.getElementById('btnEditDetail').addEventListener('click', openEdit);
     var btnClose = document.getElementById('btnCloseCase');
-    if(btnClose) btnClose.addEventListener('click', function(){
-      if(!confirm('确认将该事件标记为已结案？\n结案后将同步至学生档案「风险」。')) return;
-      currentSel.status = 'closed';
-      renderDetail();
-      renderList();
-      alert('已标记结案');
-    });
+    if(btnClose) btnClose.addEventListener('click', openCloseCase);
 
     document.getElementById('detailBody').innerHTML =
       '<div class="detail-grid">'+
         '<div class="kv"><div class="label">严重程度</div><div class="val"><span class="lv-tag '+e.lv+'">'+LV_LABEL[e.lv]+'</span></div></div>'+
         '<div class="kv"><div class="label">事件状态</div><div class="val"><span class="pill '+e.status+'">'+STATUS_LABEL[e.status]+'</span></div></div>'+
         '<div class="kv"><div class="label">事件类型</div><div class="val">'+e.type+'</div></div>'+
-        '<div class="kv"><div class="label">发生时间</div><div class="val">'+e.time+'</div></div>'+
+        '<div class="kv"><div class="label">发生时间</div><div class="val">'+fmtTime(e.time)+'</div></div>'+
         '<div class="kv"><div class="label">发生地点</div><div class="val">'+e.place+'</div></div>'+
         '<div class="kv"><div class="label">登记人</div><div class="val">'+e.reporter+'</div></div>'+
       '</div>'+
@@ -693,6 +803,10 @@
       '<div class="desc-box">'+e.desc+'</div>'+
       '<div class="section-title"><i class="fas fa-stethoscope"></i> 处置与家长通知</div>'+
       '<div class="desc-box">'+e.handle+'</div>'+
+      (e.status==='closed' && e.closeNote
+        ? '<div class="section-title"><i class="fas fa-flag-checkered"></i> 结案说明'+(e.closedAt?' <span style="font-weight:400;color:#88a3b5;font-size:12px">· '+fmtTime(e.closedAt)+'</span>':'')+'</div>'+
+          '<div class="desc-box">'+e.closeNote+'</div>'
+        : '')+
       '<div class="section-title"><i class="fas fa-paperclip"></i> 现场照片</div>'+
       '<div class="photo-row">'+
         '<div class="photo"><i class="fas fa-image"></i></div>'+
@@ -727,6 +841,7 @@
   });
 
   document.getElementById('btnSubmitEdit').addEventListener('click', saveEdit);
+  document.getElementById('btnSubmitCloseCase').addEventListener('click', submitCloseCase);
 
   document.getElementById('btnSubmitAdd').addEventListener('click', function(){
     if(!addSelectedStudent){
@@ -747,5 +862,6 @@
     showList();
   }
 </script>
+<script src="proto-notes.js"></script>
 </body>
 </html>
