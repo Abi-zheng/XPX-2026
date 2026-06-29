@@ -21,8 +21,7 @@
     .btn-outline{background:#fff;border:1px solid #cbdde6;color:#4c6a7e}
     .btn-outline:hover{border-color:#1C6E5C;color:#1C6E5C}
 
-    .layout{display:grid;grid-template-columns:360px minmax(280px,1fr) 340px;gap:16px;align-items:start}
-    @media(max-width:1200px){.layout{grid-template-columns:360px 1fr}.proto-notes-section{grid-column:1/-1}}
+    .layout{display:grid;grid-template-columns:360px minmax(280px,1fr);gap:16px;align-items:start}
     @media(max-width:960px){.layout{grid-template-columns:1fr}}
     .panel{background:#fff;border:1px solid #eef2f8;border-radius:18px;padding:20px;box-shadow:0 4px 10px rgba(0,0,0,.02)}
     .panel h3{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
@@ -53,9 +52,34 @@
     .style-card.active .style-info .name i.check{opacity:1}
     .style-info .desc{font-size:11px;color:#88a3b5;margin-top:3px;line-height:1.5}
 
+    .generate-block{margin-top:18px;padding-top:16px;border-top:1px solid #eef2f8}
+    .generate-block .btn-generate{width:100%;justify-content:center;padding:11px 16px;font-size:14px}
+
     /* —— 右侧：海报预览 —— */
-    .preview-wrap{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:14px}
+    .preview-wrap{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:14px;width:100%}
     .preview-actions{display:flex;gap:8px;align-self:flex-end}
+    .preview-actions .btn:disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+
+    .poster-placeholder{
+      width:100%;max-width:380px;min-height:480px;border-radius:20px;
+      border:2px dashed #cbdde6;background:linear-gradient(180deg,#fafbfc 0%,#f3f6fc 100%);
+      display:flex;align-items:center;justify-content:center;padding:32px 24px;
+      text-align:center;color:#88a3b5;
+    }
+    .poster-placeholder .ph-inner{max-width:260px}
+    .poster-placeholder .ph-icon{
+      width:72px;height:72px;margin:0 auto 16px;border-radius:18px;
+      background:#fff;border:1px solid #eef2f8;display:flex;align-items:center;justify-content:center;
+      font-size:28px;color:#b8d9ce;
+    }
+    .poster-placeholder .ph-title{font-size:15px;font-weight:600;color:#5e7f92;margin-bottom:8px}
+    .poster-placeholder .ph-desc{font-size:12px;line-height:1.7;color:#88a3b5}
+    .poster-placeholder.is-stale .ph-icon{color:#e6b422;border-color:#f5dab1;background:#fffbf5}
+    .poster-placeholder.is-stale .ph-title{color:#b88230}
+
+    .poster-panel{display:none;width:100%;flex-direction:column;align-items:center;gap:14px}
+    .poster-panel.show{display:flex}
+
     .poster{width:100%;max-width:380px;border-radius:20px;padding:28px 24px;text-align:center;box-shadow:0 8px 24px rgba(28,46,71,.08);position:relative;overflow:hidden}
     .poster .school{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:14px;margin-bottom:8px}
     .poster .term{display:inline-block;padding:3px 12px;border-radius:999px;font-size:11px;font-weight:600;margin-bottom:14px}
@@ -106,89 +130,17 @@
     .hint{font-size:12px;color:#88a3b5;line-height:1.7;margin-top:14px;padding:10px 12px;background:#fafbfc;border:1px solid #eef2f8;border-radius:10px;width:100%;max-width:380px}
     .hint i{color:#1C6E5C;margin-right:4px}
 
-    /* —— 原型批注标记（非正式页面内容） —— */
-    .proto-mark{
-      display:inline-flex;align-items:center;justify-content:center;
-      width:18px;height:18px;margin-left:4px;
-      border-radius:50%;background:#f5a623;color:#fff;
-      font-size:11px;font-weight:700;line-height:1;flex-shrink:0;
-      vertical-align:middle;position:relative;top:-1px;
-      cursor:help;
-    }
-    .proto-mark:hover{background:#e09400}
-    h3 .proto-mark,h2 .proto-mark{margin-left:6px}
-
-    .proto-notes-section{
-      position:sticky;top:1rem;align-self:start;
-      max-height:calc(100vh - 3rem);overflow-y:auto;
-      padding:16px 14px 18px;
-      background:#fffbeb;border:2px dashed #f0c040;border-radius:16px;
-    }
-    .proto-notes-header{
-      display:flex;flex-direction:column;align-items:flex-start;gap:8px;
-      margin-bottom:14px;padding-bottom:12px;
-      border-bottom:1px dashed #f0c040;
-    }
-    .proto-notes-header h3{
-      font-size:14px;font-weight:700;color:#8a6d1d;
-      display:flex;align-items:center;gap:8px;margin:0;line-height:1.35;
-    }
-    .proto-notes-header h3 i{color:#c99700}
-    .proto-notes-badge{
-      font-size:11px;font-weight:600;color:#a16207;
-      background:#fef3c7;border:1px solid #fcd34d;
-      padding:4px 10px;border-radius:999px;
-    }
-    .proto-notes-grid{
-      display:flex;flex-direction:column;gap:10px;
-    }
-    .proto-note-card{
-      background:#fff;border:1px dashed #f0c040;border-radius:12px;
-      padding:10px 12px;display:flex;gap:8px;align-items:flex-start;
-    }
-    .proto-note-num{
-      width:26px;height:26px;border-radius:50%;background:#f5a623;color:#fff;
-      font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;
-      flex-shrink:0;
-    }
-    .proto-note-body{flex:1;min-width:0;font-size:11px;line-height:1.55;color:#57534e}
-    .proto-note-row{margin-bottom:5px}
-    .proto-note-row:last-child{margin-bottom:0}
-    .proto-note-row b{
-      display:block;color:#92400e;font-size:10px;
-      font-weight:700;margin-bottom:1px;
-    }
-    .proto-note-row.type b{min-width:0}
-    .proto-note-row.type span{
-      display:inline-block;font-size:10px;font-weight:600;color:#a16207;
-      background:#fef9c3;border:1px solid #fde047;padding:1px 7px;border-radius:999px;
-    }
-    .proto-scan-sample{
-      margin-top:6px;padding:8px 10px;background:#fafafa;
-      border:1px solid #e7e5e4;border-left:3px solid #f5a623;border-radius:8px;
-    }
-    .proto-scan-sample .sample-title{
-      font-size:11px;font-weight:800;color:#1E2F3E;margin-bottom:4px;
-    }
-    .proto-scan-sample .sample-body{
-      font-size:10.5px;color:#57534e;line-height:1.55;
-    }
-    .proto-scan-sample .sample-action{
-      margin-top:5px;font-size:10px;color:#88a3b5;
-    }
-    .proto-scan-sample code{
-      font-size:10px;background:#fef3c7;padding:1px 4px;border-radius:4px;
-    }
-
     @media print{
-      .sidebar,.top-bar,.panel.scope-panel,.preview-actions,.hint,
+      .sidebar,.top-bar,.panel.scope-panel,.preview-actions,.hint,.poster-placeholder,
       .proto-mark,.proto-notes-section{display:none!important}
       .main-content{padding:0}
       .layout{grid-template-columns:1fr}
+      .poster-panel.show{display:flex!important}
       .poster{border:2px solid #000;box-shadow:none;max-width:100%}
     }
   </style>
   <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="proto-notes.css">
   <link rel="stylesheet" href="学平险-学校端-sidebar.css">
   <link rel="stylesheet" href="学平险-学校端-b-end.css">
 </head>
@@ -207,6 +159,8 @@
       </div>
     </div>
 
+    <div class="page-with-notes">
+    <div class="page-main-col">
     <div class="layout">
       <!-- 左：范围 + 海报风格 -->
       <div class="panel scope-panel">
@@ -235,7 +189,7 @@
 
         <h3 style="margin-top:8px"><i class="fas fa-palette"></i> 海报风格<span class="proto-mark" title="见右侧批注 ③">③</span></h3>
         <div class="style-list" id="styleList">
-          <div class="style-card active" data-theme="green">
+          <div class="style-card" data-theme="green">
             <div class="style-thumb theme-green"><div class="dot"></div>清新绿</div>
             <div class="style-info">
               <div class="name">清新绿 · 默认 <i class="fas fa-check check"></i></div>
@@ -257,17 +211,34 @@
             </div>
           </div>
         </div>
+
+        <div class="generate-block">
+          <button type="button" class="btn btn-primary btn-generate" id="btnGenerate">
+            <i class="fas fa-wand-magic-sparkles"></i> 生成海报
+          </button>
+          <p class="validity-tip" style="margin-top:10px;text-align:center">设置有效时间与风格后，点击生成右侧预览</p>
+        </div>
       </div>
 
       <!-- 右：海报预览 -->
       <div class="preview-wrap">
         <div class="preview-actions">
-          <button class="btn btn-outline" id="btnDownload"><i class="fas fa-download"></i> 下载海报<span class="proto-mark" title="见右侧批注 ④">④</span></button>
-          <button class="btn btn-primary" id="btnPrint"><i class="fas fa-print"></i> 打印</button>
+          <button class="btn btn-outline" id="btnDownload" disabled><i class="fas fa-download"></i> 下载海报<span class="proto-mark" title="见右侧批注 ④">④</span></button>
+          <button class="btn btn-primary" id="btnPrint" disabled><i class="fas fa-print"></i> 打印</button>
         </div>
 
+        <div class="poster-placeholder" id="posterPlaceholder">
+          <div class="ph-inner">
+            <div class="ph-icon"><i class="fas fa-image"></i></div>
+            <p class="ph-title">海报预览区</p>
+            <p class="ph-desc" id="placeholderDesc">请先在左侧设置二维码有效时间与海报风格，点击「生成海报」后在此预览最终效果。</p>
+          </div>
+        </div>
+
+        <div class="poster-panel" id="posterPanel">
         <div class="poster theme-green" id="poster">
           <div class="school"><i class="fas fa-shield-heart"></i> 立德中学<span class="proto-mark" title="见右侧批注 ⑤">⑤</span></div>
+          <span class="term" id="posterTerm">2026 春季</span>
           <h2>扫码投保</h2>
           <span class="scope-tag" id="posterScopeTag">学校通用</span>
           <div class="qr-frame">
@@ -279,14 +250,17 @@
           <div class="deadline" id="posterDeadline"><i class="fas fa-clock"></i> 投保截止：2026-05-31</div>
           <div class="foot">投保平台 · 学平险</div>
         </div>
+        </div>
 
         <div class="hint">
           <i class="fas fa-circle-info"></i>
           二维码生成后会带上学校与有效时间；过期后扫码将无法投保。投保完成后数据自动回传到「班级投保名单」。<span class="proto-mark" title="见右侧批注 ⑧">⑧</span>
         </div>
       </div>
+    </div><!-- /.layout -->
+    </div><!-- /.page-main-col -->
 
-      <!-- 右侧：产品批注 / 开发注意点（仅原型说明，非正式页面内容） -->
+      <!-- 右侧：产品批注（固定页面最右栏，见 proto-notes.css） -->
       <section class="proto-notes-section" aria-label="产品批注与开发注意点">
       <div class="proto-notes-header">
         <h3><i class="fas fa-clipboard-list"></i> 产品批注 / 开发注意点</h3>
@@ -309,7 +283,7 @@
             <div class="proto-note-row"><b>位置</b>左侧「生效日期 / 失效日期」</div>
             <div class="proto-note-row type"><b>类型</b><span>校验规则</span></div>
             <div class="proto-note-row"><b>说明</b>设定家长可扫码办理的时间区间，分为三种状态：尚未生效、正常可用、已经失效。生效前与失效后均不允许进入产品页，详见批注 ⑨、⑩。</div>
-            <div class="proto-note-row"><b>体验要求</b>失效日期不能早于生效日期；修改日期后，左侧摘要与右侧海报立即同步；下载或打印前，若日期不完整或不合法需给出提示。</div>
+            <div class="proto-note-row"><b>体验要求</b>失效日期不能早于生效日期；修改日期后左侧摘要即时更新；<strong>右侧海报须点击「生成海报」后才更新</strong>，配置变更后需重新生成；下载或打印前校验有效期与是否已生成。</div>
             <div class="proto-note-row"><b>规则要求</b>以系统服务器日期为准判断是否可投保，不能仅依赖用户手机时间；生成二维码时需一并保存生效日与失效日。</div>
           </div>
         </article>
@@ -319,7 +293,7 @@
             <div class="proto-note-row"><b>位置</b>左侧「海报风格」卡片列表</div>
             <div class="proto-note-row type"><b>类型</b><span>展示配置</span></div>
             <div class="proto-note-row"><b>说明</b>提供清新绿、暖橙、商务蓝三种海报样式，仅改变视觉呈现，不影响二维码内容与投保规则。</div>
-            <div class="proto-note-row"><b>体验要求</b>选中某风格后，右侧预览即时切换；下载或打印出的海报须与当前选中风格一致。</div>
+            <div class="proto-note-row"><b>体验要求</b>选中某风格后左侧高亮；<strong>右侧预览不即时切换</strong>，须点击「生成海报」后按所选风格渲染；下载或打印出的海报须与最后一次生成结果一致。</div>
             <div class="proto-note-row"><b>规则要求</b>可按学校或渠道预设默认风格；若平台端配置了品牌色，下发可选风格列表与之对齐。</div>
           </div>
         </article>
@@ -329,7 +303,7 @@
             <div class="proto-note-row"><b>位置</b>右侧预览区「下载海报 / 打印」</div>
             <div class="proto-note-row type"><b>类型</b><span>分发能力</span></div>
             <div class="proto-note-row"><b>说明</b>供学校管理员下载图片或打印后，在家长群、公告栏等场景分发；打印时只输出海报本身，不含配置面板与批注。</div>
-            <div class="proto-note-row"><b>体验要求</b>下载前校验有效期是否合法；打印预览干净，仅保留海报内容。</div>
+            <div class="proto-note-row"><b>体验要求</b>未生成时右侧展示虚线占位区；下载/打印按钮置灰；生成成功后启用下载与打印。</div>
             <div class="proto-note-row"><b>规则要求</b>正式环境应生成含真实二维码的高清图片；建议记录谁在何时下载/打印，便于追溯。</div>
           </div>
         </article>
@@ -433,7 +407,7 @@
         </article>
       </div>
     </section>
-    </div>
+    </div><!-- /.page-with-notes -->
 
   </main>
 </div>
@@ -443,18 +417,28 @@
 <script>initSchoolUserMenu('#userMenuMount');</script>
 <script>
   var SCHOOL_NAME = '立德中学';
-  var state = { theme:'green', validFrom:'2026-03-01', validTo:'2026-05-31' };
+  var TERM_LABEL = '2026 春季';
+  var state = {
+    theme: null,
+    validFrom: '2026-03-01',
+    validTo: '2026-05-31',
+    generated: false
+  };
 
   var summary = document.getElementById('scopeSummary');
   var posterScopeTag = document.getElementById('posterScopeTag');
-  var posterValidity = document.getElementById('posterValidity');
   var posterValidityText = document.getElementById('posterValidityText');
   var posterDeadline = document.getElementById('posterDeadline');
   var poster = document.getElementById('poster');
+  var posterPanel = document.getElementById('posterPanel');
+  var posterPlaceholder = document.getElementById('posterPlaceholder');
+  var placeholderDesc = document.getElementById('placeholderDesc');
   var validFrom = document.getElementById('validFrom');
   var validTo = document.getElementById('validTo');
   var validityTip = document.getElementById('validityTip');
   var validityTipText = document.getElementById('validityTipText');
+  var btnDownload = document.getElementById('btnDownload');
+  var btnPrint = document.getElementById('btnPrint');
 
   function fmtDateShort(iso){
     if(!iso) return '—';
@@ -469,54 +453,108 @@
     if(state.validFrom > state.validTo) return '失效日期不能早于生效日期';
     return '';
   }
+  function styleError(){
+    if(!state.theme) return '请选择海报风格';
+    return '';
+  }
 
-  function render(){
+  function invalidatePoster(reason){
+    if(!state.generated) return;
+    state.generated = false;
+    posterPanel.classList.remove('show');
+    posterPlaceholder.style.display = 'flex';
+    posterPlaceholder.classList.add('is-stale');
+    placeholderDesc.textContent = reason || '配置已变更，请重新点击「生成海报」更新预览。';
+    btnDownload.disabled = true;
+    btnPrint.disabled = true;
+  }
+
+  function showPlaceholderInitial(){
+    posterPanel.classList.remove('show');
+    posterPlaceholder.style.display = 'flex';
+    posterPlaceholder.classList.remove('is-stale');
+    placeholderDesc.textContent = '请先在左侧设置二维码有效时间与海报风格，点击「生成海报」后在此预览最终效果。';
+    btnDownload.disabled = true;
+    btnPrint.disabled = true;
+  }
+
+  function renderSummary(){
     var scopeText = SCHOOL_NAME + ' · 学校通用二维码';
-    var tagText = '学校通用';
     var err = validityError();
-    var validLine = '有效 ' + fmtDateShort(state.validFrom) + ' ～ ' + fmtDateShort(state.validTo);
+    var validLine = state.validFrom && state.validTo
+      ? '有效 ' + fmtDateShort(state.validFrom) + ' ～ ' + fmtDateShort(state.validTo)
+      : '有效时间未设置';
     summary.innerHTML = '<b>当前：</b>' + scopeText + '<br><span style="opacity:.9">' + validLine + '</span>';
-    posterScopeTag.textContent = tagText;
-    posterValidityText.textContent = '有效时间：' + fmtDateShort(state.validFrom) + ' 至 ' + fmtDateShort(state.validTo);
-    posterDeadline.innerHTML = '<i class="fas fa-clock"></i> 投保截止：' + fmtDateShort(state.validTo);
 
     validityTip.className = 'validity-tip' + (err ? ' warn' : '');
     validityTipText.textContent = err || '过期后二维码将失效，家长扫码将无法进入投保页。';
+  }
 
+  function renderPosterContent(){
+    posterScopeTag.textContent = '学校通用';
+    posterValidityText.textContent = '有效时间：' + fmtDateShort(state.validFrom) + ' 至 ' + fmtDateShort(state.validTo);
+    posterDeadline.innerHTML = '<i class="fas fa-clock"></i> 投保截止：' + fmtDateShort(state.validTo);
+    document.getElementById('posterTerm').textContent = TERM_LABEL;
     poster.className = 'poster theme-' + state.theme;
   }
 
-  validFrom.addEventListener('change', function(){ syncValidityFromInputs(); render(); });
-  validTo.addEventListener('change', function(){ syncValidityFromInputs(); render(); });
+  function generatePoster(){
+    syncValidityFromInputs();
+    var err = validityError() || styleError();
+    if(err){ alert(err); return; }
+    state.generated = true;
+    renderPosterContent();
+    posterPlaceholder.style.display = 'none';
+    posterPlaceholder.classList.remove('is-stale');
+    posterPanel.classList.add('show');
+    btnDownload.disabled = false;
+    btnPrint.disabled = false;
+  }
 
-  /* 海报风格 */
+  validFrom.addEventListener('change', function(){
+    syncValidityFromInputs();
+    renderSummary();
+    invalidatePoster('有效时间已变更，请重新点击「生成海报」。');
+  });
+  validTo.addEventListener('change', function(){
+    syncValidityFromInputs();
+    renderSummary();
+    invalidatePoster('有效时间已变更，请重新点击「生成海报」。');
+  });
+
   document.querySelectorAll('#styleList .style-card').forEach(function(card){
     card.addEventListener('click', function(){
       document.querySelectorAll('#styleList .style-card').forEach(function(c){ c.classList.toggle('active', c===card); });
-      state.theme = card.getAttribute('data-theme');
-      render();
+      var nextTheme = card.getAttribute('data-theme');
+      if(state.theme !== nextTheme) invalidatePoster('海报风格已变更，请重新点击「生成海报」。');
+      state.theme = nextTheme;
     });
   });
 
-  /* 下载 / 打印 */
+  document.getElementById('btnGenerate').addEventListener('click', generatePoster);
+
   function currentScopeLabel(){
     return SCHOOL_NAME + '_学校';
   }
   function validateBeforeExport(){
+    if(!state.generated){ alert('请先生成海报'); return false; }
     var err = validityError();
     if(err){ alert(err); return false; }
     return true;
   }
-  document.getElementById('btnDownload').addEventListener('click', function(){
+  btnDownload.addEventListener('click', function(){
     if(!validateBeforeExport()) return;
     alert('已下载海报：' + currentScopeLabel() + '_学平险二维码.png\n有效时间：' + fmtDateShort(state.validFrom) + ' 至 ' + fmtDateShort(state.validTo));
   });
-  document.getElementById('btnPrint').addEventListener('click', function(){
+  btnPrint.addEventListener('click', function(){
     if(!validateBeforeExport()) return;
     window.print();
   });
 
-  render();
+  syncValidityFromInputs();
+  renderSummary();
+  showPlaceholderInitial();
 </script>
+<script src="proto-notes.js"></script>
 </body>
 </html>
