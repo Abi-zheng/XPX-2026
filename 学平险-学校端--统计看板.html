@@ -23,6 +23,7 @@
     .kpi-card .kpi-val{font-size:1.85rem;font-weight:700;color:#1E2F3E;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
     .kpi-card .kpi-val small{font-size:13px;color:#88a3b5;font-weight:500}
     .kpi-card.success .kpi-val{color:#1C6E5C}
+    .kpi-card.success.overflow .kpi-val{color:#b88230}
     .kpi-card.danger .kpi-val{color:#c45656}
     .kpi-card .kpi-sub{font-size:12px;color:#5e7f92}
 
@@ -69,6 +70,7 @@
     .term-scope-bar .meta{font-size:12px;color:#5e7f92;line-height:1.5;flex:1;min-width:220px}
   </style>
   <link rel="stylesheet" href="shared-ui.css">
+  <link rel="stylesheet" href="proto-notes.css">
   <link rel="stylesheet" href="学平险-学校端-sidebar.css">
   <link rel="stylesheet" href="学平险-学校端-b-end.css">
 </head>
@@ -79,28 +81,30 @@
 
     <div class="top-bar">
       <div class="welcome">
-        <h2><i class="fas fa-chart-pie" style="color:#1C6E5C"></i> 统计看板</h2>
-        <p>立德中学 · <span id="topTerm">2026 春季</span> · 数据 15 分钟同步一次</p>
+        <h2><i class="fas fa-chart-pie" style="color:#1C6E5C"></i> 统计看板<span class="proto-mark" title="见右侧批注 ⑥">⑥</span></h2>
+        <p>立德中学 · <span id="topTerm">2026 春季</span> · <span id="syncHint">数据 15 分钟同步一次</span><span class="proto-mark" title="见右侧批注 ⑦">⑦</span></p>
       </div>
       <div id="userMenuMount"></div>
     </div>
 
+    <div class="page-with-notes">
+    <div class="page-main-col">
+
     <!-- 统计学期：本学期已投保按此口径汇总 -->
     <div class="term-scope-bar" id="termScopeBar">
-      <label for="termSel"><i class="fas fa-calendar-days"></i> 统计学期</label>
+      <label for="termSel"><i class="fas fa-calendar-days"></i> 统计学期<span class="proto-mark" title="见右侧批注 ①">①</span></label>
       <select id="termSel" title="统计学期"></select>
-      <span class="meta" id="termScopeMeta">—</span>
     </div>
 
     <!-- 2 张 KPI：学生总数 / 本学期已投保 -->
     <div class="kpi-grid">
       <div class="kpi-card">
-        <div class="kpi-head"><span>学生总数</span><i class="fas fa-user-graduate"></i></div>
+        <div class="kpi-head"><span>学生总数<span class="proto-mark" title="见右侧批注 ②">②</span></span><i class="fas fa-user-graduate"></i></div>
         <div class="kpi-val" id="kpiStudents">— <small>人</small></div>
         <div class="kpi-sub">学生建档</div>
       </div>
-      <div class="kpi-card success">
-        <div class="kpi-head"><span id="kpiInsuredLabel">本学期已投保</span><i class="fas fa-user-check"></i></div>
+      <div class="kpi-card success" id="kpiInsuredCard">
+        <div class="kpi-head"><span id="kpiInsuredLabel">本学期已投保<span class="proto-mark" title="见右侧批注 ③">③</span></span><i class="fas fa-user-check"></i></div>
         <div class="kpi-val" id="kpiInsured">— <small>人</small></div>
         <div class="kpi-sub" id="kpiInsuredSub">—</div>
       </div>
@@ -109,7 +113,7 @@
     <!-- 近期风险事件 -->
     <div class="panel">
       <div class="panel-head">
-        <h3><i class="fas fa-triangle-exclamation"></i> 近期风险事件</h3>
+        <h3><i class="fas fa-triangle-exclamation"></i> 近期风险事件<span class="proto-mark" title="见右侧批注 ④">④</span></h3>
         <a href="学平险-学校端--风险事件登记.html" class="note" style="color:#1C6E5C;text-decoration:none">登记 / 查看 →</a>
       </div>
       <div class="panel-bd">
@@ -118,6 +122,9 @@
     </div>
 
     <!-- 快捷入口 -->
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;font-size:13px;font-weight:600;color:#1E2F3E">
+      <i class="fas fa-bolt" style="color:#1C6E5C"></i> 快捷入口<span class="proto-mark" title="见右侧批注 ⑤">⑤</span>
+    </div>
     <div class="quick-row">
       <a href="学平险-学校端--学生档案.html" class="quick-card">
         <div class="qc-icon"><i class="fas fa-address-card"></i></div>
@@ -153,10 +160,17 @@
       </a>
     </div>
 
+    </div><!-- /.page-main-col -->
+
+    <div id="protoNotesMount"></div>
+
+    </div><!-- /.page-with-notes -->
+
   </main>
 </div>
 
 <script src="学平险-学校端-school-stats.js"></script>
+<script src="proto-datetime.js"></script>
 <script src="学平险-学校端-sidebar.js"></script>
 <script>initSchoolSidebar("dashboard");</script>
 <script>initSchoolUserMenu('#userMenuMount');</script>
@@ -164,14 +178,38 @@
   /* #原型说明：与班级投保名单共用 SchoolStats，按统计学期汇总「本学期已投保」 */
   var fmt = SchoolStats.fmt;
 
-  /** 按学期汇总：去重学生数（cls + studentName） + 订单数 */
+  /** 按学期汇总：去重学生数 + 档案关联（见 SchoolStats.summarizeTermEnrollment） */
   function getEnrolledForTerm(termCode){
-    var orders = SchoolStats.getEnrollmentRecords().filter(function(r){
-      return SchoolStats.termCodeFromDate(r.enrolledAt) === termCode;
-    });
-    var uniq = {};
-    orders.forEach(function(r){ uniq[r.cls + '|' + r.studentName] = true; });
-    return { insuredStudents: Object.keys(uniq).length, orders: orders.length };
+    return SchoolStats.summarizeTermEnrollment(termCode);
+  }
+
+  function renderKpis(){
+    var totals = SchoolStats.schoolTotals();
+    var def = SchoolStats.getStatTerm();
+    var termCode = SchoolStats.getStatTermCode();
+    var enrolled = getEnrolledForTerm(termCode);
+    var totalStudents = totals.students;
+    var insured = enrolled.insuredStudents;
+    var kpiCard = document.getElementById('kpiInsuredCard');
+    var ratePart;
+    var subParts = ['保障期 ' + def.coverageText];
+
+    if (!totalStudents) {
+      ratePart = '—';
+    } else if (insured > totalStudents) {
+      var overBy = insured - totalStudents;
+      ratePart = '超建档 ' + overBy + ' 人';
+      kpiCard.classList.add('overflow');
+    } else {
+      ratePart = (insured / totalStudents * 100).toFixed(1) + '%';
+      kpiCard.classList.remove('overflow');
+    }
+
+    document.getElementById('topTerm').textContent = def.label;
+    document.getElementById('kpiInsuredLabel').textContent = def.label + ' 已投保';
+    document.getElementById('kpiStudents').innerHTML = fmt(totalStudents) + ' <small>人</small>';
+    document.getElementById('kpiInsured').innerHTML = fmt(insured) + ' <small>人 · ' + ratePart + '</small>';
+    document.getElementById('kpiInsuredSub').textContent = subParts.join(' · ');
   }
 
   function fillTermSelect(){
@@ -182,26 +220,6 @@
       return '<option value="'+code+'">'+d.label+' · '+d.coverageText+'</option>';
     }).join('');
     sel.value = SchoolStats.getStatTermCode();
-  }
-
-  function renderKpis(){
-    var totals = SchoolStats.schoolTotals();
-    var def = SchoolStats.getStatTerm();
-    var termCode = SchoolStats.getStatTermCode();
-    var enrolled = getEnrolledForTerm(termCode);
-    var rate = totals.students ? (enrolled.insuredStudents / totals.students * 100).toFixed(1) : '—';
-
-    document.getElementById('topTerm').textContent = def.label;
-    document.getElementById('kpiInsuredLabel').textContent = def.label + ' 已投保';
-    document.getElementById('kpiStudents').innerHTML = fmt(totals.students)+' <small>人</small>';
-    document.getElementById('kpiInsured').innerHTML = fmt(enrolled.insuredStudents)+' <small>人 · '+rate+'%</small>';
-    document.getElementById('kpiInsuredSub').textContent = '投保订单 '+enrolled.orders+' 条 · 保障期 '+def.coverageText;
-
-    var auto = SchoolStats.termCodeFromDate(SchoolStats.referenceToday) === termCode;
-    document.getElementById('termScopeMeta').innerHTML =
-      '学期 <b>'+def.coverageText+'</b>'+
-      (auto ? ' · 参考日期 '+SchoolStats.referenceToday+' 自动匹配' : ' · 已手动切换')+
-      ' · 本学期已投保按订单流水（家长端）汇总';
   }
 
   SchoolStats.initFromUrl();
@@ -218,12 +236,17 @@
     return '<a class="event-item '+e.lv+'" href="学平险-学校端--风险事件登记.html" style="text-decoration:none;color:inherit">'+
       '<div class="ev-dot"></div>'+
       '<div class="ev-body">'+
-        '<div class="ev-time">'+e.time+'</div>'+
+        '<div class="ev-time">'+ProtoDateTime.formatDateTimeFull(e.time)+'</div>'+
         '<div class="ev-title">'+e.title+' <span class="lv-tag '+e.lv+'">'+e.label+'</span></div>'+
         '<div class="ev-meta">'+e.meta+'</div>'+
       '</div>'+
     '</a>';
   }).join('');
+</script>
+<script src="proto-notes.js"></script>
+<script src="学平险-学校端--统计看板.notes.js"></script>
+<script>
+  mountProtoNotes('protoNotesMount', buildFullProtoNotesSection(window.SCHOOL_DASHBOARD_PROTO));
 </script>
 </body>
 </html>

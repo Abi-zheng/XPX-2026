@@ -311,7 +311,53 @@
       });
     });
 
+    /* 3) 演示：未建档/未全部建档投保 — 使「已投保人数」可能大于「学生总数（建制建档）」 */
+    var springDef = SCHOOL_TERM_DEFS['2026春季'];
+    if (springDef) {
+      for (var ei = 0; ei < 150; ei++) {
+        var cls = ALL_CLASSES[ei % ALL_CLASSES.length];
+        var d = addDaysStr(springDef.coverageStart, (ei * 3 + 12) % 80);
+        records.push({
+          orderId: nextOrderId(d),
+          studentName: '未建档投保' + String(ei + 1).padStart(2, '0'),
+          cls: cls.name,
+          grade: cls.grade,
+          contact: FILL_CONTACTS[ei % FILL_CONTACTS.length],
+          contactPhone: maskPhone('overflow' + ei),
+          product: '学平险 B 款',
+          enrolledAt: d,
+          coverageStart: springDef.coverageStart,
+          coverageEnd: springDef.coverageEnd,
+          channel: '家长端 H5'
+        });
+      }
+    }
+
     return records;
+  }
+
+  /** 按学期汇总投保人数：订单去重 + 档案关联情况（看板 KPI ③） */
+  function summarizeTermEnrollment(termCode) {
+    var orders = getEnrollmentRecords().filter(function (r) {
+      return termCodeFromDate(r.enrolledAt) === termCode;
+    });
+    var seen = {};
+    var linkedProfile = 0;
+    var unlinkedProfile = 0;
+    orders.forEach(function (r) {
+      var key = r.cls + '|' + r.studentName;
+      if (seen[key]) return;
+      seen[key] = true;
+      if (findProfileByNameAndClass(r.studentName, r.cls)) linkedProfile++;
+      else unlinkedProfile++;
+    });
+    var insuredStudents = Object.keys(seen).length;
+    return {
+      insuredStudents: insuredStudents,
+      orders: orders.length,
+      linkedProfile: linkedProfile,
+      unlinkedProfile: unlinkedProfile
+    };
   }
 
   function getEnrollmentRecords() {
@@ -360,6 +406,7 @@
     targetInsuredForClass: targetInsuredForClass,
     getEnrollmentRecords: getEnrollmentRecords,
     getEnrollmentsForClass: getEnrollmentsForClass,
+    summarizeTermEnrollment: summarizeTermEnrollment,
     findProfileByNameAndClass: findProfileByNameAndClass,
     get referenceToday() { return REFERENCE_TODAY; },
     set referenceToday(v) { REFERENCE_TODAY = v; }
